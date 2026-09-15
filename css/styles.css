@@ -309,7 +309,7 @@ em{ font-style: normal; }
   overflow:hidden;
   background: var(--black);
 }
-.hero-media{ position:absolute; inset:0; will-change: transform; }
+.hero-media{ position:absolute; inset:0; }
 .hero-scrim{
   position:absolute; inset:0;
   background:
@@ -606,26 +606,7 @@ em{ font-style: normal; }
 .mobile-sticky-cta a:last-child{ border-right:0; }
 .mobile-sticky-cta--primary{ background: var(--gold); color: var(--black)!important; font-size:.72rem!important; }
 
-/* ================= SCROLL REVEAL BASE STATES =================
-   Default = fully visible (safe if JS/CDN fails). Only once the
-   early head script confirms JS by tagging <html class="js"> do
-   reveal targets hide pending their .is-visible toggle. */
-[data-reveal], [data-reveal-stagger], [data-reveal-text]{
-  opacity: 1;
-  transform: none;
-}
-.js [data-reveal], .js [data-reveal-stagger], .js [data-reveal-text]{
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity .9s var(--ease), transform .9s var(--ease);
-  transition-delay: var(--reveal-delay, 0s);
-}
-.js [data-reveal].is-visible,
-.js [data-reveal-stagger].is-visible,
-.js [data-reveal-text].is-visible{
-  opacity: 1;
-  transform: none;
-}
+/* Content is always visible — no scroll-triggered reveal/parallax effects. */
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 1180px){
@@ -677,5 +658,4 @@ em{ font-style: normal; }
 /* ================= REDUCED MOTION ================= */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{ animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
-  [data-reveal], [data-reveal-stagger], [data-reveal-text]{ opacity:1; transform:none; }
 }

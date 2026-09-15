@@ -19,12 +19,12 @@ just point it at the repo root.
 ```
 index.html        one-page site, anchor nav (Home/Rims/Suspension/Services/Gallery/About/Contact)
 css/styles.css     design system + all component/section styles
-js/main.js         nav, reveals, parallax, gallery lightbox, before/after slider, forms
+js/main.js         nav, gallery lightbox, before/after slider, forms
 ```
 
-No bundler. `js/main.js` is vanilla JS (IntersectionObserver + rAF) so the
-core experience — navigation, reveals, forms, gallery, before/after — works
-with zero external dependencies. [Lenis](https://github.com/darkroomengineering/lenis)
+No bundler. `js/main.js` is vanilla JS so the core experience —
+navigation, forms, gallery, before/after — works with zero external
+dependencies. [Lenis](https://github.com/darkroomengineering/lenis)
 loads from a CDN purely as a smooth-scroll enhancement; if it fails to load
 (offline, blocked CDN, ad blocker) the site falls back to native smooth
 scrolling automatically — nothing breaks.
@@ -98,8 +98,8 @@ submission`) to one of:
   regardless of OS light/dark preference, as a brand choice (per the brief).
 - **Type**: Oswald (condensed display headlines) + Inter (body), loaded from
   Google Fonts with system-font fallback if that fails to load.
-- **Motion**: scroll reveals + stagger via IntersectionObserver, a subtle
-  hero/closing-CTA parallax, hover states on cards/links, an interactive
-  before/after drag slider. Everything respects `prefers-reduced-motion`.
+- **Motion**: deliberately minimal — content is visible immediately as you
+  scroll, no reveal/parallax effects. Hover states on cards/links and an
+  interactive before/after drag slider are the only motion in the page.
 - **Mobile**: sticky Call/WhatsApp/Get Quote bar, off-canvas menu, all grids
   collapse down to 1–2 columns. Tested at 375/390/768/1024/1440/1920px.
