@@ -1,0 +1,202 @@
+{
+  "sections": {
+    "hero": {
+      "type": "studio-video-hero",
+      "settings": {
+        "poster": "shopify://shop_images/sevencrush-original-video-poster.jpg",
+        "eyebrow": "THE HAIR EDIT",
+        "heading": "Your hair.\nYour way.",
+        "copy": "Dry, smooth and style. Find the tool for your routine.",
+        "cta": "Explore hair tools",
+        "video_label": "SevenCrush hair styling film"
+      }
+    },
+    "ticker": {
+      "type": "home-marquee",
+      "settings": {
+        "label": "Shopping with SevenCrush",
+        "speed": 38
+      },
+      "blocks": {
+        "f1": {
+          "type": "fact",
+          "settings": {
+            "text": "Tracking number with every order"
+          }
+        },
+        "f2": {
+          "type": "fact",
+          "settings": {
+            "text": "Orders processed in 1–3 business days"
+          }
+        },
+        "f3": {
+          "type": "fact",
+          "settings": {
+            "text": "USA delivery in 11–16 business days"
+          }
+        },
+        "f4": {
+          "type": "fact",
+          "settings": {
+            "text": "Secure Shopify checkout"
+          }
+        }
+      },
+      "block_order": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ]
+    },
+    "intent": {
+      "type": "home-intent",
+      "settings": {
+        "eyebrow": "START HERE",
+        "heading": "What are you looking for?"
+      },
+      "blocks": {
+        "n1": {
+          "type": "need",
+          "settings": {
+            "label": "Hair tools",
+            "collection": "seven-crush-for-her",
+            "title": "Dry, smooth, style.",
+            "text": "Dryers, a 2-in-1 straightener and a multi-styler for your routine at home.",
+            "cta": "Shop hair tools",
+            "products": [
+              "aircurve-hair-dryer",
+              "superair-hair-dryer",
+              "airsleek-straightener",
+              "airwave-multi-styler"
+            ]
+          }
+        },
+        "n2": {
+          "type": "need",
+          "settings": {
+            "label": "Gaming",
+            "collection": "seven-crush-for-him",
+            "title": "Gear for your setup.",
+            "text": "Controllers, PlayStation Portal and Nintendo Switch 2.",
+            "cta": "Shop gaming",
+            "products": [
+              "ps5-portal",
+              "dualsense-wireless-controller",
+              "dualsense-edge-wireless-controller",
+              "nintendo-switch-2"
+            ]
+          }
+        },
+        "n3": {
+          "type": "need",
+          "settings": {
+            "label": "Accessories",
+            "collection": "jewelry",
+            "title": "Small details.",
+            "text": "Bracelets and phone cases.",
+            "cta": "Shop accessories"
+          }
+        }
+      },
+      "block_order": [
+        "n1",
+        "n2",
+        "n3"
+      ]
+    },
+    "story": {
+      "type": "studio-feature",
+      "settings": {
+        "anchor": "the-detail",
+        "product": "airsleek-straightener",
+        "image": "shopify://shop_images/airsleek-red-hd-diagonal.jpg",
+        "eyebrow": "ONE TOOL. TWO STEPS.",
+        "heading": "Dry.\nStraighten.\nDone.",
+        "copy": "AirSleek brings drying and straightening into one tool, with settings for wet and dry hair.",
+        "cta": "Meet AirSleek",
+        "dark": false,
+        "lifestyle": false
+      }
+    },
+    "gaming": {
+      "type": "studio-feature",
+      "settings": {
+        "anchor": "gaming",
+        "product": "nintendo-switch-2",
+        "eyebrow": "GAMING / CHANGE THE SCENE",
+        "heading": "Your downtime.\nReimagined.",
+        "copy": "From the big screen to wherever the day takes you. Discover Nintendo Switch 2.",
+        "cta": "Explore Switch 2",
+        "dark": true
+      }
+    },
+    "beauty": {
+      "type": "studio-shelf",
+      "settings": {
+        "anchor": "dyson-products",
+        "eyebrow": "BEAUTY / THE DAILY RITUAL",
+        "heading": "Find your finish.",
+        "products": [
+          "aircurve-hair-dryer",
+          "superair-hair-dryer",
+          "airsleek-straightener",
+          "airwave-multi-styler"
+        ],
+        "link": "/collections/seven-crush-for-her",
+        "link_label": "All hair tools",
+        "carousel": true
+      }
+    },
+    "play": {
+      "type": "studio-shelf",
+      "settings": {
+        "anchor": "controllers",
+        "eyebrow": "THE GAMING EDIT",
+        "heading": "Make room for play.",
+        "products": [
+          "ps5-portal",
+          "dualsense-wireless-controller",
+          "dualsense-edge-wireless-controller",
+          "nintendo-switch-2"
+        ],
+        "link": "/collections/seven-crush-for-him",
+        "link_label": "Explore gaming",
+        "carousel": true
+      }
+    },
+    "games": {
+      "type": "studio-shelf",
+      "settings": {
+        "anchor": "games",
+        "eyebrow": "NEXT IN YOUR LIBRARY",
+        "heading": "One more chapter.",
+        "products": [
+          "marvels-spider-man-2-ps5",
+          "astro-bot-ps5",
+          "elden-ring-ps5",
+          "split-fiction-ps5"
+        ],
+        "link": "/collections/all/sc-game",
+        "link_label": "Explore games",
+        "carousel": true
+      }
+    },
+    "newsletter": {
+      "type": "studio-newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "ticker",
+    "intent",
+    "story",
+    "gaming",
+    "beauty",
+    "play",
+    "games",
+    "newsletter"
+  ]
+}

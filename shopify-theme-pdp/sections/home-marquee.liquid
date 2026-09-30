@@ -1,0 +1,17 @@
+{%- if section.blocks.size > 0 -%}
+{{ 'home-dynamic.css' | asset_url | stylesheet_tag }}
+<div class="hd-marquee" style="--hd-speed:{{ section.settings.speed }}s" role="region" aria-label="{{ section.settings.label | escape }}">
+  <div class="hd-marquee__track">
+    {%- for i in (1..2) -%}
+    <ul class="hd-marquee__set"{% if i == 2 %} aria-hidden="true"{% endif %}>{%- for b in section.blocks -%}<li {% if i == 1 %}{{ b.shopify_attributes }}{% endif %}>{{ b.settings.text | escape }}</li>{%- endfor -%}</ul>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+{% schema %}
+{"name":"Home · Facts ticker","tag":"section","settings":[
+{"type":"text","id":"label","label":"Accessible label","default":"Shopping with SevenCrush"},
+{"type":"range","id":"speed","label":"Loop duration (seconds)","min":20,"max":80,"step":2,"default":38,"info":"Higher = slower."}],
+"blocks":[{"type":"fact","name":"Fact","limit":8,"settings":[{"type":"text","id":"text","label":"Text","info":"Only facts that are true today (policies, checkout, tracking)."}]}],
+"presets":[{"name":"Home · Facts ticker","blocks":[{"type":"fact"},{"type":"fact"},{"type":"fact"}]}]}
+{% endschema %}

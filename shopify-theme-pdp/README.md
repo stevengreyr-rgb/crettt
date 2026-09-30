@@ -9,3 +9,4 @@ duplicated from the live theme "SEVENCRUSH — Studio redesign Sep 30" (16719740
 - assets/pdp-system.{css,js}  shared styles + behaviour (reviews, FAQ, video, recs, analytics events)
 - assets/studio-product.js    variant/cart logic (unchanged behaviour) + sticky variant/thumbnail + events
 - templates/product*.json     per-product compositions (beauty / gaming / jewelry / generic)
+- sections/home-*.liquid, assets/home-dynamic.*, templates/index.json: redesigned home (video hero kept, ticker + shop-by-need tabs before products). studio-video-hero.liquid: CTA anchor changed to #start.
