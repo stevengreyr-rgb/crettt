@@ -1,0 +1,233 @@
+{
+  "sections": {
+    "main": {
+      "type": "sc-product",
+      "settings": {
+        "show_breadcrumb": false,
+        "sticky_bar": true,
+        "after_add": "cart",
+        "form_label": "Add to bag",
+        "trust_1": "Secure checkout",
+        "trust_2": "Tracked delivery",
+        "trust_3": ""
+      }
+    },
+    "ps": {
+      "type": "product-problem-solution",
+      "settings": {
+        "tone": "gaming",
+        "heading": "The console, as Nintendo ships it",
+        "problem_title": "Not sure what you're buying",
+        "problem_text": "Consoles can arrive open-box or refurbished.",
+        "solution_title": "Sealed, current model",
+        "solution_text": "Nintendo Switch 2, sealed and current, nothing refurbished.",
+        "result_title": "Bring your library",
+        "result_text": "Full backward compatibility with your Switch library."
+      }
+    },
+    "ben": {
+      "type": "product-benefits",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Why Switch 2"
+      },
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "title": "7.9\" screen",
+            "text": "A larger display than before.",
+            "icon": "01"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "title": "Joy-Con 2",
+            "text": "Magnetic controllers with mouse-mode control.",
+            "icon": "02"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "title": "Backward compatible",
+            "text": "Play your Switch library.",
+            "icon": "03"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ]
+    },
+    "demo": {
+      "type": "product-demo",
+      "settings": {
+        "tone": "gaming",
+        "heading": "See it in motion"
+      }
+    },
+    "inc": {
+      "type": "product-included",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Everything you receive",
+        "note": "Exactly what Nintendo includes, nothing removed."
+      },
+      "blocks": {
+        "b1": {
+          "type": "item",
+          "settings": {
+            "title": "Nintendo Switch 2 console",
+            "text": ""
+          }
+        },
+        "b2": {
+          "type": "item",
+          "settings": {
+            "title": "Joy-Con 2 (L/R)",
+            "text": ""
+          }
+        },
+        "b3": {
+          "type": "item",
+          "settings": {
+            "title": "Joy-Con grip",
+            "text": ""
+          }
+        },
+        "b4": {
+          "type": "item",
+          "settings": {
+            "title": "Dock",
+            "text": ""
+          }
+        },
+        "b5": {
+          "type": "item",
+          "settings": {
+            "title": "HDMI cable",
+            "text": ""
+          }
+        },
+        "b6": {
+          "type": "item",
+          "settings": {
+            "title": "USB-C charging cable",
+            "text": ""
+          }
+        },
+        "b7": {
+          "type": "item",
+          "settings": {
+            "title": "AC adapter",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4",
+        "b5",
+        "b6",
+        "b7"
+      ]
+    },
+    "rev": {
+      "type": "product-reviews",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "ugc": {
+      "type": "product-ugc",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "trust": {
+      "type": "product-trust",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "faq": {
+      "type": "product-faq",
+      "settings": {
+        "tone": "gaming"
+      },
+      "blocks": {
+        "b1": {
+          "type": "qa",
+          "settings": {
+            "q": "Is it new?",
+            "a": "<p>Yes. The console is sold sealed, current model, nothing refurbished.</p>"
+          }
+        },
+        "b2": {
+          "type": "qa",
+          "settings": {
+            "q": "Will my Switch games work?",
+            "a": "<p>Yes, Switch 2 is fully backward compatible with your Switch library.</p>"
+          }
+        },
+        "b3": {
+          "type": "qa",
+          "settings": {
+            "q": "What's in the box?",
+            "a": "<p>Console, Joy-Con 2 (L/R), Joy-Con grip, dock, HDMI cable, USB-C charging cable and AC adapter.</p>"
+          }
+        },
+        "b4": {
+          "type": "qa",
+          "settings": {
+            "q": "How long does shipping take?",
+            "a": "<p>Orders are processed in 1–3 business days and shipping within the USA takes 7–14 business days, so most orders arrive in 11–16 business days in total. Every order includes a tracking number. Delivery times can vary by location and customs delays.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ]
+    },
+    "bundle": {
+      "type": "product-bundle",
+      "settings": {
+        "tone": "gaming",
+        "kicker": "Complete your setup",
+        "heading": "Pair it with",
+        "products": [
+          "ps5-portal"
+        ]
+      }
+    },
+    "recs": {
+      "type": "product-recommendations-premium",
+      "settings": {
+        "tone": "gaming",
+        "heading": "You may also like"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "ps",
+    "ben",
+    "demo",
+    "inc",
+    "rev",
+    "ugc",
+    "trust",
+    "faq",
+    "bundle",
+    "recs"
+  ]
+}

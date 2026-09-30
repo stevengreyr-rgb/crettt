@@ -1,0 +1,190 @@
+{%- liquid
+  assign p = product
+  assign cv = p.selected_or_first_available_variant
+  assign single_variant = p.has_only_default_variant
+  assign subtitle = section.settings.subtitle_text
+  if subtitle == blank
+    assign subtitle = p.type
+  endif
+  if subtitle == blank
+    assign subtitle = p.vendor
+  endif
+  assign has_sale = false
+  if cv.compare_at_price and cv.compare_at_price > cv.price
+    assign has_sale = true
+    assign save_pct = cv.compare_at_price | minus: cv.price | times: 100.0 | divided_by: cv.compare_at_price | round
+  endif
+  assign add_label = section.settings.form_label
+  if add_label == blank
+    assign add_label = 'studio.add' | t
+  endif
+  assign has_refund = false
+  if shop.refund_policy.body != blank
+    assign has_refund = true
+  endif
+-%}
+
+{{ 'pdp-system.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'pdp-system.js' | asset_url }}" defer></script>
+<script type="application/ld+json">{{ product | structured_data }}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":{{ shop.name | json }},"item":{{ shop.url | json }}}{% if collection %},{"@type":"ListItem","position":2,"name":{{ collection.title | json }},"item":{{ collection.url | prepend: shop.url | json }}},{"@type":"ListItem","position":3,"name":{{ p.title | json }},"item":{{ p.url | prepend: shop.url | json }}}{% else %},{"@type":"ListItem","position":2,"name":{{ p.title | json }},"item":{{ p.url | prepend: shop.url | json }}}{% endif %}]}</script>
+<div id="sc-pdp" data-cart-add="{{ routes.cart_add_url }}" data-cart-url="{{ routes.cart_url }}" data-cart-mode="{{ settings.cart_type }}" data-handle="{{ p.handle }}">
+<div class="scp-gallery" data-gallery>
+<div class="scp-gallery__track" data-gallery-track>
+{%- if p.media.size > 0 -%}
+  {%- for media in p.media -%}
+    <div class="scp-gallery__slide" data-media-id="{{ media.id }}">
+      {%- if media.media_type == 'video' -%}
+        {{ media | video_tag: image_size: '1000x', controls: true, playsinline: true, preload: 'none', loop: true }}
+      {%- else -%}
+        {%- if forloop.first -%}
+          {{ media.preview_image | image_url: width: 1400 | image_tag: widths: '480,750,1000,1400', sizes: '(max-width:749px) 100vw, 50vw', loading: 'eager', fetchpriority: 'high', alt: media.alt | default: p.title }}
+        {%- else -%}
+          {{ media.preview_image | image_url: width: 1400 | image_tag: widths: '480,750,1000,1400', sizes: '(max-width:749px) 100vw, 50vw', loading: 'lazy', alt: media.alt | default: p.title }}
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  {%- endfor -%}
+{%- else -%}
+  <div class="scp-gallery__slide">{{ 'product-1' | placeholder_svg_tag }}</div>
+{%- endif -%}
+</div>
+{%- if p.media.size > 1 -%}
+<span class="scp-gallery__count" data-gallery-count aria-hidden="true">1 / {{ p.media.size }}</span>
+<div class="scp-dots" role="group" aria-label="Product photos">
+  {%- for media in p.media -%}<button type="button" data-dot aria-label="Photo {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}>{{ media.preview_image | image_url: width: 120 | image_tag: widths: '60,120', sizes: '56px', loading: 'lazy', alt: '' }}</button>{%- endfor -%}
+</div>
+{%- endif -%}
+</div>
+<div class="scp-body" id="StudioProductOptions">
+{% if subtitle != blank %}<p class="scp-subtitle">{{ subtitle | escape }}</p>{% endif %}<h1>{{ p.title | escape }}</h1><div class="scp-rating">{% render 'sc-rating', product: p %}</div>
+<div class="scp-price" data-price><span data-price-now>{{ cv.price | money }}</span><span class="scp-price__was" data-price-was{% unless has_sale %} hidden{% endunless %}>{% if has_sale %}{{ cv.compare_at_price | money }}{% endif %}</span><span class="scp-price__save" data-price-save{% unless has_sale %} hidden{% endunless %}>{% if has_sale %}−{{ save_pct }}%{% endif %}</span></div>
+{% if section.settings.offer_text != blank %}<p>{{ section.settings.offer_text | escape }}</p>{% endif %}
+    {%- unless single_variant -%}
+      <div class="scp-opts scp-rise" style="--i:4" data-opts>
+        {%- for opt in p.options_with_values -%}
+          {%- assign is_color = false -%}
+          {%- if opt.name == 'Color' or opt.name == 'Colour' or opt.name == 'Colour ' -%}{%- assign is_color = true -%}{%- endif -%}
+          <div class="scp-opt{% if is_color %} scp-opt--color{% endif %}" data-opt-index="{{ forloop.index0 }}">
+            {% if is_color %}
+            <span class="scp-opt__label">{{ opt.name | escape }}<em data-color-name>{{ opt.selected_value | remove: ' 1' | capitalize | escape }}</em></span>
+            <div class="scp-opt__row">
+              {% for val in opt.values %}<button type="button" class="scp-opt__sw" data-opt-value="{{ val | escape }}" title="{{ val | escape }}" aria-label="{{ val | escape }}" style="{% render 'sc-swatch', name: val, only_value: true %}" aria-pressed="{% if opt.selected_value == val %}true{% else %}false{% endif %}"></button>{% endfor %}
+            </div>
+            {% else %}
+            <label class="scp-opt__label" for="StudioOption-{{ section.id }}-{{ forloop.index }}">{{ opt.name | escape }}</label>
+            <select class="scp-opt__select" id="StudioOption-{{ section.id }}-{{ forloop.index }}" data-opt-select>{% for val in opt.values %}<option value="{{ val | escape }}"{% if opt.selected_value == val %} selected{% endif %}>{{ val | escape }}</option>{% endfor %}</select>
+            {% endif %}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endunless -%}
+
+{% if p.handle == 'airwave-multi-styler' %}<p class="st-product-note">The current specifications list 220–240 V only. Please confirm voltage compatibility with us before ordering for use in the US.</p>{% endif %}
+<div class="scp-buy">
+{% form 'product', p, id: 'sc-pdp-form' %}<input type="hidden" name="id" value="{{ cv.id }}" data-variant-id><div class="scp-qty" data-qty><button type="button" data-qty-step="-1" aria-label="{{ 'studio.decrease' | t }}">−</button><input class="scp-qty__input" name="quantity" type="number" min="1" step="1" value="1" inputmode="numeric" data-qty-input aria-label="{{ 'studio.quantity' | t }}"><button type="button" data-qty-step="1" aria-label="{{ 'studio.increase' | t }}">+</button></div><button type="submit" class="scp-formbtn" data-checkout{% unless cv.available %} disabled{% endunless %}><span data-checkout-label>{{ add_label }}</span></button>{% endform %}
+<button type="button" class="scp-formbtn scp-buy-now" data-direct-checkout{% unless cv.available %} disabled{% endunless %}>{{ 'studio.buy' | t }}</button><p class="st-error" data-error role="status" aria-live="polite" hidden></p>
+</div>
+<ul class="scp-ticks">
+  <li>{{ section.settings.trust_1 | default: 'Secure checkout' | escape }}</li>
+  <li>{{ section.settings.trust_2 | default: 'Tracked delivery' | escape }}</li>
+  {%- if section.settings.trust_3 != blank -%}<li>{{ section.settings.trust_3 | escape }}</li>{%- endif -%}
+  {%- if has_refund -%}<li><a href="{{ shop.refund_policy.url }}" style="color:inherit">Return policy</a></li>{%- endif -%}
+</ul>
+{%- if section.settings.eta_text != blank -%}<p class="scp-eta">{{ section.settings.eta_text | escape }}</p>{%- endif -%}
+<ul class="scp-pay" aria-label="Payment methods">{%- for t in shop.enabled_payment_types -%}<li>{{ t | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
+<div class="st-product-details">{% if p.description != blank %}<details{% if section.settings.details_open %} open{% endif %}><summary>{{ 'studio.details' | t }}</summary><div>{{ p.description }}</div></details>{% endif %}<details><summary>{{ 'studio.shipping' | t }}</summary><div><p>{{ 'studio.shipping_copy' | t }}</p>{% if shop.shipping_policy.body != blank %}<a href="{{ shop.shipping_policy.url }}">{{ 'studio.shipping_policy' | t }}</a>{% endif %}</div></details><details><summary>{{ 'studio.questions' | t }}</summary><div><a href="{{ routes.root_url }}pages/contact">{{ 'studio.contact' | t }}</a>{% if has_refund %}<p><a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title }}</a></p>{% endif %}</div></details></div>
+{% for block in section.blocks %}{% render block %}{% endfor %}
+</div>
+  <script type="application/json" data-variant-data>
+    {{ p.variants | json }}
+  </script>
+  <script type="application/json" data-variant-meta>
+    {
+      {%- for v in p.variants -%}
+        {%- liquid
+          assign v_cmp = ''
+          assign v_save = ''
+          if v.compare_at_price and v.compare_at_price > v.price
+            assign v_cmp = v.compare_at_price
+            assign v_save = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round
+          endif
+        -%}
+        "{{ v.id }}": {
+          "available": {{ v.available }},
+          "price": {{ v.price | money | json }},
+          "compare_at": {% if v_cmp != blank %}{{ v_cmp | money | json }}{% else %}""{% endif %},
+          "save": "{{ v_save }}",
+          "media_id": {% if v.featured_media %}{{ v.featured_media.id | json }}{% else %}""{% endif %},
+          "media_url": {% if v.featured_media %}{{ v.featured_media.preview_image | image_url: width: 900 | json }}{% else %}""{% endif %}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    }
+  </script>
+<script type="application/json" data-st-strings>{"add":{{ add_label | json }},"buy":{{ 'studio.buy' | t | json }},"sold":{{ 'studio.sold_out' | t | json }},"unavailable":{{ 'studio.unavailable' | t | json }},"choose":{{ 'studio.choose' | t | json }},"error":{{ 'studio.add_error' | t | json }},"adding":{{ 'studio.adding' | t | json }},"opening":{{ 'studio.opening' | t | json }}}</script>
+</div>
+{% liquid
+ assign routine_image = section.settings.lifestyle_image
+ assign routine_heading = section.settings.lifestyle_heading
+ assign routine_copy = section.settings.lifestyle_copy
+ if product.handle == 'superair-hair-dryer'
+  assign routine_image = routine_image | default: images['sevencrush-superair-lifestyle.webp']
+  if routine_heading == blank
+   assign routine_heading = 'studio.superair_routine_heading' | t
+  endif
+  if routine_copy == blank
+   assign routine_copy = 'studio.superair_routine_copy' | t
+  endif
+ elsif product.handle == 'airsleek-straightener'
+  assign routine_image = routine_image | default: images['sevencrush-airsleek-lifestyle.webp']
+  if routine_heading == blank
+   assign routine_heading = 'studio.airsleek_routine_heading' | t
+  endif
+  if routine_copy == blank
+   assign routine_copy = 'studio.airsleek_routine_copy' | t
+  endif
+ endif
+%}
+{% if routine_image != blank %}<section class="st-routine st-wrap" data-st-reveal aria-label="{{ 'studio.in_your_routine' | t }}"><div class="st-routine__image">{{ routine_image | image_url: width: 1200 | image_tag: widths: '390,600,900,1200', sizes: '(max-width:749px) 100vw, 43vw', loading: 'lazy' }}</div><div class="st-routine__copy"><p class="st-kicker">{{ 'studio.in_your_routine' | t }}</p><h2>{{ routine_heading | escape }}</h2><p>{{ routine_copy | escape }}</p><a class="st-textlink" href="#StudioProductOptions">{{ 'studio.choose_yours' | t }} ↑</a></div></section>{% endif %}
+{% if section.settings.sticky_bar %}<div id="sc-pdp-sticky" aria-hidden="true" inert><div>{% if p.featured_image %}<img class="scp-sticky__thumb" data-sticky-thumb src="{{ p.featured_image | image_url: width: 120 }}" alt="" width="44" height="44">{% endif %}<div style="min-width:0"><div class="scp-sticky__name">{{ p.title | escape }}</div><div class="scp-sticky__price"><span data-sticky-price>{{ cv.price | money }}</span>{% unless single_variant %} · <span class="scp-sticky__variant" data-sticky-variant>{{ cv.title | escape }}</span>{% endunless %}</div></div></div><button type="button" class="scp-formbtn" data-sticky-atc>{{ add_label }}</button></div>{% endif %}
+<script src="{{ 'studio-product.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Studio product",
+  "tag": "section",
+  "class": "sc-product-section",
+  "settings": [
+    {"type":"header","content":"Breadcrumb"},
+    {"type":"checkbox","id":"show_breadcrumb","label":"Show breadcrumb","default":true},
+    {"type":"header","content":"Offer line"},
+    {"type":"text","id":"offer_text","label":"Offer text","info":"Short line under the price. Only use for a real, active promotion."},
+    {"type":"header","content":"Subtitle"},
+    {"type":"text","id":"subtitle_text","label":"Subtitle override","info":"Defaults to the product type, then vendor."},
+    {"type":"header","content":"Product details"},
+    {"type":"text","id":"details_label","label":"Toggle label","default":"View product details"},
+    {"type":"checkbox","id":"details_open","label":"Open by default","default":false},
+    {"type":"header","content":"Size guide"},
+    {"type":"text","id":"size_guide_label","label":"Toggle label","default":"Find your size"},
+    {"type":"richtext","id":"size_guide","label":"Size guide content","info":"Leave empty to hide the size toggle."},
+    {"type":"url","id":"size_guide_link","label":"Full size guide link"},
+    {"type":"header","content":"Buy button"},
+    {"type":"text","id":"form_label","label":"Add to bag button label","default":"Add to bag"},
+    {"type":"checkbox","id":"sticky_bar","label":"Show sticky bar on scroll (mobile)","default":true},
+    {"type":"select","id":"after_add","label":"After adding to bag","default":"cart","options":[{"value":"cart","label":"Go to cart"},{"value":"none","label":"Stay on page"}]},
+    {"type":"header","content":"Delivery"},
+    {"type":"text","id":"eta_text","label":"Delivery estimate (under the buttons)","default":"Estimated delivery: 11–16 business days · tracking included","info":"Must match your shipping policy."},
+    {"type":"text","id":"delivery_note","label":"(legacy) Delivery line"},
+    {"type":"text","id":"pickup_note","label":"(legacy) Note"},
+    {"type":"header","content":"Trust row"},
+    {"type":"text","id":"trust_1","label":"Line 1","default":"Secure checkout"},
+    {"type":"text","id":"trust_2","label":"Line 2","default":"Tracked delivery"},
+    {"type":"text","id":"trust_3","label":"Line 3"},
+    {"type":"header","content":"Lifestyle story"},
+    {"type":"image_picker","id":"lifestyle_image","label":"Model using this product","info":"Overrides the built-in SuperAir or AirSleek story image."},
+    {"type":"text","id":"lifestyle_heading","label":"Story heading"},
+    {"type":"text","id":"lifestyle_copy","label":"Story description"}
+  ],
+  "blocks": [{"type": "@app"}]
+}
+{% endschema %}

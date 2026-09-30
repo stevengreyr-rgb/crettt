@@ -1,0 +1,230 @@
+{
+  "sections": {
+    "main": {
+      "type": "sc-product",
+      "settings": {
+        "show_breadcrumb": false,
+        "sticky_bar": true,
+        "after_add": "cart",
+        "form_label": "Add to bag",
+        "trust_1": "Secure checkout",
+        "trust_2": "Tracked delivery",
+        "trust_3": ""
+      }
+    },
+    "ps": {
+      "type": "product-problem-solution",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Your PS5, away from the TV",
+        "problem_title": "The TV is taken",
+        "problem_text": "Someone else is using the screen, or you'd rather play from another room.",
+        "solution_title": "Stream your own PS5 games",
+        "solution_text": "PlayStation Portal streams over Wi-Fi to an 8-inch LCD with DualSense-style controls built in.",
+        "result_title": "Play where you are",
+        "result_text": "Full haptic feedback and adaptive triggers, no separate controller needed."
+      }
+    },
+    "ben": {
+      "type": "product-benefits",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Built for PS5 players"
+      },
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "title": "8-inch LCD",
+            "text": "Your PS5 games on a handheld screen.",
+            "icon": "01"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "title": "Haptic feedback and adaptive triggers",
+            "text": "DualSense-style controls built in.",
+            "icon": "02"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "title": "Sony's official remote player",
+            "text": "Made for PS5.",
+            "icon": "03"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ]
+    },
+    "demo": {
+      "type": "product-demo",
+      "settings": {
+        "tone": "gaming",
+        "heading": "See it in motion"
+      }
+    },
+    "how": {
+      "type": "product-how-it-works",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Set up in three steps"
+      },
+      "blocks": {
+        "b1": {
+          "type": "step",
+          "settings": {
+            "title": "Connect",
+            "text": "Your PS5 needs to be on your home network."
+          }
+        },
+        "b2": {
+          "type": "step",
+          "settings": {
+            "title": "Pair",
+            "text": "Link Portal to your PS5."
+          }
+        },
+        "b3": {
+          "type": "step",
+          "settings": {
+            "title": "Play",
+            "text": "Stream your own games over Wi-Fi."
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ]
+    },
+    "inc": {
+      "type": "product-included",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Everything you receive",
+        "note": ""
+      },
+      "blocks": {
+        "b1": {
+          "type": "item",
+          "settings": {
+            "title": "PlayStation Portal remote player",
+            "text": ""
+          }
+        },
+        "b2": {
+          "type": "item",
+          "settings": {
+            "title": "USB-C charging cable",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2"
+      ]
+    },
+    "rev": {
+      "type": "product-reviews",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "ugc": {
+      "type": "product-ugc",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "trust": {
+      "type": "product-trust",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "faq": {
+      "type": "product-faq",
+      "settings": {
+        "tone": "gaming"
+      },
+      "blocks": {
+        "b1": {
+          "type": "qa",
+          "settings": {
+            "q": "Do I need a PS5?",
+            "a": "<p>Yes. Portal streams games from your own PS5, which must be on your home network.</p>"
+          }
+        },
+        "b2": {
+          "type": "qa",
+          "settings": {
+            "q": "Does it come with games?",
+            "a": "<p>No. It streams the games you already have on your PS5.</p>"
+          }
+        },
+        "b3": {
+          "type": "qa",
+          "settings": {
+            "q": "What's in the box?",
+            "a": "<p>The PlayStation Portal remote player and a USB-C charging cable.</p>"
+          }
+        },
+        "b4": {
+          "type": "qa",
+          "settings": {
+            "q": "How long does shipping take?",
+            "a": "<p>Orders are processed in 1–3 business days and shipping within the USA takes 7–14 business days, so most orders arrive in 11–16 business days in total. Every order includes a tracking number. Delivery times can vary by location and customs delays.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ]
+    },
+    "bundle": {
+      "type": "product-bundle",
+      "settings": {
+        "tone": "gaming",
+        "kicker": "Complete your setup",
+        "heading": "Pair it with",
+        "products": [
+          "dualsense-wireless-controller",
+          "dualsense-edge-wireless-controller"
+        ]
+      }
+    },
+    "recs": {
+      "type": "product-recommendations-premium",
+      "settings": {
+        "tone": "gaming",
+        "heading": "You may also like"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "ps",
+    "ben",
+    "demo",
+    "how",
+    "inc",
+    "rev",
+    "ugc",
+    "trust",
+    "faq",
+    "bundle",
+    "recs"
+  ]
+}

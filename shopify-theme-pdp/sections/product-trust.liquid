@@ -1,0 +1,47 @@
+{%- liquid
+  assign s = section.settings
+  assign has_refund = false
+  if shop.refund_policy.body != blank
+    assign has_refund = true
+  endif
+  assign contact = routes.root_url | append: 'pages/contact'
+-%}
+<section class="pdp-s" data-tone="{{ s.tone }}" id="shipping-returns" aria-labelledby="pt-{{ section.id }}">
+  <div class="pdp-head pdp-rv"><p class="pdp-kicker">{{ s.kicker | escape }}</p><h2 id="pt-{{ section.id }}">{{ s.heading | escape }}</h2></div>
+  <div class="pdp-trust">
+    <div class="pdp-tcard pdp-rv"><h3>Shipping &amp; delivery</h3>
+      <dl>
+        {%- if s.processing != blank -%}<div><dt>Processing</dt><dd>{{ s.processing | escape }}</dd></div>{%- endif -%}
+        {%- if s.transit != blank -%}<div><dt>Shipping time</dt><dd>{{ s.transit | escape }}</dd></div>{%- endif -%}
+        {%- if s.total != blank -%}<div><dt>Estimated delivery</dt><dd>{{ s.total | escape }}</dd></div>{%- endif -%}
+        {%- if s.tracking != blank -%}<div><dt>Tracking</dt><dd>{{ s.tracking | escape }}</dd></div>{%- endif -%}
+      </dl>
+      {%- if shop.shipping_policy.body != blank -%}<p style="margin-top:14px"><a href="{{ shop.shipping_policy.url }}">Shipping policy</a></p>{%- endif -%}
+    </div>
+    <div class="pdp-tcard pdp-rv"><h3>Returns</h3>
+      {%- if has_refund -%}<p style="margin-top:8px">Our return terms — eligibility, timeframe and process — are in the refund policy.</p><p style="margin-top:14px"><a href="{{ shop.refund_policy.url }}">Read the return policy</a></p>
+      {%- elsif s.returns_text != blank -%}<p style="margin-top:8px">{{ s.returns_text | escape }}</p><p style="margin-top:14px"><a href="{{ contact }}">Contact us</a></p>
+      {%- else -%}<p style="margin-top:8px">Questions about a return? Write to us before you order and we'll answer.</p><p style="margin-top:14px"><a href="{{ contact }}">Contact us</a></p>{%- endif -%}
+    </div>
+    <div class="pdp-tcard pdp-rv"><h3>Secure checkout &amp; support</h3>
+      <p style="margin-top:8px">Pay through Shopify's secure checkout with the methods below.{% if s.buyer_protection != blank %} {{ s.buyer_protection | escape }}{% endif %}</p>
+      <ul class="pdp-pay" aria-label="Payment methods">{%- for t in shop.enabled_payment_types -%}<li>{{ t | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
+      <p style="margin-top:14px"><a href="{{ contact }}">Contact support</a>{% if s.support_email != blank %} · <a href="mailto:{{ s.support_email }}">{{ s.support_email | escape }}</a>{% endif %}</p>
+    </div>
+  </div>
+</section>
+{% schema %}
+{"name":"PDP · Shipping, returns & trust","tag":"div","settings":[{"type":"select","id":"tone","label":"Category style","default":"tech","options":[{"value":"beauty","label":"Beauty"},{"value":"gaming","label":"Gaming (dark)"},{"value":"tech","label":"Tech"},{"value":"cameras","label":"Cameras"},{"value":"fragrance","label":"Fragrance"},{"value":"jewelry","label":"Jewelry"},{"value":"fashion","label":"Fashion"}]},
+{"type":"text","id":"kicker","label":"Label","default":"Buy with confidence"},{"type":"text","id":"heading","label":"Heading","default":"Shipping, returns & support"},
+{"type":"header","content":"Shipping — must match your shipping policy"},
+{"type":"text","id":"processing","label":"Processing","default":"1–3 business days"},
+{"type":"text","id":"transit","label":"Shipping time","default":"7–14 business days (USA)"},
+{"type":"text","id":"total","label":"Estimated delivery","default":"11–16 business days"},
+{"type":"text","id":"tracking","label":"Tracking","default":"Tracking number included with every order"},
+{"type":"header","content":"Returns"},
+{"type":"textarea","id":"returns_text","label":"Returns text (used only if no refund policy is published)","info":"Leave empty until a return policy exists. Publish it in Settings → Policies."},
+{"type":"header","content":"Protection & support"},
+{"type":"text","id":"buyer_protection","label":"Buyer protection sentence (optional)","info":"Only add if it is true for every order."},
+{"type":"text","id":"support_email","label":"Support email (optional)"}],
+"presets":[{"name":"PDP · Shipping, returns & trust"}]}
+{% endschema %}

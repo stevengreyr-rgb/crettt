@@ -1,0 +1,231 @@
+{
+  "sections": {
+    "main": {
+      "type": "sc-product",
+      "settings": {
+        "show_breadcrumb": false,
+        "sticky_bar": true,
+        "after_add": "cart",
+        "form_label": "Add to bag",
+        "trust_1": "Secure checkout",
+        "trust_2": "Tracked delivery",
+        "trust_3": ""
+      }
+    },
+    "ben": {
+      "type": "product-benefits",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Built to compete"
+      },
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "title": "Swappable stick modules",
+            "text": "Replace them when you need to.",
+            "icon": "01"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "title": "Remappable back buttons",
+            "text": "Put the controls where you want them.",
+            "icon": "02"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "title": "Adjustable trigger stops",
+            "text": "Tune how far the triggers travel.",
+            "icon": "03"
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "title": "Saved control profiles",
+            "text": "Switch setups quickly.",
+            "icon": "04"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ]
+    },
+    "inc": {
+      "type": "product-included",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Everything you receive",
+        "note": "Brand new and sealed."
+      },
+      "blocks": {
+        "b1": {
+          "type": "item",
+          "settings": {
+            "title": "DualSense Edge wireless controller",
+            "text": ""
+          }
+        },
+        "b2": {
+          "type": "item",
+          "settings": {
+            "title": "Carrying case",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2"
+      ]
+    },
+    "cmp": {
+      "type": "product-comparison",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Edge vs. standard DualSense",
+        "theirs": "DualSense",
+        "note": "Feature availability only."
+      },
+      "blocks": {
+        "b1": {
+          "type": "row",
+          "settings": {
+            "label": "Swappable stick modules",
+            "ours": "Yes",
+            "theirs": "No"
+          }
+        },
+        "b2": {
+          "type": "row",
+          "settings": {
+            "label": "Remappable back buttons",
+            "ours": "Yes",
+            "theirs": "No"
+          }
+        },
+        "b3": {
+          "type": "row",
+          "settings": {
+            "label": "Adjustable trigger stops",
+            "ours": "Yes",
+            "theirs": "No"
+          }
+        },
+        "b4": {
+          "type": "row",
+          "settings": {
+            "label": "Saved control profiles",
+            "ours": "Yes",
+            "theirs": "No"
+          }
+        },
+        "b5": {
+          "type": "row",
+          "settings": {
+            "label": "Carrying case",
+            "ours": "Included",
+            "theirs": "Not included"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4",
+        "b5"
+      ]
+    },
+    "rev": {
+      "type": "product-reviews",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "ugc": {
+      "type": "product-ugc",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "trust": {
+      "type": "product-trust",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "faq": {
+      "type": "product-faq",
+      "settings": {
+        "tone": "gaming"
+      },
+      "blocks": {
+        "b1": {
+          "type": "qa",
+          "settings": {
+            "q": "What makes it different from the standard DualSense?",
+            "a": "<p>Swappable stick modules, remappable back buttons, adjustable trigger stops and saved control profiles, plus a carrying case.</p>"
+          }
+        },
+        "b2": {
+          "type": "qa",
+          "settings": {
+            "q": "Is it new?",
+            "a": "<p>Yes, brand new and sealed.</p>"
+          }
+        },
+        "b3": {
+          "type": "qa",
+          "settings": {
+            "q": "How long does shipping take?",
+            "a": "<p>Orders are processed in 1–3 business days and shipping within the USA takes 7–14 business days, so most orders arrive in 11–16 business days in total. Every order includes a tracking number. Delivery times can vary by location and customs delays.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ]
+    },
+    "bundle": {
+      "type": "product-bundle",
+      "settings": {
+        "tone": "gaming",
+        "kicker": "Complete your setup",
+        "heading": "Pair it with",
+        "products": [
+          "ps5-portal"
+        ]
+      }
+    },
+    "recs": {
+      "type": "product-recommendations-premium",
+      "settings": {
+        "tone": "gaming",
+        "heading": "You may also like"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "ben",
+    "inc",
+    "cmp",
+    "rev",
+    "ugc",
+    "trust",
+    "faq",
+    "bundle",
+    "recs"
+  ]
+}

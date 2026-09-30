@@ -1,0 +1,144 @@
+{
+  "sections": {
+    "main": {
+      "type": "sc-product",
+      "settings": {
+        "show_breadcrumb": false,
+        "sticky_bar": true,
+        "after_add": "cart",
+        "form_label": "Add to bag",
+        "trust_1": "Secure checkout",
+        "trust_2": "Tracked delivery",
+        "trust_3": ""
+      }
+    },
+    "ben": {
+      "type": "product-benefits",
+      "settings": {
+        "tone": "gaming",
+        "heading": "Feel every moment"
+      },
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "title": "Haptic feedback",
+            "text": "Turns impacts and footsteps into precise vibrations.",
+            "icon": "01"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "title": "Adaptive triggers",
+            "text": "Push back with changing tension.",
+            "icon": "02"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "title": "Mic and speaker built in",
+            "text": "Plus USB-C charging.",
+            "icon": "03"
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "title": "Works across devices",
+            "text": "PS5, PC, Mac and mobile.",
+            "icon": "04"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ]
+    },
+    "rev": {
+      "type": "product-reviews",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "ugc": {
+      "type": "product-ugc",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "trust": {
+      "type": "product-trust",
+      "settings": {
+        "tone": "gaming"
+      }
+    },
+    "faq": {
+      "type": "product-faq",
+      "settings": {
+        "tone": "gaming"
+      },
+      "blocks": {
+        "b1": {
+          "type": "qa",
+          "settings": {
+            "q": "Which devices does it work with?",
+            "a": "<p>PS5, PC, Mac and mobile.</p>"
+          }
+        },
+        "b2": {
+          "type": "qa",
+          "settings": {
+            "q": "Which colours are there?",
+            "a": "<p>Thirteen colours, from White and Midnight Black to the Chroma series. Prices vary slightly by colour, so pick yours to see the price.</p>"
+          }
+        },
+        "b3": {
+          "type": "qa",
+          "settings": {
+            "q": "How long does shipping take?",
+            "a": "<p>Orders are processed in 1–3 business days and shipping within the USA takes 7–14 business days, so most orders arrive in 11–16 business days in total. Every order includes a tracking number. Delivery times can vary by location and customs delays.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ]
+    },
+    "bundle": {
+      "type": "product-bundle",
+      "settings": {
+        "tone": "gaming",
+        "kicker": "Complete your setup",
+        "heading": "Pair it with",
+        "products": [
+          "dualsense-edge-wireless-controller",
+          "ps5-portal"
+        ]
+      }
+    },
+    "recs": {
+      "type": "product-recommendations-premium",
+      "settings": {
+        "tone": "gaming",
+        "heading": "You may also like"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "ben",
+    "rev",
+    "ugc",
+    "trust",
+    "faq",
+    "bundle",
+    "recs"
+  ]
+}

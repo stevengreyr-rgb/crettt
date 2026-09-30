@@ -1,0 +1,19 @@
+{%- if section.blocks.size > 0 -%}
+<section class="pdp-s" data-tone="{{ section.settings.tone }}" aria-labelledby="pw-{{ section.id }}">
+  <div class="pdp-head pdp-rv"><p class="pdp-kicker">{{ section.settings.kicker | escape }}</p><h2 id="pw-{{ section.id }}">{{ section.settings.heading | escape }}</h2></div>
+  <ol class="pdp-steps" style="list-style:none;padding:0;margin:0">
+    {%- for b in section.blocks -%}
+    <li class="pdp-step pdp-rv" {{ b.shopify_attributes }}>
+      {%- if b.settings.image != blank -%}<div class="pdp-media">{{ b.settings.image | image_url: width: 700 | image_tag: widths: '240,480,700', sizes: '(max-width:749px) 96px, 30vw', loading: 'lazy', alt: b.settings.title }}</div>{%- else -%}<div></div>{%- endif -%}
+      <div><p class="pdp-kicker">{{ 'Step' }} {{ forloop.index }}</p><h3>{{ b.settings.title | escape }}</h3><p>{{ b.settings.text | escape }}</p></div>
+    </li>
+    {%- endfor -%}
+  </ol>
+</section>
+{%- endif -%}
+{% schema %}
+{"name":"PDP · How it works","tag":"div","settings":[{"type":"select","id":"tone","label":"Category style","default":"tech","options":[{"value":"beauty","label":"Beauty"},{"value":"gaming","label":"Gaming (dark)"},{"value":"tech","label":"Tech"},{"value":"cameras","label":"Cameras"},{"value":"fragrance","label":"Fragrance"},{"value":"jewelry","label":"Jewelry"},{"value":"fashion","label":"Fashion"}]},
+{"type":"text","id":"kicker","label":"Label","default":"How it works"},{"type":"text","id":"heading","label":"Heading"}],
+"blocks":[{"type":"step","name":"Step","limit":5,"settings":[{"type":"image_picker","id":"image","label":"Photo"},{"type":"text","id":"title","label":"Title"},{"type":"textarea","id":"text","label":"Text"}]}],
+"presets":[{"name":"PDP · How it works","blocks":[{"type":"step"},{"type":"step"},{"type":"step"}]}]}
+{% endschema %}

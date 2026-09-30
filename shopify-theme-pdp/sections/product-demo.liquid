@@ -1,0 +1,33 @@
+{%- liquid
+  assign s = section.settings
+  assign vid = s.video
+  if vid == blank
+    for m in product.media
+      if m.media_type == 'video' and vid == blank
+        assign vid = m
+      endif
+    endfor
+  endif
+-%}
+{%- if vid != blank -%}
+<section class="pdp-s" data-tone="{{ s.tone }}" aria-labelledby="pd-{{ section.id }}">
+  <div class="pdp-demo">
+    <div class="pdp-media pdp-rv">
+      <video data-pdp-video muted loop playsinline preload="none" aria-label="{{ s.heading | escape }}"{% if s.poster != blank %} poster="{{ s.poster | image_url: width: 720 }}"{% elsif vid.preview_image %} poster="{{ vid.preview_image | image_url: width: 720 }}"{% endif %}>
+        {%- for src in vid.sources -%}{%- if src.format == 'mp4' -%}<source data-src="{{ src.url }}" type="video/mp4">{%- endif -%}{%- endfor -%}
+      </video>
+      <button type="button" class="pdp-demo__sound" data-on="Sound on" data-off="Sound off">Sound on</button>
+    </div>
+    <div class="pdp-rv"><p class="pdp-kicker">{{ s.kicker | escape }}</p><h2 id="pd-{{ section.id }}">{{ s.heading | escape }}</h2><p>{{ s.text | escape }}</p>
+      {%- if s.cta_label != blank -%}<a class="pdp-btn" style="margin-top:22px" href="#StudioProductOptions">{{ s.cta_label | escape }}</a>{%- endif -%}</div>
+  </div>
+</section>
+{%- endif -%}
+{% schema %}
+{"name":"PDP · Product demo","tag":"div","settings":[{"type":"select","id":"tone","label":"Category style","default":"tech","options":[{"value":"beauty","label":"Beauty"},{"value":"gaming","label":"Gaming (dark)"},{"value":"tech","label":"Tech"},{"value":"cameras","label":"Cameras"},{"value":"fragrance","label":"Fragrance"},{"value":"jewelry","label":"Jewelry"},{"value":"fashion","label":"Fashion"}]},
+{"type":"video","id":"video","label":"Vertical demo video","info":"Plays muted on loop. Empty = uses the product's own video if it has one; hides if none."},
+{"type":"image_picker","id":"poster","label":"Poster image"},
+{"type":"text","id":"kicker","label":"Label","default":"See it in action"},{"type":"text","id":"heading","label":"Heading"},{"type":"textarea","id":"text","label":"Text"},
+{"type":"text","id":"cta_label","label":"Button label (scrolls to buy box)"}],
+"presets":[{"name":"PDP · Product demo"}]}
+{% endschema %}

@@ -1,0 +1,18 @@
+{%- comment -%} @param product, list (string), show_add (bool), goto (url, optional) {%- endcomment -%}
+{%- if product != blank -%}
+{%- assign av = product.variants | where: 'available', true -%}
+<article class="pdp-pcard" data-pdp-card data-handle="{{ product.handle }}">
+  <a class="pdp-pcard__img" href="{{ product.url }}" aria-label="{{ product.title | escape }}">{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 | image_tag: widths: '240,360,480,600', sizes: '(max-width:749px) 58vw, 22vw', loading: 'lazy', alt: product.featured_image.alt | default: product.title }}{% endif %}</a>
+  <h3><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
+  {%- render 'sc-rating', product: product -%}
+  <div class="pdp-pcard__price">{% if product.price_varies %}From {% endif %}{{ product.price | money }}{% if product.compare_at_price > product.price %}<s>{{ product.compare_at_price | money }}</s>{% endif %}</div>
+  {%- if show_add -%}
+    {%- if av.size == 0 -%}<p class="pdp-sold">Sold out</p>
+    {%- elsif product.has_only_default_variant or av.size == 1 -%}<button type="button" class="pdp-btn" data-add data-variant="{{ av.first.id }}" data-done="Added ✓" data-err="Try again"{% if goto %} data-goto="{{ goto }}"{% endif %}>Add to bag</button>
+    {%- else -%}
+      <select aria-label="{{ product.title | escape }} options">{%- for v in av -%}<option value="{{ v.id }}">{{ v.title | escape }}{% if v.price != product.price %} — {{ v.price | money }}{% endif %}</option>{%- endfor -%}</select>
+      <button type="button" class="pdp-btn" data-add data-done="Added ✓" data-err="Try again">Add to bag</button>
+    {%- endif -%}
+  {%- endif -%}
+</article>
+{%- endif -%}

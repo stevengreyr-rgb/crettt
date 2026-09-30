@@ -1,0 +1,26 @@
+{%- if section.blocks.size > 0 -%}
+<section class="pdp-s" data-tone="{{ section.settings.tone }}" aria-labelledby="pi-{{ section.id }}">
+  <div class="pdp-head pdp-rv"><p class="pdp-kicker">{{ section.settings.kicker | escape }}</p><h2 id="pi-{{ section.id }}">{{ section.settings.heading | escape }}</h2></div>
+  <div class="pdp-inc">
+    {%- assign hero = section.settings.image | default: product.images[1] | default: product.featured_image -%}
+    {%- if hero != blank -%}<div class="pdp-inc__hero pdp-card pdp-rv"><div class="pdp-media pdp-media--contain">{{ hero | image_url: width: 1000 | image_tag: widths: '480,720,1000', sizes: '(max-width:749px) 100vw, 55vw', loading: 'lazy', alt: section.settings.heading }}</div></div>{%- endif -%}
+    <ul class="pdp-inc__list">
+      {%- for b in section.blocks -%}
+      <li class="pdp-rv{% if b.settings.image == blank %} is-text{% endif %}" {{ b.shopify_attributes }}>
+        {%- if b.settings.image != blank -%}<div class="pdp-media pdp-media--contain">{{ b.settings.image | image_url: width: 400 | image_tag: widths: '200,400', sizes: '(max-width:749px) 40vw, 18vw', loading: 'lazy', alt: b.settings.title }}</div>{%- endif -%}
+        <div>{{ b.settings.title | escape }}{%- if b.settings.text != blank -%}<br><span>{{ b.settings.text | escape }}</span>{%- endif -%}</div>
+      </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+  {%- if section.settings.note != blank -%}<p class="pdp-note">{{ section.settings.note | escape }}</p>{%- endif -%}
+</section>
+{%- endif -%}
+{% schema %}
+{"name":"PDP · What's included","tag":"div","settings":[{"type":"select","id":"tone","label":"Category style","default":"tech","options":[{"value":"beauty","label":"Beauty"},{"value":"gaming","label":"Gaming (dark)"},{"value":"tech","label":"Tech"},{"value":"cameras","label":"Cameras"},{"value":"fragrance","label":"Fragrance"},{"value":"jewelry","label":"Jewelry"},{"value":"fashion","label":"Fashion"}]},
+{"type":"text","id":"kicker","label":"Label","default":"In the box"},{"type":"text","id":"heading","label":"Heading","default":"Everything you receive"},
+{"type":"image_picker","id":"image","label":"Main photo","info":"Defaults to the product's second photo."},
+{"type":"text","id":"note","label":"Footnote (optional)"}],
+"blocks":[{"type":"item","name":"Included item","settings":[{"type":"image_picker","id":"image","label":"Photo (optional)"},{"type":"text","id":"title","label":"Item"},{"type":"text","id":"text","label":"Detail (optional)"}]}],
+"presets":[{"name":"PDP · What's included","blocks":[{"type":"item"},{"type":"item"}]}]}
+{% endschema %}

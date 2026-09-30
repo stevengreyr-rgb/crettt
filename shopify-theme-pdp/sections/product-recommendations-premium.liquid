@@ -1,0 +1,25 @@
+{%- liquid
+  assign s = section.settings
+  assign manual = 0
+  if s.collection != blank
+    assign manual = 1
+  endif
+-%}
+{%- if recommendations.performed -%}
+  {%- if recommendations.products_count > 0 -%}<div data-pdp-recs-out>{%- for p in recommendations.products limit: s.limit -%}{%- render 'pdp-card', product: p, list: 'recs', show_add: s.quick_add -%}{%- endfor -%}</div>{%- endif -%}
+{%- else -%}
+<section class="pdp-s" data-tone="{{ s.tone }}" aria-labelledby="prc-{{ section.id }}"{% if manual == 0 %} data-pdp-recs data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ s.limit }}&intent=related" hidden{% endif %}>
+  <div class="pdp-head pdp-rv"><p class="pdp-kicker">{{ s.kicker | escape }}</p><h2 id="prc-{{ section.id }}">{{ s.heading | escape }}</h2></div>
+  <div class="pdp-rail" data-slot data-list="recs">
+    {%- if manual == 1 -%}{%- assign shown = 0 -%}{%- for p in s.collection.products -%}{%- if p.id != product.id and shown < s.limit -%}{%- assign shown = shown | plus: 1 -%}{%- render 'pdp-card', product: p, list: 'collection', show_add: s.quick_add -%}{%- endif -%}{%- endfor -%}{%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+{% schema %}
+{"name":"PDP · You may also like","tag":"div","settings":[{"type":"select","id":"tone","label":"Category style","default":"tech","options":[{"value":"beauty","label":"Beauty"},{"value":"gaming","label":"Gaming (dark)"},{"value":"tech","label":"Tech"},{"value":"cameras","label":"Cameras"},{"value":"fragrance","label":"Fragrance"},{"value":"jewelry","label":"Jewelry"},{"value":"fashion","label":"Fashion"}]},
+{"type":"text","id":"kicker","label":"Label","default":"More to explore"},{"type":"text","id":"heading","label":"Heading","default":"You may also like"},
+{"type":"collection","id":"collection","label":"Collection (optional)","info":"Empty = Shopify's automatic related products."},
+{"type":"range","id":"limit","label":"Products","min":2,"max":8,"step":1,"default":4},
+{"type":"checkbox","id":"quick_add","label":"Quick add button","default":true}],
+"presets":[{"name":"PDP · You may also like"}]}
+{% endschema %}

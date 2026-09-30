@@ -1,0 +1,195 @@
+{
+  "sections": {
+    "main": {
+      "type": "sc-product",
+      "settings": {
+        "show_breadcrumb": false,
+        "sticky_bar": true,
+        "after_add": "cart",
+        "form_label": "Add to bag",
+        "trust_1": "Secure checkout",
+        "trust_2": "Tracked delivery",
+        "trust_3": ""
+      }
+    },
+    "ps": {
+      "type": "product-problem-solution",
+      "settings": {
+        "tone": "beauty",
+        "heading": "Light in the hand, quick on the hair",
+        "problem_title": "Heavy dryers, slow dries",
+        "problem_text": "A bulky dryer makes every routine feel longer.",
+        "solution_title": "Compact and fast",
+        "solution_text": "A curved body and a fast motor that dries quickly and stays light in the hand.",
+        "result_title": "Smoother finish",
+        "result_text": "Negative ions help keep frizz down."
+      }
+    },
+    "ben": {
+      "type": "product-benefits",
+      "settings": {
+        "tone": "beauty",
+        "heading": "Built for everyday use"
+      },
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "title": "High-speed motor",
+            "text": "Up to 110,000 rpm.",
+            "icon": "01"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "title": "Negative ion care",
+            "text": "For smoother, shinier hair.",
+            "icon": "02"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "title": "Separate speed and temperature",
+            "text": "Plus a cool shot.",
+            "icon": "03"
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "title": "Magnetic concentrator nozzle",
+            "text": "Included, with a 1.8 m cable and dual voltage 100–240 V.",
+            "icon": "04"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ]
+    },
+    "demo": {
+      "type": "product-demo",
+      "settings": {
+        "tone": "beauty",
+        "heading": "See it in motion"
+      }
+    },
+    "inc": {
+      "type": "product-included",
+      "settings": {
+        "tone": "beauty",
+        "heading": "Everything you receive",
+        "note": ""
+      },
+      "blocks": {
+        "b1": {
+          "type": "item",
+          "settings": {
+            "title": "AirCurve hair dryer",
+            "text": ""
+          }
+        },
+        "b2": {
+          "type": "item",
+          "settings": {
+            "title": "Magnetic concentrator nozzle",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2"
+      ]
+    },
+    "rev": {
+      "type": "product-reviews",
+      "settings": {
+        "tone": "beauty"
+      }
+    },
+    "ugc": {
+      "type": "product-ugc",
+      "settings": {
+        "tone": "beauty"
+      }
+    },
+    "trust": {
+      "type": "product-trust",
+      "settings": {
+        "tone": "beauty"
+      }
+    },
+    "faq": {
+      "type": "product-faq",
+      "settings": {
+        "tone": "beauty"
+      },
+      "blocks": {
+        "b1": {
+          "type": "qa",
+          "settings": {
+            "q": "Which colours and plugs are available?",
+            "a": "<p>Blue, Green and Pink, with US or EU plug options. It is dual voltage (100–240 V).</p>"
+          }
+        },
+        "b2": {
+          "type": "qa",
+          "settings": {
+            "q": "How long is the cable?",
+            "a": "<p>1.8 m.</p>"
+          }
+        },
+        "b3": {
+          "type": "qa",
+          "settings": {
+            "q": "How long does shipping take?",
+            "a": "<p>Orders are processed in 1–3 business days and shipping within the USA takes 7–14 business days, so most orders arrive in 11–16 business days in total. Every order includes a tracking number. Delivery times can vary by location and customs delays.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ]
+    },
+    "bundle": {
+      "type": "product-bundle",
+      "settings": {
+        "tone": "beauty",
+        "kicker": "Pair it with",
+        "heading": "Complete your routine",
+        "products": [
+          "superair-hair-dryer",
+          "airsleek-straightener"
+        ]
+      }
+    },
+    "recs": {
+      "type": "product-recommendations-premium",
+      "settings": {
+        "tone": "beauty",
+        "heading": "You may also like"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "ps",
+    "ben",
+    "demo",
+    "inc",
+    "rev",
+    "ugc",
+    "trust",
+    "faq",
+    "bundle",
+    "recs"
+  ]
+}

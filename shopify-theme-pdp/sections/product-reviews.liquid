@@ -1,0 +1,65 @@
+{%- liquid
+  assign s = section.settings
+  assign jm = product.metafields.judgeme.review_widget_data.value
+  assign total = jm.number_of_reviews | default: 0 | plus: 0
+  assign avg = jm.average_rating | default: 0 | plus: 0.0
+  assign list = jm.reviews
+  assign widget = product.metafields.judgeme.widget.value
+  assign shown_n = list | size
+-%}
+<section class="pdp-s" data-tone="{{ s.tone }}" id="reviews" aria-labelledby="pr-{{ section.id }}">
+  <div class="pdp-head pdp-rv"><p class="pdp-kicker">{{ s.kicker | escape }}</p><h2 id="pr-{{ section.id }}">{{ s.heading | escape }}</h2></div>
+  <div data-pdp-reviews data-step="{{ s.per_page }}">
+  {%- if total > 0 and shown_n > 0 -%}
+    <div class="pdp-rev__sum pdp-rv">
+      <div><div class="pdp-rev__score"><b>{{ avg | round: 1 }}</b><span class="pdp-stars" style="--r:{{ avg }}" role="img" aria-label="{{ avg | round: 1 }} / 5"></span></div><p style="margin-top:8px">Based on {{ total }} review{% if total != 1 %}s{% endif %}</p></div>
+      <div class="pdp-bars">
+        {%- for h in jm.histogram -%}
+        <button type="button" class="pdp-bar" data-star="{{ h.rating }}" aria-pressed="false" aria-label="Filter {{ h.rating }} stars"><span>{{ h.rating }} ★</span><i style="--w:{{ h.percentage | default: 0 }}%"></i><span>{{ h.frequency | default: 0 }}</span></button>
+        {%- endfor -%}
+      </div>
+    </div>
+    <div class="pdp-filters">
+      <button type="button" class="pdp-chip" data-photos aria-pressed="false">With photos</button>
+    </div>
+    <div class="pdp-rev__list">
+      {%- for r in list -%}
+        {%- liquid
+          assign rname = r.reviewer.name | default: r.reviewer_name | default: r.name
+          assign verified = false
+          if r.verified_buyer == true or r.reviewer.verified_buyer == true or r.verified == 'buyer' or r.verified_badge == 'verified-purchase'
+            assign verified = true
+          endif
+          assign pics = r.pictures | default: r.photos
+          assign has_pics = 0
+          if pics.size > 0
+            assign has_pics = 1
+          endif
+        -%}
+        <article class="pdp-review" data-rating="{{ r.rating }}" data-photos="{{ has_pics }}">
+          <header><span class="pdp-stars" style="--r:{{ r.rating }}" role="img" aria-label="{{ r.rating }} / 5"></span><time datetime="{{ r.created_at }}">{{ r.created_at | date: '%b %-d, %Y' }}</time></header>
+          {%- if r.title != blank -%}<h3>{{ r.title | escape }}</h3>{%- endif -%}
+          <p>{{ r.body | strip_html | truncate: 520 }}</p>
+          {%- if has_pics == 1 -%}<div class="pdp-review__pics">{%- for p in pics limit: 4 -%}{%- assign pu = p.urls.compact | default: p.url | default: p -%}{%- if pu contains 'http' -%}<img src="{{ pu }}" alt="Customer photo" loading="lazy" width="84" height="84">{%- endif -%}{%- endfor -%}</div>{%- endif -%}
+          <p style="margin-top:10px;font-size:12px"><strong style="color:var(--p-ink)">{{ rname | escape }}</strong></p>
+          {%- if verified -%}<span class="pdp-verified">✓ Verified purchase</span>{%- endif -%}
+        </article>
+      {%- endfor -%}
+    </div>
+    <p data-none hidden class="pdp-empty">No reviews match this filter.</p>
+    <button type="button" class="pdp-btn pdp-btn--ghost pdp-more" data-more hidden>Load more reviews</button>
+  {%- else -%}
+    <div class="pdp-empty pdp-rv"><h3>No reviews yet</h3><p>{{ s.empty_text | escape }}</p></div>
+  {%- endif -%}
+  {%- if widget != blank -%}
+    <details class="pdp-write" data-write><summary>{% if total > shown_n %}See all reviews or write one{% else %}Write a review{% endif %}</summary>{{ widget }}</details>
+  {%- endif -%}
+  </div>
+</section>
+{% schema %}
+{"name":"PDP · Reviews","tag":"div","settings":[{"type":"select","id":"tone","label":"Category style","default":"tech","options":[{"value":"beauty","label":"Beauty"},{"value":"gaming","label":"Gaming (dark)"},{"value":"tech","label":"Tech"},{"value":"cameras","label":"Cameras"},{"value":"fragrance","label":"Fragrance"},{"value":"jewelry","label":"Jewelry"},{"value":"fashion","label":"Fashion"}]},
+{"type":"text","id":"kicker","label":"Label","default":"Customer reviews"},{"type":"text","id":"heading","label":"Heading","default":"What buyers say"},
+{"type":"range","id":"per_page","label":"Reviews per load","min":3,"max":12,"step":1,"default":6},
+{"type":"textarea","id":"empty_text","label":"Text when there are no reviews","default":"Reviews appear here only after verified customers submit them. Yours can be the first."}],
+"presets":[{"name":"PDP · Reviews"}]}
+{% endschema %}

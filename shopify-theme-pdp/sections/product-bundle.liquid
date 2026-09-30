@@ -1,0 +1,20 @@
+{%- liquid
+  assign s = section.settings
+  assign n = 0
+-%}
+{%- capture cards -%}
+  {%- for p in s.products -%}{%- if p.id != product.id and p.published_at != blank -%}{%- assign n = n | plus: 1 -%}{%- render 'pdp-card', product: p, list: section.id, show_add: true -%}{%- endif -%}{%- endfor -%}
+{%- endcapture -%}
+{%- if n > 0 -%}
+<section class="pdp-s" data-tone="{{ s.tone }}" aria-labelledby="pbu-{{ section.id }}">
+  <div class="pdp-head pdp-rv"><p class="pdp-kicker">{{ s.kicker | escape }}</p><h2 id="pbu-{{ section.id }}">{{ s.heading | escape }}</h2>{%- if s.text != blank -%}<p>{{ s.text | escape }}</p>{%- endif -%}</div>
+  <div class="pdp-rail pdp-rv" data-list="{{ s.kicker | handleize }}">{{ cards }}</div>
+</section>
+{%- endif -%}
+{% schema %}
+{"name":"PDP · Pair it with (bundle)","tag":"div","settings":[{"type":"select","id":"tone","label":"Category style","default":"tech","options":[{"value":"beauty","label":"Beauty"},{"value":"gaming","label":"Gaming (dark)"},{"value":"tech","label":"Tech"},{"value":"cameras","label":"Cameras"},{"value":"fragrance","label":"Fragrance"},{"value":"jewelry","label":"Jewelry"},{"value":"fashion","label":"Fashion"}]},
+{"type":"text","id":"kicker","label":"Label","default":"Pair it with"},{"type":"text","id":"heading","label":"Heading","default":"Complete your setup"},
+{"type":"text","id":"text","label":"Text (optional)","info":"Do not promise a bundle discount unless one is configured in Shopify."},
+{"type":"product_list","id":"products","label":"Products (real store products)","limit":4}],
+"presets":[{"name":"PDP · Pair it with (bundle)"}]}
+{% endschema %}

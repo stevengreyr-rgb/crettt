@@ -1,0 +1,239 @@
+{
+  "sections": {
+    "main": {
+      "type": "sc-product",
+      "settings": {
+        "show_breadcrumb": false,
+        "sticky_bar": true,
+        "after_add": "cart",
+        "form_label": "Add to bag",
+        "trust_1": "Secure checkout",
+        "trust_2": "Tracked delivery",
+        "trust_3": ""
+      }
+    },
+    "ps": {
+      "type": "product-problem-solution",
+      "settings": {
+        "tone": "beauty",
+        "heading": "One dryer, every kind of day",
+        "problem_title": "One heat doesn't suit every day",
+        "problem_text": "Quick dries and gentler finishes call for different temperatures, and many dryers make you settle for one.",
+        "solution_title": "Four settings, one dryer",
+        "solution_text": "95 °C quick dry, 80 °C normal, 60 °C scalp care and 28 °C cool air, with LED indicators that show the active setting.",
+        "result_title": "Dry it your way",
+        "result_text": "Switch between a fast dry and a gentler setting without changing tools."
+      }
+    },
+    "ben": {
+      "type": "product-benefits",
+      "settings": {
+        "tone": "beauty",
+        "heading": "Designed around how you dry"
+      },
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "title": "High-speed motor",
+            "text": "Up to 110,000 rpm for a quick dry.",
+            "icon": "01"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "title": "Four temperature settings",
+            "text": "Quick dry, normal, scalp care and cool air.",
+            "icon": "02"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "title": "Negative ion care",
+            "text": "Helps reduce frizz and static.",
+            "icon": "03"
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "title": "Dual voltage 100–240 V",
+            "text": "Made for home and travel.",
+            "icon": "04"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ]
+    },
+    "demo": {
+      "type": "product-demo",
+      "settings": {
+        "tone": "beauty",
+        "heading": "See it in motion"
+      }
+    },
+    "how": {
+      "type": "product-how-it-works",
+      "settings": {
+        "tone": "beauty",
+        "heading": "Three steps to your finish"
+      },
+      "blocks": {
+        "b1": {
+          "type": "step",
+          "settings": {
+            "title": "Pick your setting",
+            "text": "Choose quick dry, normal, scalp care or cool air. The LED shows which one is active."
+          }
+        },
+        "b2": {
+          "type": "step",
+          "settings": {
+            "title": "Dry or style",
+            "text": "Use the drying, smoothing or styling attachment that suits your hair."
+          }
+        },
+        "b3": {
+          "type": "step",
+          "settings": {
+            "title": "Finish with cool air",
+            "text": "Switch to the 28 °C cool setting to finish."
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3"
+      ]
+    },
+    "inc": {
+      "type": "product-included",
+      "settings": {
+        "tone": "beauty",
+        "heading": "Everything you receive",
+        "note": "Contents as listed in the product description."
+      },
+      "blocks": {
+        "b1": {
+          "type": "item",
+          "settings": {
+            "title": "SuperAir hair dryer",
+            "text": ""
+          }
+        },
+        "b2": {
+          "type": "item",
+          "settings": {
+            "title": "Drying, smoothing and styling attachments",
+            "text": ""
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2"
+      ]
+    },
+    "rev": {
+      "type": "product-reviews",
+      "settings": {
+        "tone": "beauty"
+      }
+    },
+    "ugc": {
+      "type": "product-ugc",
+      "settings": {
+        "tone": "beauty"
+      }
+    },
+    "trust": {
+      "type": "product-trust",
+      "settings": {
+        "tone": "beauty"
+      }
+    },
+    "faq": {
+      "type": "product-faq",
+      "settings": {
+        "tone": "beauty"
+      },
+      "blocks": {
+        "b1": {
+          "type": "qa",
+          "settings": {
+            "q": "What temperature settings does it have?",
+            "a": "<p>Four: 95 °C quick dry, 80 °C normal, 60 °C scalp care and 28 °C cool air. LED indicators show the active setting.</p>"
+          }
+        },
+        "b2": {
+          "type": "qa",
+          "settings": {
+            "q": "Which colours can I choose?",
+            "a": "<p>Rose Pink, Dark Blue and Green.</p>"
+          }
+        },
+        "b3": {
+          "type": "qa",
+          "settings": {
+            "q": "Can I use it in the US?",
+            "a": "<p>SuperAir is dual voltage (100–240 V). Contact us if you want to confirm the plug type before ordering.</p>"
+          }
+        },
+        "b4": {
+          "type": "qa",
+          "settings": {
+            "q": "How long does shipping take?",
+            "a": "<p>Orders are processed in 1–3 business days and shipping within the USA takes 7–14 business days, so most orders arrive in 11–16 business days in total. Every order includes a tracking number. Delivery times can vary by location and customs delays.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ]
+    },
+    "bundle": {
+      "type": "product-bundle",
+      "settings": {
+        "tone": "beauty",
+        "kicker": "Pair it with",
+        "heading": "Complete your routine",
+        "products": [
+          "airsleek-straightener",
+          "aircurve-hair-dryer"
+        ]
+      }
+    },
+    "recs": {
+      "type": "product-recommendations-premium",
+      "settings": {
+        "tone": "beauty",
+        "heading": "You may also like"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "ps",
+    "ben",
+    "demo",
+    "how",
+    "inc",
+    "rev",
+    "ugc",
+    "trust",
+    "faq",
+    "bundle",
+    "recs"
+  ]
+}
