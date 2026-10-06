@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Catálogo — Maxi Motor</title>
+<meta name="description" content="Catálogo de rines, suspensión y servicios Maxi Motor con precios. Pide tu link de pago por WhatsApp.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%230a0a0a'/%3E%3Ccircle cx='12' cy='12' r='8' fill='none' stroke='%23c6a15b' stroke-width='1.6'/%3E%3Ccircle cx='12' cy='12' r='2.6' fill='%23c6a15b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/catalog.css">
+</head>
+<body>
+<header class="site-header is-scrolled" id="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo" aria-label="Maxi Motor — Inicio">
+      <span class="logo-mark" aria-hidden="true"></span>
+      <span class="logo-text">MAXI<em>MOTOR</em></span>
+    </a>
+    <nav class="cat-nav" aria-label="Principal">
+      <a href="index.html">← Volver al sitio</a>
+    </nav>
+  </div>
+</header>
+
+<section class="cat-hero">
+  <div class="container">
+    <span class="kicker">Catálogo</span>
+    <h1>Productos y <em style="color:var(--gold)">precios</em></h1>
+    <p>Elige tu producto y toca <strong>Pedir link de pago</strong>: te enviamos el link por WhatsApp para pagar de forma segura.</p>
+  </div>
+</section>
+
+<main class="container">
+  <div class="cat-toolbar">
+    <div class="chip-group" role="group" aria-label="Categorías">
+      <button class="chip is-active" data-cat="all">Todo</button>
+      <button class="chip" data-cat="rines">Rines</button>
+      <button class="chip" data-cat="suspension">Suspensión</button>
+      <button class="chip" data-cat="servicios">Servicios</button>
+    </div>
+    <input class="cat-search" id="cat-search" type="search" placeholder="Buscar producto…" aria-label="Buscar producto">
+  </div>
+  <div class="cat-grid" id="cat-grid" aria-live="polite"></div>
+  <p class="cat-note">Precios de ejemplo — confirma disponibilidad y precio final por WhatsApp antes de pagar.</p>
+</main>
+
+<script src="js/products.js"></script>
+<script src="js/catalog.js"></script>
+</body>
+</html>
