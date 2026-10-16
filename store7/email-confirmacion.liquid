@@ -1,10 +1,10 @@
 {%- comment -%}
-  Pega este bloque en: Configuración > Notificaciones > Confirmación del pedido > Editar código.
-  Colócalo justo después del saludo / antes del resumen del pedido.
+  Paste in: Settings > Notifications > Order confirmation > Edit code.
+  Place it right after the greeting / before the order summary.
 {%- endcomment -%}
 {% for line in line_items %}
-  {% if line.product.handle == '10-proveedores-china' or line.title contains '10 proveedores' %}
-  <h2>Tus 10 proveedores</h2>
+  {% if line.product.handle == '10-proveedores-china' or line.title contains 'China Suppliers' %}
+  <h2>Your 10 suppliers</h2>
   <p>
     1) +852 5327 2987<br>
     2) +852 7036 9101<br>
@@ -15,8 +15,8 @@
     7) +852 6628 4467<br>
     8) +86 191 0071 9797 (Vivian)<br>
     9) +1 636 252 5760 (Nintendo Supplier Electronic)<br>
-    10) +86 189 7408 8972 (Sisi: maquillaje y ropa)
+    10) +86 189 7408 8972 (Sisi: makeup and clothing)
   </p>
+  <p style="font-size:12px;color:#777">Information only. Always order samples and do your own checks before paying a supplier.</p>
   {% endif %}
 {% endfor %}
-<p style="font-size:12px;color:#777">Lista informativa. Pide siempre muestras y haz tu propia comprobación antes de pagar a un proveedor.</p>
