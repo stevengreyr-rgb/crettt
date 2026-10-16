@@ -3,7 +3,7 @@
   Colócalo justo después del saludo / antes del resumen del pedido.
 {%- endcomment -%}
 {% for line in line_items %}
-  {% if line.product.handle == '10-proveedores-china' %}
+  {% if line.product.handle == '10-proveedores-china' or line.title contains '10 proveedores' %}
   <h2>Tus 10 proveedores</h2>
   <p>
     1) +852 5327 2987<br>
