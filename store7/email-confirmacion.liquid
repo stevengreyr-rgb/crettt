@@ -1,27 +1,21 @@
 {%- comment -%}
   Pega este bloque en: Configuración > Notificaciones > Confirmación del pedido > Editar código.
   Colócalo justo después del saludo / antes del resumen del pedido.
-  Reparto de secciones provisional: confirma qué proveedor va en cada una.
 {%- endcomment -%}
 {% for line in line_items %}
-  {% if line.product.handle == 'seccion-1-5-proveedores' %}
-  <h2>Tus proveedores — Sección 1</h2>
+  {% if line.product.handle == '10-proveedores-china' %}
+  <h2>Tus 10 proveedores</h2>
   <p>
     1) +852 5327 2987<br>
     2) +852 7036 9101<br>
     3) +852 4093 2183<br>
     4) +852 9017 0949<br>
-    5) +86 152 6090 3718
-  </p>
-  {% endif %}
-  {% if line.product.handle == 'seccion-2-5-proveedores' %}
-  <h2>Tus proveedores — Sección 2</h2>
-  <p>
-    1) +852 5648 6697<br>
-    2) +852 6628 4467<br>
-    3) +86 191 0071 9797<br>
-    4) +1 636 252 5760<br>
-    5) +86 189 7408 8972 (Sisi: maquillaje y ropa)
+    5) +86 152 6090 3718<br>
+    6) +852 5648 6697<br>
+    7) +852 6628 4467<br>
+    8) +86 191 0071 9797 (Vivian)<br>
+    9) +1 636 252 5760 (Nintendo Supplier Electronic)<br>
+    10) +86 189 7408 8972 (Sisi: maquillaje y ropa)
   </p>
   {% endif %}
 {% endfor %}
