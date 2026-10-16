@@ -219,7 +219,7 @@ footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-s
     </div>
     <div class="grid g4">
       <div class="card step" data-n="01"><h3>Elige tu plan</h3><p>Sección 1 ($12), Sección 2 ($25) o ambas.</p></div>
-      <div class="card step" data-n="02"><h3>Recibe tu acceso</h3><p>Recibes los datos de tus proveedores por email al pagar.</p></div>
+      <div class="card step" data-n="02"><h3>Recibe tu acceso</h3><p>Al pagar, ves tus proveedores al instante en una página privada.</p></div>
       <div class="card step" data-n="03"><h3>Compara</h3><p>Revisa MOQ, precios, plazos y tipo de cada proveedor.</p></div>
       <div class="card step" data-n="04"><h3>Contacta y negocia</h3><p>Pide muestras y cotizaciones directamente al proveedor.</p></div>
     </div>
@@ -279,7 +279,7 @@ footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-s
           <li>MOQ, rango de precios y plazos</li>
           <li>Uso personal o para tu negocio</li>
         </ul>
-        <a href="#acceso" class="btn btn-ghost">Quiero la Sección 1</a>
+        <a href="https://buy.stripe.com/REEMPLAZA_LINK_SECCION_1" class="btn btn-ghost">Quiero la Sección 1 — $12</a>
       </div>
       <div class="card price-card pop">
         <span class="badge">MÁS COMPLETA</span>
@@ -292,7 +292,7 @@ footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-s
           <li>MOQ, rango de precios y plazos</li>
           <li>Uso personal o para tu negocio</li>
         </ul>
-        <a href="#acceso" class="btn btn-primary">Quiero la Sección 2</a>
+        <a href="https://buy.stripe.com/REEMPLAZA_LINK_SECCION_2" class="btn btn-primary">Quiero la Sección 2 — $25</a>
       </div>
     </div>
     <p class="note center">Precios en dólares (USD). Acceso inmediato tras el pago.</p>
@@ -332,12 +332,11 @@ footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-s
   <div class="wrap">
     <span class="eyebrow">Empieza hoy</span>
     <h2>Consigue tus proveedores</h2>
-    <p class="lead" style="margin-inline:auto">Déjanos tu email y te enviamos la información de acceso.</p>
-    <form class="signup" id="signup" novalidate>
-      <input type="email" id="email" placeholder="tu@email.com" aria-label="Tu email" required>
-      <button class="btn btn-primary" type="submit">Quiero acceso</button>
-    </form>
-    <p class="msg" id="msg" role="status"></p>
+    <p class="lead" style="margin-inline:auto">Pago seguro con Stripe. Acceso inmediato a tus proveedores después del pago.</p>
+    <div class="cta-row" style="justify-content:center;margin-top:28px">
+      <a href="https://buy.stripe.com/REEMPLAZA_LINK_SECCION_1" class="btn btn-ghost">Sección 1 — $12</a>
+      <a href="https://buy.stripe.com/REEMPLAZA_LINK_SECCION_2" class="btn btn-primary">Sección 2 — $25</a>
+    </div>
   </div>
 </section>
 
@@ -348,28 +347,16 @@ footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-s
     <div class="foot">
       <a href="#top" class="logo">Store<b>7</b></a>
       <nav>
-        <a href="#">Términos de uso</a>
-        <a href="#">Privacidad</a>
-        <a href="#">Reembolsos</a>
-        <a href="#">Contacto</a>
+        <a href="terminos.html">Términos de uso</a>
+        <a href="privacidad.html">Privacidad</a>
+        <a href="reembolsos.html">Reembolsos</a>
+        <a href="mailto:TU_EMAIL@dominio.com">Contacto</a>
       </nav>
     </div>
     <p class="legal">© <span id="y"></span> Store 7. Lista informativa. No vendemos productos ni intervenimos en las transacciones entre usuarios y proveedores. Las marcas mencionadas pertenecen a sus respectivos propietarios.</p>
   </div>
 </footer>
 
-<script>
-document.getElementById('y').textContent = new Date().getFullYear();
-// Sustituye este handler por tu servicio de email/pagos (Shopify, Stripe, Mailchimp...)
-document.getElementById('signup').addEventListener('submit', function(e){
-  e.preventDefault();
-  var v = document.getElementById('email').value.trim();
-  var msg = document.getElementById('msg');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ msg.style.color='#f87171'; msg.textContent='Introduce un email válido.'; return; }
-  msg.style.color='';
-  msg.textContent='¡Listo! Te escribiremos pronto.';
-  this.reset();
-});
-</script>
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 </body>
 </html>

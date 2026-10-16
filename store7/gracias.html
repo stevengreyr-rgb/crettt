@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Tus proveedores — Store 7</title>
+<style>
+:root{--bg:#0b0f1a;--card:#161e2e;--line:#243049;--text:#e8ecf4;--muted:#9aa6bd;--accent:#f59e0b;--ok:#34d399}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:40px 16px}
+.wrap{max-width:860px;margin:0 auto}
+.logo{font-weight:800;font-size:1.25rem;display:inline-block;margin-bottom:28px;color:var(--text);text-decoration:none}.logo b{color:var(--accent)}
+h1{font-size:clamp(1.7rem,4vw,2.4rem);letter-spacing:-.02em;margin-bottom:8px}
+.sub{color:var(--muted);margin-bottom:28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:14px}
+.card h3{font-size:1.1rem;margin-bottom:2px}.cat{color:var(--accent);font-size:.82rem;font-weight:700;margin-bottom:10px;display:block}
+dl{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:.95rem}
+dt{color:var(--muted)}dd{word-break:break-word}
+dd a{color:var(--accent)}
+.msg{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;color:var(--muted)}
+.err{border-color:#f87171;color:#fca5a5}
+.warn{margin-top:26px;font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
+@media(max-width:560px){dl{grid-template-columns:1fr}dt{margin-top:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="logo" href="/">Store<b>7</b></a>
+  <h1>¡Gracias por tu compra!</h1>
+  <p class="sub">Aquí están tus proveedores. Guarda esta página o copia los datos.</p>
+  <div id="out" class="msg">Verificando tu pago…</div>
+  <p class="warn">Pide siempre muestras y haz tu propia comprobación antes de pagar a un proveedor. Store 7 no interviene en las transacciones. ¿Problemas? Escribe a TU_EMAIL@dominio.com con tu recibo de Stripe.</p>
+</div>
+<script>
+(function(){
+  var out = document.getElementById('out');
+  var id = new URLSearchParams(location.search).get('session_id');
+  function fail(t){ out.className='msg err'; out.textContent=t; }
+  if(!id){ return fail('No se encontró tu pago. Abre el enlace desde la confirmación de Stripe.'); }
+  fetch('/api/entrega?session_id='+encodeURIComponent(id))
+    .then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j.error||'Error'); return j; }); })
+    .then(function(j){
+      out.className=''; out.textContent='';
+      j.secciones.forEach(function(sec){
+        var h = document.createElement('h2'); h.textContent = sec.titulo; h.style.margin='6px 0 14px'; out.appendChild(h);
+        sec.proveedores.forEach(function(p){
+          var c = document.createElement('div'); c.className='card';
+          var t = document.createElement('h3'); t.textContent = p.nombre; c.appendChild(t);
+          var k = document.createElement('span'); k.className='cat'; k.textContent = p.categoria; c.appendChild(k);
+          var dl = document.createElement('dl');
+          [['Ubicación',p.ubicacion],['Contacto',p.contacto],['Web',p.web],['MOQ',p.moq],['Precios',p.precios],['Plazo',p.plazo],['Tipo',p.tipo],['Notas',p.notas]].forEach(function(f){
+            if(!f[1]) return;
+            var dt=document.createElement('dt'); dt.textContent=f[0];
+            var dd=document.createElement('dd');
+            if(f[0]==='Web' && /^https?:\/\//.test(f[1])){ var a=document.createElement('a'); a.href=f[1]; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent=f[1]; dd.appendChild(a); } else { dd.textContent=f[1]; }
+            dl.appendChild(dt); dl.appendChild(dd);
+          });
+          c.appendChild(dl); out.appendChild(c);
+        });
+      });
+    })
+    .catch(function(e){ fail(e.message); });
+})();
+</script>
+</body>
+</html>
