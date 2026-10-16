@@ -1,7 +1,7 @@
 {%- comment -%}
   Pega este bloque en: Configuración > Notificaciones > Confirmación del pedido > Editar código.
   Colócalo justo después del saludo / antes del resumen del pedido.
-  Los [corchetes] son números que aún faltan por confirmar.
+  Reparto de secciones provisional: confirma qué proveedor va en cada una.
 {%- endcomment -%}
 {% for line in line_items %}
   {% if line.product.handle == 'seccion-1-5-proveedores' %}
@@ -21,7 +21,7 @@
     2) +852 6628 4467<br>
     3) +86 191 0071 9797<br>
     4) +1 636 252 5760<br>
-    5) [Sisi: número]
+    5) +86 189 7408 8972
   </p>
   {% endif %}
 {% endfor %}
