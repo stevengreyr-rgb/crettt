@@ -1,0 +1,28 @@
+{%- comment -%}
+  Pega este bloque en: Configuración > Notificaciones > Confirmación del pedido > Editar código.
+  Colócalo justo después del saludo / antes del resumen del pedido.
+  Sustituye los textos entre [corchetes] por tus números o enlaces.
+{%- endcomment -%}
+{% for line in line_items %}
+  {% if line.product.handle == 'seccion-1-5-proveedores' %}
+  <h2>Tus proveedores — Sección 1</h2>
+  <p>
+    1) [Proveedor 1: número o enlace]<br>
+    2) [Proveedor 2: número o enlace]<br>
+    3) [Proveedor 3: número o enlace]<br>
+    4) [Proveedor 4: número o enlace]<br>
+    5) [Proveedor 5: número o enlace]
+  </p>
+  {% endif %}
+  {% if line.product.handle == 'seccion-2-5-proveedores' %}
+  <h2>Tus proveedores — Sección 2</h2>
+  <p>
+    1) [Proveedor 6: número o enlace]<br>
+    2) [Proveedor 7: número o enlace]<br>
+    3) [Proveedor 8: número o enlace]<br>
+    4) [Proveedor 9: número o enlace]<br>
+    5) [Proveedor 10: número o enlace]
+  </p>
+  {% endif %}
+{% endfor %}
+<p style="font-size:12px;color:#777">Lista informativa. Pide siempre muestras y haz tu propia comprobación antes de pagar a un proveedor.</p>
