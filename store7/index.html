@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Store 7 — Proveedores de China</title>
+<meta name="description" content="Store 7: 10 proveedores de China seleccionados de todas las categorías, desde $12. Para uso personal o para tu negocio.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23111827'/%3E%3Ctext x='12' y='17' font-size='14' font-weight='700' text-anchor='middle' fill='%23f59e0b' font-family='Arial'%3E7%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0b0f1a; --bg2:#111827; --card:#161e2e; --line:#243049;
+  --text:#e8ecf4; --muted:#9aa6bd; --accent:#f59e0b; --accent2:#fbbf24; --ok:#34d399;
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+section{padding:84px 0}
+h1,h2,h3{line-height:1.15;letter-spacing:-.02em}
+h1{font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:800}
+h2{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:800;margin-bottom:14px}
+h3{font-size:1.15rem;margin-bottom:8px}
+.eyebrow{display:inline-block;color:var(--accent);font-weight:700;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+.lead{color:var(--muted);font-size:1.1rem;max-width:62ch}
+.center{text-align:center}.center .lead{margin-inline:auto}
+.btn{display:inline-block;padding:14px 26px;border-radius:999px;font-weight:700;border:1px solid transparent;transition:.2s;cursor:pointer;font-size:1rem}
+.btn-primary{background:var(--accent);color:#1a1200}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-2px)}
+.btn-ghost{border-color:var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* nav */
+header{position:sticky;top:0;z-index:50;background:rgba(11,15,26,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-weight:800;font-size:1.25rem}.logo b{color:var(--accent)}
+.nav ul{display:flex;gap:26px;list-style:none;color:var(--muted);font-size:.95rem}
+.nav ul a:hover{color:var(--text)}
+.nav .btn{padding:9px 20px;font-size:.9rem}
+@media(max-width:820px){.nav ul{display:none}}
+
+/* hero */
+.hero{padding:96px 0 72px;background:radial-gradient(900px 400px at 80% -10%,rgba(245,158,11,.14),transparent),radial-gradient(700px 400px at 0% 0%,rgba(59,130,246,.10),transparent)}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.hero p.lead{margin:20px 0 30px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.trust{display:flex;gap:20px;flex-wrap:wrap;margin-top:28px;color:var(--muted);font-size:.9rem}
+.trust span::before{content:"✓ ";color:var(--ok);font-weight:700}
+.mock{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+.mock-top{display:flex;gap:6px;margin-bottom:14px}
+.mock-top i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--bg2);font-size:.92rem}
+.row small{color:var(--muted);display:block}
+.tag{font-size:.72rem;padding:3px 9px;border-radius:999px;background:rgba(52,211,153,.12);color:var(--ok);font-weight:700;white-space:nowrap}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.hero{padding-top:56px}}
+
+/* grids */
+.grid{display:grid;gap:18px;margin-top:44px}
+.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:900px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.g3,.g4,.g2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+.card p{color:var(--muted);font-size:.96rem}
+.ico{font-size:1.7rem;margin-bottom:12px}
+.alt{background:var(--bg2);border-block:1px solid var(--line)}
+
+/* categories */
+.cat{text-align:center;padding:22px 12px}
+.cat .ico{font-size:2rem}
+.cat b{display:block;font-size:.98rem}
+.cat span{color:var(--muted);font-size:.82rem}
+
+/* steps */
+.step{position:relative;padding-top:54px}
+.step::before{content:attr(data-n);position:absolute;top:20px;left:26px;font-size:1.6rem;font-weight:800;color:var(--accent)}
+
+/* audience split */
+.split .card h3{color:var(--accent)}
+.split ul{list-style:none;margin-top:12px;color:var(--muted);font-size:.95rem}
+.split li{padding:5px 0 5px 24px;position:relative}
+.split li::before{content:"→";position:absolute;left:0;color:var(--accent)}
+
+/* pricing */
+.price-card{display:flex;flex-direction:column}
+.price-card.pop{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 30px 60px -35px rgba(245,158,11,.5);position:relative}
+.badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent);color:#1a1200;font-size:.74rem;font-weight:800;padding:4px 14px;border-radius:999px}
+.price{font-size:2.6rem;font-weight:800;margin:10px 0 2px}
+.price small{font-size:1rem;color:var(--muted);font-weight:500}
+.price-card ul{list-style:none;margin:20px 0 26px;flex:1}
+.price-card li{padding:7px 0 7px 26px;position:relative;font-size:.95rem;color:var(--muted);border-bottom:1px dashed var(--line)}
+.price-card li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:700}
+.price-card li.no{opacity:.45}.price-card li.no::before{content:"–";color:var(--muted)}
+.price-card .btn{text-align:center}
+.note{color:var(--muted);font-size:.85rem;margin-top:22px}
+
+/* verification box */
+.verify{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@media(max-width:820px){.verify{grid-template-columns:1fr}}
+.checks{list-style:none}
+.checks li{padding:14px 18px;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;background:var(--card);display:flex;gap:12px;font-size:.96rem}
+.checks li::before{content:"✓";color:var(--ok);font-weight:800}
+
+/* warn */
+.warn{border:1px solid rgba(245,158,11,.4);background:rgba(245,158,11,.06);border-radius:var(--radius);padding:26px}
+.warn h3{color:var(--accent)}
+.warn p{color:var(--muted);font-size:.96rem}
+
+/* faq */
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin-bottom:12px}
+summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--accent);font-size:1.3rem;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin-top:12px;font-size:.96rem}
+
+/* final cta + form */
+.final{text-align:center;background:radial-gradient(700px 300px at 50% 0%,rgba(245,158,11,.14),transparent)}
+.signup{display:flex;gap:10px;max-width:520px;margin:30px auto 0;flex-wrap:wrap}
+.signup input{flex:1;min-width:220px;padding:14px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:1rem}
+.signup input:focus{outline:2px solid var(--accent);border-color:transparent}
+.msg{margin-top:14px;font-size:.92rem;color:var(--ok);min-height:1.4em}
+
+footer{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:.86rem}
+.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.foot nav{display:flex;gap:18px;flex-wrap:wrap}
+.foot a:hover{color:var(--text)}
+.legal{margin-top:18px;font-size:.78rem;opacity:.8;max-width:90ch}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="logo">Store<b>7</b></a>
+    <ul>
+      <li><a href="#que-es">Qué es</a></li>
+      <li><a href="#categorias">Categorías</a></li>
+      <li><a href="#como">Cómo funciona</a></li>
+      <li><a href="#planes">Planes</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="#planes" class="btn btn-primary">Ver precios</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Proveedores de China</span>
+      <h1>Encuentra proveedores de China en minutos, no en meses.</h1>
+      <p class="lead">10 proveedores seleccionados de todas las categorías, con contacto directo, pedido mínimo y condiciones. Para tu negocio o para tus compras personales.</p>
+      <div class="cta-row">
+        <a href="#planes" class="btn btn-primary">Ver precios desde $12</a>
+        <a href="#como" class="btn btn-ghost">Cómo funciona</a>
+      </div>
+      <div class="trust">
+        <span>Acceso inmediato</span>
+        <span>Uso personal o negocio</span>
+        <span>Sin conocimientos previos</span>
+      </div>
+    </div>
+    <div class="mock" aria-hidden="true">
+      <div class="mock-top"><i></i><i></i><i></i></div>
+      <div class="row"><div><b>Electrónica y accesorios</b><small>Shenzhen · MOQ bajo · Marca propia</small></div><span class="tag">Verificado</span></div>
+      <div class="row"><div><b>Ropa y calzado</b><small>Guangzhou · Dropshipping</small></div><span class="tag">Verificado</span></div>
+      <div class="row"><div><b>Joyería (acero / fantasía)</b><small>Yiwu · Mayoreo</small></div><span class="tag">Verificado</span></div>
+      <div class="row"><div><b>Drones y cámaras</b><small>Shenzhen · Certificación CE/FCC</small></div><span class="tag">Verificado</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUE ES / PROBLEMA -->
+<section id="que-es" class="alt">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">El problema</span>
+      <h2>Buscar proveedores por tu cuenta es lento y arriesgado</h2>
+      <p class="lead">Cientos de listados, intermediarios que inflan el precio, vendedores que no responden y estafas. Store 7 te da 10 proveedores ya seleccionados para empezar con más seguridad.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card"><div class="ico">⏱️</div><h3>Ahorra semanas de búsqueda</h3><p>Una lista corta y clara en lugar de cientos de listados. Eliges y contactas.</p></div>
+      <div class="card"><div class="ico">🛡️</div><h3>Menos riesgo de estafas</h3><p>Revisamos a cada proveedor antes de incluirlo en la lista.</p></div>
+      <div class="card"><div class="ico">💬</div><h3>Contacto directo</h3><p>WhatsApp, WeChat o email del proveedor para negociar sin intermediarios.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIAS -->
+<section id="categorias">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">Categorías</span>
+      <h2>Todo en un solo lugar</h2>
+      <p class="lead">Los 10 proveedores cubren electrónica, ropa, perfumes, relojes, joyería, gaming, drones y más.</p>
+    </div>
+    <div class="grid g4">
+      <div class="card cat"><div class="ico">📱</div><b>Electrónica</b><span>Accesorios, audio, gadgets</span></div>
+      <div class="card cat"><div class="ico">👕</div><b>Ropa y calzado</b><span>Moda, deportiva, básicos</span></div>
+      <div class="card cat"><div class="ico">🧴</div><b>Perfumes y cosmética</b><span>Marca blanca y private label</span></div>
+      <div class="card cat"><div class="ico">⌚</div><b>Relojes y accesorios</b><span>Genéricos y marca propia</span></div>
+      <div class="card cat"><div class="ico">💍</div><b>Joyería</b><span>Acero, plata, fantasía</span></div>
+      <div class="card cat"><div class="ico">🎮</div><b>Gaming</b><span>Consolas retro, accesorios</span></div>
+      <div class="card cat"><div class="ico">🚁</div><b>Drones y cámaras</b><span>Con certificaciones</span></div>
+      <div class="card cat"><div class="ico">🏠</div><b>Hogar y más</b><span>Electrodomésticos, belleza, mascotas</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section id="como" class="alt">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">Cómo funciona</span>
+      <h2>De cero a tu primer pedido en 4 pasos</h2>
+    </div>
+    <div class="grid g4">
+      <div class="card step" data-n="01"><h3>Elige tu plan</h3><p>Sección 1 ($12), Sección 2 ($25) o ambas.</p></div>
+      <div class="card step" data-n="02"><h3>Recibe tu acceso</h3><p>Recibes los datos de tus proveedores por email al pagar.</p></div>
+      <div class="card step" data-n="03"><h3>Compara</h3><p>Revisa MOQ, precios, plazos y tipo de cada proveedor.</p></div>
+      <div class="card step" data-n="04"><h3>Contacta y negocia</h3><p>Pide muestras y cotizaciones directamente al proveedor.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PARA QUIEN -->
+<section>
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">Para quién es</span>
+      <h2>Úsalo para tu negocio o para ti</h2>
+    </div>
+    <div class="grid g2 split">
+      <div class="card"><h3>Para tu negocio</h3><p>Si vendes o quieres empezar a vender.</p>
+        <ul><li>Dropshipping y tiendas online</li><li>Revendedores y mayoristas</li><li>Marca propia (private label)</li><li>Tiendas físicas y de reventa</li></ul></div>
+      <div class="card"><h3>Para uso personal</h3><p>Si quieres comprar directo y más barato.</p>
+        <ul><li>Compras para ti, familia o amigos</li><li>Regalos y pedidos en grupo</li><li>Productos difíciles de encontrar</li><li>Comparar precios de fábrica</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- VERIFICACION -->
+<section class="alt">
+  <div class="wrap verify">
+    <div>
+      <span class="eyebrow">Confianza</span>
+      <h2>Cómo revisamos a cada proveedor</h2>
+      <p class="lead">No listamos a cualquiera. Cada ficha pasa por una revisión básica antes de publicarse y se vuelve a revisar con el tiempo.</p>
+    </div>
+    <ul class="checks">
+      <li>Revisión de licencia de empresa e historial público</li>
+      <li>Prueba de comunicación y tiempo de respuesta</li>
+      <li>Datos claros: MOQ, precios, plazos y tipo de proveedor</li>
+      <li>Fecha de verificación indicada en cada ficha</li>
+      <li>Retiramos de la lista a cualquier proveedor con reportes de problemas</li>
+    </ul>
+  </div>
+</section>
+
+<!-- PLANES -->
+<section id="planes">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow">Planes</span>
+      <h2>10 proveedores, 2 secciones</h2>
+      <p class="lead">Dos secciones de 5 proveedores cada una, con productos de todas las categorías. Paga solo la que necesites.</p>
+    </div>
+    <div class="grid g2" style="max-width:820px;margin-inline:auto">
+      <div class="card price-card">
+        <h3>Sección 1</h3><p>5 proveedores para empezar.</p>
+        <div class="price">$12<small> / pago único</small></div>
+        <ul>
+          <li>5 proveedores verificados</li>
+          <li>Electrónica, ropa, perfumes y más</li>
+          <li>Contacto directo (WhatsApp/WeChat/email)</li>
+          <li>MOQ, rango de precios y plazos</li>
+          <li>Uso personal o para tu negocio</li>
+        </ul>
+        <a href="#acceso" class="btn btn-ghost">Quiero la Sección 1</a>
+      </div>
+      <div class="card price-card pop">
+        <span class="badge">MÁS COMPLETA</span>
+        <h3>Sección 2</h3><p>5 proveedores adicionales.</p>
+        <div class="price">$25<small> / pago único</small></div>
+        <ul>
+          <li>5 proveedores verificados</li>
+          <li>Joyería, relojes, gaming, drones y más</li>
+          <li>Contacto directo (WhatsApp/WeChat/email)</li>
+          <li>MOQ, rango de precios y plazos</li>
+          <li>Uso personal o para tu negocio</li>
+        </ul>
+        <a href="#acceso" class="btn btn-primary">Quiero la Sección 2</a>
+      </div>
+    </div>
+    <p class="note center">Precios en dólares (USD). Acceso inmediato tras el pago.</p>
+  </div>
+</section>
+
+<!-- AVISO LEGAL -->
+<section class="alt" style="padding:56px 0">
+  <div class="wrap">
+    <div class="warn">
+      <h3>Importante antes de comprar</h3>
+      <p>Store 7 es una lista informativa de proveedores. No vendemos ni enviamos productos, y no somos parte de la transacción entre tú y el proveedor. No listamos proveedores de réplicas ni falsificaciones, y está prohibido usar estos proveedores para venderlas. Pide siempre muestras, verifica certificaciones y haz tu propia comprobación antes de pagar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap" style="max-width:780px">
+    <div class="center" style="margin-bottom:34px">
+      <span class="eyebrow">Preguntas frecuentes</span>
+      <h2>Resolvemos tus dudas</h2>
+    </div>
+    <details><summary>¿Qué recibo exactamente al pagar?</summary><p>Los datos de 5 proveedores por cada sección que compres (contacto, MOQ, rango de precios y plazos). Llegan por email.</p></details>
+    <details><summary>¿Vendéis productos?</summary><p>No. Store 7 es una lista de proveedores: tú contactas y compras directamente al proveedor.</p></details>
+    <details><summary>¿Puedo usarlo para mi negocio y para uso personal?</summary><p>Sí. Puedes usar los proveedores para tu negocio o para compras personales.</p></details>
+    <details><summary>¿Hay proveedores de marcas como Dyson, PlayStation, Nintendo o relojes de lujo?</summary><p>No. Esas marcas solo se distribuyen por canales autorizados. En esas categorías incluimos productos genéricos o de marca propia, como aspiradoras y secadores sin marca, consolas retro, relojes y joyería genéricos o de marca blanca.</p></details>
+    <details><summary>¿Garantizáis que un proveedor sea 100 % fiable?</summary><p>No podemos garantizarlo. Aplicamos un proceso de revisión, pero cada pedido es un acuerdo entre tú y el proveedor. Recomendamos empezar con muestras y pedidos pequeños.</p></details>
+    <details><summary>¿Cuántos proveedores incluye?</summary><p>10 en total: 5 en la Sección 1 ($12) y 5 en la Sección 2 ($25). Puedes comprar una o ambas.</p></details>
+    <details><summary>¿Los pagos son únicos o recurrentes?</summary><p>Son pagos únicos. No hay suscripción.</p></details>
+    <details><summary>¿Necesito experiencia importando?</summary><p>No. Recomendamos empezar con muestras y un pedido pequeño. Cada ficha incluye lo necesario para contactar.</p></details>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="acceso" class="final alt">
+  <div class="wrap">
+    <span class="eyebrow">Empieza hoy</span>
+    <h2>Consigue tus proveedores</h2>
+    <p class="lead" style="margin-inline:auto">Déjanos tu email y te enviamos la información de acceso.</p>
+    <form class="signup" id="signup" novalidate>
+      <input type="email" id="email" placeholder="tu@email.com" aria-label="Tu email" required>
+      <button class="btn btn-primary" type="submit">Quiero acceso</button>
+    </form>
+    <p class="msg" id="msg" role="status"></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a href="#top" class="logo">Store<b>7</b></a>
+      <nav>
+        <a href="#">Términos de uso</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Reembolsos</a>
+        <a href="#">Contacto</a>
+      </nav>
+    </div>
+    <p class="legal">© <span id="y"></span> Store 7. Lista informativa. No vendemos productos ni intervenimos en las transacciones entre usuarios y proveedores. Las marcas mencionadas pertenecen a sus respectivos propietarios.</p>
+  </div>
+</footer>
+
+<script>
+document.getElementById('y').textContent = new Date().getFullYear();
+// Sustituye este handler por tu servicio de email/pagos (Shopify, Stripe, Mailchimp...)
+document.getElementById('signup').addEventListener('submit', function(e){
+  e.preventDefault();
+  var v = document.getElementById('email').value.trim();
+  var msg = document.getElementById('msg');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ msg.style.color='#f87171'; msg.textContent='Introduce un email válido.'; return; }
+  msg.style.color='';
+  msg.textContent='¡Listo! Te escribiremos pronto.';
+  this.reset();
+});
+</script>
+</body>
+</html>
