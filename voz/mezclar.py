@@ -21,18 +21,18 @@ def mix(video,lines,total,fade_at,fade_d,out,captions=None):
         for i,t in enumerate(captions):
             idx,s,limit=lines[i]; d=dur(f'y/t{idx}.wav'); e=s+d/max(1.0,d/limit)+0.25
             a=f"if(lt(t,{s+.15}),(t-{s})/.15,if(gt(t,{e-.15}),({e}-t)/.15,1))"
-            dts.append(f"drawtext=fontfile={F}:text='{t}':fontsize=36:fontcolor=white:alpha='{a}':box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=h*0.84:enable='between(t,{s},{e})'")
+            dts.append(f"drawtext=fontfile={F}:text='{t}':fontsize={36 if len(t)<=30 else 30}:fontcolor=white:alpha='{a}':box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=h*0.84:enable='between(t,{s},{e})'")
         cmd=['ffmpeg','-v','error','-y',*ins,'-filter_complex',';'.join(fc)+f';[0:v]{",".join(dts)}[vv]']; vm=['-map','[vv]','-c:v','libx264','-crf','18','-pix_fmt','yuv420p']
     else: vm=['-map','0:v','-c:v','copy']
     subprocess.run([*cmd,*vm,'-map','[a]','-c:a','aac','-b:a','192k','-t',str(total),out],check=True)
-ST=[0.1,2.1,4.1,6.1,8.1]
-S={'A':[1,2,3,4,5],'B':[6,7,8,9,5],'C':[10,3,12,13,5]}
-CAP={'A':["Between every sound, a gap.","Step inside it.","What waits behind the silence?","Your own thoughts.","The Silence Collection."],
-     'B':["There\u2019s a gap in the noise.","Most never find it.","Behind it, stillness.","Wide. Deep. Yours.","The Silence Collection."],
-     'C':["Listen to the gap.","What waits behind the silence?","Everything you\u2019ve been missing.","Step through.","The Silence Collection."]}
-for v,ids in S.items():
-    L=[(i,s,1.9) for i,s in zip(ids,ST)]
+LN={'A':[(24,0.1,2.4),(25,2.6,1.9),(23,4.3,1.3),(18,6.1,1.9),(5,8.1,1.9)],
+    'B':[(26,0.1,1.9),(27,2.1,1.95),(28,4.1,1.4),(29,6.1,1.4),(5,8.1,1.9)],
+    'C':[(30,0.1,2.7),(31,2.9,1.9),(25,5.0,1.8),(23,7.0,1.1),(5,8.3,1.5)]}
+CAP={'A':["Between two thoughts, there\u2019s silence.","That silence is you.","Discover it.","Shaped to your ear.","The Silence Collection."],
+     'B':["Have you heard it?","The silence between thoughts.","That\u2019s you.","Step inside.","The Silence Collection."],
+     'C':["One thought. Then... another.","Between them, silence.","That silence is you.","Discover it.","The Silence Collection."]}
+for v,L in LN.items():
     mix(f'src_{v}.mp4',L,10,3.6,2.2,f'q_{v}.mp4')
     mix(f'src_{v}.mp4',L,10,3.6,2.2,f'q_{v}_t.mp4',captions=CAP[v])
-mix('src_L.mp4',[(1,0.3,2.6),(15,3.4,2.5),(16,6.2,2.6),(17,9.0,2.6),(13,12.0,1.5),(18,16.0,2.0),(5,21.0,2.6)],26.29,7.5,3.0,'q_L.mp4')
+mix('src_L.mp4',[(21,0.3,4.5),(22,5.0,2.4),(23,7.6,1.4),(16,9.4,2.6),(18,12.6,2.0),(13,16.0,1.5),(5,21.0,2.6)],26.29,7.5,3.0,'q_L.mp4')
 for f in ['A','B','C','A_t','B_t','C_t','L']: print(f,dur(f'q_{f}.mp4'))
