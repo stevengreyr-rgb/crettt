@@ -2,11 +2,8 @@ import subprocess, shutil
 D='/home/user/crettt'; F='/usr/share/fonts/opentype/inter/InterDisplay-Bold.otf'
 def dur(f): return float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',f]))
 def fx(idx,limit):
-    f=f'y/t{idx}.wav'; sp=max(1.0,dur(f)*1.04/limit); out=f'y/fx{idx}_{int(limit*10)}.wav'
-    fc=(f'[0:a]atempo={sp:.3f},loudnorm=I=-17:TP=-2,aresample=44100,asetrate=42400,aresample=44100,asplit=2[d][s];'
-        '[d]aecho=0.8:0.88:70|150|300|600|1000:0.4|0.32|0.25|0.18|0.1[dr];'
-        '[s]asetrate=88200,aresample=44100,atempo=0.5,volume=0.22,aecho=0.8:0.9:200|500|900:0.5|0.4|0.3[sr];'
-        '[dr][sr]amix=inputs=2:normalize=0,pan=stereo|c0=c0|c1=c0,adelay=0|16,apad=pad_dur=1.8,alimiter=limit=0.95[o]')
+    f=f'y/t{idx}.wav'; sp=max(1.0,dur(f)/limit); out=f'y/fx{idx}_{int(limit*10)}.wav'
+    fc=f'[0:a]atempo={sp:.3f},loudnorm=I=-17:TP=-2,aresample=44100,pan=stereo|c0=c0|c1=c0,apad=pad_dur=0.3,alimiter=limit=0.95[o]'
     subprocess.run(['ffmpeg','-v','error','-y','-i',f,'-filter_complex',fc,'-map','[o]','-ar','44100',out],check=True); return out
 def mix(video,lines,total,fade_at,fade_d,out,captions=None):
     ins=['-i',video]; fc=[]; labs=[]
