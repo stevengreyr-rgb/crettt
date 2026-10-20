@@ -25,14 +25,25 @@ def mix(video,lines,total,fade_at,fade_d,out,captions=None):
         cmd=['ffmpeg','-v','error','-y',*ins,'-filter_complex',';'.join(fc)+f';[0:v]{",".join(dts)}[vv]']; vm=['-map','[vv]','-c:v','libx264','-crf','18','-pix_fmt','yuv420p']
     else: vm=['-map','0:v','-c:v','copy']
     subprocess.run([*cmd,*vm,'-map','[a]','-c:a','aac','-b:a','192k','-t',str(total),out],check=True)
-LN={'A':[(24,0.1,2.4),(25,2.6,1.9),(23,4.3,1.3),(18,6.1,1.9),(5,8.1,1.9)],
-    'B':[(26,0.1,1.9),(27,2.1,1.95),(28,4.1,1.4),(29,6.1,1.4),(5,8.1,1.9)],
-    'C':[(30,0.1,2.7),(31,2.9,1.9),(25,5.0,1.8),(23,7.0,1.1),(5,8.3,1.5)]}
-CAP={'A':["Between two thoughts, there\u2019s silence.","That silence is you.","Discover it.","Shaped to your ear.","The Silence Collection."],
-     'B':["Have you heard it?","The silence between thoughts.","That\u2019s you.","Step inside.","The Silence Collection."],
-     'C':["One thought. Then... another.","Between them, silence.","That silence is you.","Discover it.","The Silence Collection."]}
-for v,L in LN.items():
-    mix(f'src_{v}.mp4',L,10,3.6,2.2,f'q_{v}.mp4')
-    mix(f'src_{v}.mp4',L,10,3.6,2.2,f'q_{v}_t.mp4',captions=CAP[v])
-mix('src_L.mp4',[(21,0.3,4.5),(22,5.0,2.4),(23,7.6,1.4),(16,9.4,2.6),(18,12.6,2.0),(13,16.0,1.5),(5,21.0,2.6)],26.29,7.5,3.0,'q_L.mp4')
+def sched(ids,start,gap,end_pin,coll=5):
+    body=ids[:-1]; ds=[dur(f'y/t{i}.wav') for i in body]
+    avail=end_pin-start-gap*(len(body))
+    sp=max(1.0,sum(ds)/avail); t=start; out=[]
+    for i,d in zip(body,ds):
+        out.append((i,round(t,2),d/sp)); t+=d/sp+gap
+    out.append((ids[-1],end_pin,dur(f'y/t{ids[-1]}.wav')))
+    return out
+SC={'A':[81,82,83,84,5],'B':[81,86,87,88,5],'C':[89,90,91,92,5]}
+CAP={'A':["If only you knew","what you could discover","if you lowered your outside noise","and merged with the silence","The Silence Collection."],
+     'B':["If only you knew","what lies on the other side of the noise","Merge with the silence","that these earbuds offer you.","The Silence Collection."],
+     'C':["Turn down the noise around you,","and merge with the silence.","Discover who you already are.","These earbuds offer you the way in.","The Silence Collection."]}
+for v,ids in SC.items():
+    L=sched(ids,0.15,0.2,8.3)
+    print(v,[(i,st) for i,st,_ in L])
+    fade=max(L[2][1]-0.2,1.0)
+    mix(f'src_{v}.mp4',L,10,fade,2.2,f'q_{v}.mp4')
+    mix(f'src_{v}.mp4',L,10,fade,2.2,f'q_{v}_t.mp4',captions=CAP[v])
+LL=sched([81,82,93,84,88,91,5],0.5,1.1,21.0)
+print('L',[(i,st) for i,st,_ in LL])
+mix('src_L.mp4',LL,26.29,LL[3][1]-0.5,3.0,'q_L.mp4')
 for f in ['A','B','C','A_t','B_t','C_t','L']: print(f,dur(f'q_{f}.mp4'))
