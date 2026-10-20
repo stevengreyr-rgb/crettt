@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Cuando tengas dominio propio, agregá aquí:
+# Sitemap: https://vieweb.page/sitemap.xml
