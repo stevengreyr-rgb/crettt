@@ -1,15 +1,41 @@
-import subprocess
+import subprocess, shutil
+D='/home/user/crettt'; F='/usr/share/fonts/opentype/inter/InterDisplay-Bold.otf'
 def dur(f): return float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',f]))
-def mix(video,lines,out,total):
+def fx(idx,limit):
+    f=f'y/t{idx}.wav'; sp=max(1.0,dur(f)*1.04/limit); out=f'y/fx{idx}_{int(limit*10)}.wav'
+    fc=(f'[0:a]atempo={sp:.3f},loudnorm=I=-17:TP=-2,aresample=44100,asetrate=42400,aresample=44100,asplit=2[d][s];'
+        '[d]aecho=0.8:0.88:70|150|300|600|1000:0.4|0.32|0.25|0.18|0.1[dr];'
+        '[s]asetrate=88200,aresample=44100,atempo=0.5,volume=0.22,aecho=0.8:0.9:200|500|900:0.5|0.4|0.3[sr];'
+        '[dr][sr]amix=inputs=2:normalize=0,pan=stereo|c0=c0|c1=c0,adelay=0|16,apad=pad_dur=1.8,alimiter=limit=0.95[o]')
+    subprocess.run(['ffmpeg','-v','error','-y','-i',f,'-filter_complex',fc,'-map','[o]','-ar','44100',out],check=True); return out
+def mix(video,lines,total,fade_at,fade_d,out,captions=None):
     ins=['-i',video]; fc=[]; labs=[]
     for k,(idx,start,limit) in enumerate(lines):
-        f=f'h/c{idx}.wav'; sp=max(1.0,dur(f)/limit); ins+=['-i',f]
-        fc.append(f'[{k+1}:a]atempo={sp:.3f},loudnorm=I=-16:TP=-2,adelay={int(start*1000)}|{int(start*1000)}[v{k}]'); labs.append(f'[v{k}]')
-    fc.append(f'{"".join(labs)}amix=inputs={len(labs)}:normalize=0:duration=longest,apad,alimiter=limit=0.95[a]')
-    subprocess.run(['ffmpeg','-v','error','-y',*ins,'-filter_complex',';'.join(fc),'-map','0:v','-map','[a]','-c:v','copy','-c:a','aac','-b:a','192k','-t',str(total),out],check=True)
+        ins+=['-i',fx(idx,limit)]; fc.append(f'[{k+1}:a]adelay={int(start*1000)}|{int(start*1000)}[v{k}]'); labs.append(f'[v{k}]')
+    n=len(lines)+1
+    ins+=['-f','lavfi','-i',f'anoisesrc=d={total}:c=pink:r=44100:a=0.5']
+    fc.append(f'[{n}:a]highpass=f=150,lowpass=f=3200,tremolo=f=0.35:d=0.4,volume=0.4,afade=t=out:st={fade_at}:d={fade_d},pan=stereo|c0=c0|c1=c0[nz]')
+    labs.append('[nz]')
+    fc.append(f'{"".join(labs)}amix=inputs={len(labs)}:normalize=0:duration=longest,alimiter=limit=0.95[a]')
+    vf=[]
+    cmd=['ffmpeg','-v','error','-y',*ins,'-filter_complex',';'.join(fc)]
+    if captions:
+        dts=[]
+        for i,t in enumerate(captions):
+            s=i*2+0.1; e=s+1.8
+            a=f"if(lt(t,{s+.15}),(t-{s})/.15,if(gt(t,{e-.15}),({e}-t)/.15,1))"
+            dts.append(f"drawtext=fontfile={F}:text='{t}':fontsize=44:fontcolor=white:alpha='{a}':box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=h*0.84:enable='between(t,{s},{e})'")
+        cmd=['ffmpeg','-v','error','-y',*ins,'-filter_complex',';'.join(fc)+f';[0:v]{",".join(dts)}[vv]']; vm=['-map','[vv]','-c:v','libx264','-crf','18','-pix_fmt','yuv420p']
+    else: vm=['-map','0:v','-c:v','copy']
+    subprocess.run([*cmd,*vm,'-map','[a]','-c:a','aac','-b:a','192k','-t',str(total),out],check=True)
 ST=[0.1,2.1,4.1,6.1,8.1]
 S={'A':[1,2,3,4,5],'B':[6,7,8,9,10],'C':[11,12,13,14,15]}
+CAP={'A':["The world is loud.","Find the quiet within.","Let the noise fade.","Silence, perfectly fitted.","Everything you need. Inside."],
+     'B':["Can you hear yourself?","Beneath the noise.","Stillness begins.","Shaped to your ear.","Press play. Breathe."],
+     'C':["Noise follows you.","Release it.","Silence. Wireless.","Made for your ear.","Your quiet, inside."]}
 for v,ids in S.items():
-    mix(f'src_{v}.mp4',[(i,s,1.9) for i,s in zip(ids,ST)],f'p_{v}.mp4',10)
-mix('src_L.mp4',[(16,0.3,2.5),(17,3.3,2.7),(8,6.1,2.0),(18,8.4,3.0),(19,11.6,2.3),(20,15.95,3.1),(5,20.95,2.4)],'p_L.mp4',26.29)
-for v in 'ABCL': print(v,dur(f'p_{v}.mp4'))
+    L=[(i,s,1.9) for i,s in zip(ids,ST)]
+    mix(f'src_{v}.mp4',L,10,3.6,2.2,f'q_{v}.mp4')
+    mix(f'src_{v}.mp4',L,10,3.6,2.2,f'q_{v}_t.mp4',captions=CAP[v])
+mix('src_L.mp4',[(1,0.3,2.4),(16,3.3,2.7),(3,6.3,2.0),(17,8.5,3.0),(18,11.8,2.2),(9,14.0,2.0),(15,20.95,2.6)],26.29,7.5,3.0,'q_L.mp4')
+for f in ['A','B','C','A_t','B_t','C_t','L']: print(f,dur(f'q_{f}.mp4'))
