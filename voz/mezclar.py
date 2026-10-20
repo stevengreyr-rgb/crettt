@@ -19,7 +19,7 @@ def mix(video,lines,total,fade_at,fade_d,out,captions=None):
     if captions:
         dts=[]
         for i,t in enumerate(captions):
-            s=i*2+0.1; e=s+1.8
+            idx,s,limit=lines[i]; d=dur(f'y/t{idx}.wav'); e=s+d/max(1.0,d/limit)+0.25
             a=f"if(lt(t,{s+.15}),(t-{s})/.15,if(gt(t,{e-.15}),({e}-t)/.15,1))"
             dts.append(f"drawtext=fontfile={F}:text='{t}':fontsize=36:fontcolor=white:alpha='{a}':box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=h*0.84:enable='between(t,{s},{e})'")
         cmd=['ffmpeg','-v','error','-y',*ins,'-filter_complex',';'.join(fc)+f';[0:v]{",".join(dts)}[vv]']; vm=['-map','[vv]','-c:v','libx264','-crf','18','-pix_fmt','yuv420p']
