@@ -24,18 +24,18 @@ def mix(video,lines,total,fade_at,fade_d,out,captions=None):
         for i,t in enumerate(captions):
             s=i*2+0.1; e=s+1.8
             a=f"if(lt(t,{s+.15}),(t-{s})/.15,if(gt(t,{e-.15}),({e}-t)/.15,1))"
-            dts.append(f"drawtext=fontfile={F}:text='{t}':fontsize=44:fontcolor=white:alpha='{a}':box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=h*0.84:enable='between(t,{s},{e})'")
+            dts.append(f"drawtext=fontfile={F}:text='{t}':fontsize=36:fontcolor=white:alpha='{a}':box=1:boxcolor=black@0.5:boxborderw=18:x=(w-text_w)/2:y=h*0.84:enable='between(t,{s},{e})'")
         cmd=['ffmpeg','-v','error','-y',*ins,'-filter_complex',';'.join(fc)+f';[0:v]{",".join(dts)}[vv]']; vm=['-map','[vv]','-c:v','libx264','-crf','18','-pix_fmt','yuv420p']
     else: vm=['-map','0:v','-c:v','copy']
     subprocess.run([*cmd,*vm,'-map','[a]','-c:a','aac','-b:a','192k','-t',str(total),out],check=True)
 ST=[0.1,2.1,4.1,6.1,8.1]
-S={'A':[1,2,3,4,5],'B':[6,7,8,9,10],'C':[11,12,13,14,15]}
-CAP={'A':["The world is loud.","Find the quiet within.","Let the noise fade.","Silence, perfectly fitted.","Everything you need. Inside."],
-     'B':["Can you hear yourself?","Beneath the noise.","Stillness begins.","Shaped to your ear.","Press play. Breathe."],
-     'C':["Noise follows you.","Release it.","Silence. Wireless.","Made for your ear.","Your quiet, inside."]}
+S={'A':[1,2,3,4,5],'B':[6,7,8,9,5],'C':[10,3,12,13,5]}
+CAP={'A':["Between every sound, a gap.","Step inside it.","What waits behind the silence?","Your own thoughts.","The Silence Collection."],
+     'B':["There\u2019s a gap in the noise.","Most never find it.","Behind it, stillness.","Wide. Deep. Yours.","The Silence Collection."],
+     'C':["Listen to the gap.","What waits behind the silence?","Everything you\u2019ve been missing.","Step through.","The Silence Collection."]}
 for v,ids in S.items():
     L=[(i,s,1.9) for i,s in zip(ids,ST)]
     mix(f'src_{v}.mp4',L,10,3.6,2.2,f'q_{v}.mp4')
     mix(f'src_{v}.mp4',L,10,3.6,2.2,f'q_{v}_t.mp4',captions=CAP[v])
-mix('src_L.mp4',[(1,0.3,2.4),(16,3.3,2.7),(3,6.3,2.0),(17,8.5,3.0),(18,11.8,2.2),(9,14.0,2.0),(15,20.95,2.6)],26.29,7.5,3.0,'q_L.mp4')
+mix('src_L.mp4',[(1,0.3,2.6),(15,3.4,2.5),(16,6.2,2.6),(17,9.0,2.6),(13,12.0,1.5),(18,16.0,2.0),(5,21.0,2.6)],26.29,7.5,3.0,'q_L.mp4')
 for f in ['A','B','C','A_t','B_t','C_t','L']: print(f,dur(f'q_{f}.mp4'))
