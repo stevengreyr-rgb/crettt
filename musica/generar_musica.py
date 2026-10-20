@@ -20,46 +20,65 @@ def wood(f,n=2200):  # palos / claves
     t=T(n); return (np.sin(2*np.pi*f*t)*np.exp(-t*90)+.4*np.sin(2*np.pi*f*2.7*t)*np.exp(-t*140))
 def scrape(n=2500): return hpf(rng.standard_normal(n),5000)*np.exp(-T(n)*60)
 
-ROOTS=[45,45,43,40]  # A A G E (low)
-def tom(f,n=None,dec=9): n=n or int(.5*sr); return drum(f*1.5,f,n,dec,.08)
-def bellows(f,n,dur,swell,sec=True):
-    x=reed(f,n,dur,att=.03,rel=.15,trem=4.5,td=.12,bright=900)
-    x+=reed(f*1.5,n,dur,att=.03,rel=.15,trem=4.5,td=.12,bright=700)*.5 if sec else 0
-    sw=np.sin(np.pi*np.clip(T(n)/dur,0,1))**swell
-    return x*(.35+.65*sw)
-def make(bpm,dur,style,out):
-    N=int(dur*sr); L=np.zeros(N); R=np.zeros(N); beat=60/bpm; e8=beat/2; e16=beat/4
+ROOTS=[45,41,36,43]  # Am F C G, bass octave
+def conga(f,kind,n=None):
+    n=n or int(.4*sr); t=T(n)
+    if kind=='open': x=np.sin(2*np.pi*(f*t+f*.35*(1-np.exp(-t*60))/60))*np.exp(-t*11)+.3*np.sin(2*np.pi*f*2.1*t)*np.exp(-t*25)
+    elif kind=='mute': x=np.sin(2*np.pi*f*t)*np.exp(-t*45)
+    else: x=bpf(rng.standard_normal(n),1500,4500)*np.exp(-t*50)*.8+.4*np.sin(2*np.pi*f*1.4*t)*np.exp(-t*30)
+    return x
+def whoosh(dur,up=True):
+    n=int(dur*sr); x=rng.standard_normal(n); out=np.zeros(n); seg=40
+    for i in range(0,n,n//seg):
+        p=i/n; c=300+(6500-300)*(p**2 if up else (1-p)**2)
+        out[i:i+n//seg]=bpf(x,c*.7,min(c*1.4,20000))[i:i+n//seg]
+    e=np.sin(np.pi*np.linspace(0,1,n))**(1.5 if up else 1.5)
+    return out*e*1.6
+def impact(n=None):
+    n=n or int(1.2*sr); t=T(n)
+    return np.sin(2*np.pi*(38*t+90*(1-np.exp(-t*25))/25))*np.exp(-t*3.2)+.25*lpf(rng.standard_normal(n),1800)*np.exp(-t*9)
+def sub(f,n,dur):
+    t=T(n); x=np.sin(2*np.pi*f*t)+.25*np.sin(4*np.pi*f*t)
+    return np.tanh(1.6*x)*np.minimum(t/.01,1)*np.minimum(np.maximum((dur-t)/.05,0),1)
+def make(bpm,dur,style,cuts,out,risers=()):
+    N=int(dur*sr); L=np.zeros(N); R=np.zeros(N); beat=60/bpm; e8=beat/2
     def add(x,t,g,pan=0):
         i=int(t*sr)
         if i>=N or i<0: return
         x=x[:N-i]; L[i:i+len(x)]+=x*g*(1-max(pan,0)); R[i:i+len(x)]+=x*g*(1+min(pan,0))
+    duck=np.ones(N)
     for bar in range(int(dur/(4*beat))+2):
-        r=ROOTS[bar%4]; t0=bar*4*beat; f=midi(r)
-        if style=='ritual':
-            add(bellows(f,int(4*beat*sr),4*beat*.95,1.2),t0,.7)
-            add(tom(95,dec=6),t0,.9); add(tom(95,dec=6),t0+2*beat,.7)
-            add(tom(140,dec=8),t0+3.5*beat,.6,pan=.3)
-            for k in (1,3): add(wood(1300,3000),t0+k*beat,.5,pan=.5)
-            add(wood(1800),t0+3.75*beat,.3,pan=.5)
-        elif style=='tribal':
-            for b in range(4):
-                t=t0+b*beat
-                add(bellows(f if b%2==0 else midi(r+7),int(beat*sr),beat*.9,.8,False),t,.6)
-                add(tom(90,dec=10),t,.9 if b%2==0 else .6)
-                add(tom(150,dec=12),t+e8,.55,pan=-.3)
-                if b in(1,3): add(tom(210,dec=14),t+e16*3,.45,pan=.3)
-                add(wood(1500),t+e8,.5,pan=.5); add(wood(2200),t+e16,.25,pan=.5) if b%2 else None
-        else: # stomp
-            for b in range(4):
-                t=t0+b*beat
-                add(bellows(f,int(beat*sr),beat*.5,.6,False),t,.65)
-                add(tom(80,dec=11),t,1.0 if b%2==0 else .7)
-                for s in range(4):
-                    add(wood(1600+200*(s%2),2200),t+s*e16,.4 if s%2==0 else .22,pan=.5)
-                if b in(1,3): add(tom(170,dec=14),t+e8,.6,pan=-.3)
+        r=ROOTS[bar%4]; t0=bar*4*beat
+        for b in range(4):
+            t=t0+b*beat
+            if style in('tech','drive'):
+                add(sub(midi(r),int(beat*sr),beat*.9),t+e8*0,.75)
+                i=int(t*sr); d=int(.18*sr)
+                if i<N: duck[i:i+d]*=np.linspace(.35,1,min(d,N-i))
+            else:
+                if b in(0,2): add(sub(midi(r),int(2*beat*sr),beat*1.8),t,.8)
+        # conga tumbao
+        pat=[('mute',0),('open',.5),('slap',1),('open',1.5),('mute',2),('open',2.5),('slap',3),('open',3.5)] if style!='chill' else [('mute',0),('open',1.5),('slap',2),('open',3),('mute',3.5)]
+        for kind,o in pat:
+            f=330 if kind!='slap' else 420
+            add(conga(f,kind),t0+o*beat,.55 if kind=='open' else .4,pan=.35)
+        if style!='chill':
+            for k in (0.25,1.25,2.25,3.25): add(conga(500,'mute'),t0+k*beat,.18,pan=-.35)
+        if style=='drive':
+            for k in range(8): add(conga(480,'slap'),t0+k*e8+e8*.5,.18,pan=-.4)
+    L*=duck; R*=duck
+    # effects: whoosh into each cut, impact on cut, risers
+    for c in cuts:
+        if c>0.4: add(whoosh(.45),c-.4,.5,pan=-.3); add(whoosh(.3,False),c,.25,pan=.3)
+        add(impact(),c,.75)
+    for a,b in risers: add(whoosh(b-a),a,.45)
     m=np.stack([L,R],1)
-    m*=np.minimum(T(N)/.03,1)[:,None]; m*=np.minimum((N-np.arange(N))/sr/.6,1)[:,None]
-    m=np.tanh(m*1.2); m/=np.abs(m).max()/0.89
+    m*=np.minimum(T(N)/.02,1)[:,None]; m*=np.minimum((N-np.arange(N))/sr/.7,1)[:,None]
+    m=np.tanh(m*1.1); m/=np.abs(m).max()/0.6
     with wave.open(out,'wb') as w:
         w.setnchannels(2); w.setsampwidth(2); w.setframerate(sr); w.writeframes((m*32767).astype(np.int16).tobytes())
-make(120,10,'tribal','mA.wav'); make(90,10,'ritual','mB.wav'); make(150,10,'stomp','mC.wav'); make(120,26.3,'tribal','mL.wav')
+c10=[0,2,4,6,8]
+make(120,10,'tech',c10,'mA.wav',risers=[(4.8,6.0)])
+make(90,10,'chill',c10,'mB.wav',risers=[(4.6,6.0)])
+make(150,10,'drive',c10,'mC.wav',risers=[(4.2,6.0),(7.0,8.0)])
+make(120,26.3,'tech',[0,3.1,6.06,8.1,11.56,13.46,15.3,15.79,20.79],'mL.wav',risers=[(14.3,15.79),(19.3,20.79)])
