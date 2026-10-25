@@ -36,7 +36,7 @@ Prompts (append to each: *"Same woman, same white robe, same white studio. Natur
 
 ## 3D colour creatives (18 s each)
 
-`python3 creatives.py` → `LED-Creative-A-18s.mp4`, `LED-Creative-B-18s.mp4` (1080×1920, 30 fps, ~-15 LUFS).
+`python3 creatives.py` → `LED-Creative-A-18s.mp4`, `LED-Creative-B-18s.mp4` (1080×1920, 30 fps, ~−31.5 LUFS).
 
 - **A · 360 Spin**: the Higgsfield turntable clip (`clips-src/turn-inside-alpha.mp4`, background removed) keyed onto a white studio. Every light change is a full 360° turn that shows the LED field inside the shell.
 - **B · Glow Macro**: the floating hero render, with a different close angle per light and a tinted light sweep on each change.
@@ -52,6 +52,6 @@ Prompts (append to each: *"Same woman, same white robe, same white studio. Natur
 
 Visuals: a zoom punch, colour bloom and expanding light ring on every light change. A spins toward the camera and glides with a slight tilt; B whip-zooms (with zoom blur) from one close-up to the next.
 
-Sound (both): a warm chill bed. Soft dark ambient air and muted electric-piano chords sit under a slow, laid-back groove at 80 BPM (soft kick, brushed snare, quiet shaker, warm sine bass). One bar is 3 s, so the downbeats land on the light changes. Every light change gets a muffled click and a soft low thump. There are no bells, beeps or bright notes, and the whole mix is rolled off above 5 kHz. Level is about −21.5 LUFS.
+Sound (both): a warm chill bed. Soft dark ambient air and muted electric-piano chords sit under a slow, laid-back groove at 80 BPM (soft kick, brushed snare, quiet shaker, warm sine bass). One bar is 3 s, so the downbeats land on the light changes. Every light change gets a muffled click and a soft low thump. There are no bells, beeps or bright notes, and the whole mix is rolled off above 5 kHz. Level is about −31.5 LUFS (very quiet, background only).
 
 Source clips in `clips-src/` (Higgsfield): `turn-red*` (360° turn, red glow), `turn-inside*` (360° turn showing the inside LEDs), `woman-blue` / `woman-green` (Kling, 3 s, real motion; not used yet).

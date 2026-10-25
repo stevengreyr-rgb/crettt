@@ -390,7 +390,7 @@ def soundtrack(path, chimes, power_on):
     R = music + RV._conv(keys * 0.6 + drums * 0.15, irs[1]) + air[1] * 0.06 + fx * 0.8
     st = np.stack([_filt(L, hi=5000), _filt(R, hi=5000)], 1)           # nothing bright or piercing
     st *= (fade_in * np.clip((TOTAL - t) / 1.0, 0, 1))[:, None]
-    st *= 10 ** (-23 / 20) / (np.sqrt(np.mean(st ** 2)) + 1e-9)         # ~ -22 LUFS, calm level
+    st *= 10 ** (-33 / 20) / (np.sqrt(np.mean(st ** 2)) + 1e-9)         # ~ -31.5 LUFS, very quiet
     with wave.open(str(path), 'wb') as f:
         f.setnchannels(2); f.setsampwidth(2); f.setframerate(SR)
         f.writeframes((np.clip(st, -1, 1) * 32767).astype('<i2').tobytes())
