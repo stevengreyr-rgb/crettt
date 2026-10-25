@@ -170,7 +170,7 @@ function stickyShip(){
 }
 
 /* ---------------- rotating product viewer (real-photo turntable) ---------------- */
-const TURN_URL='__TURN_VIDEO__',TURN_POSTER='__TURN_POSTER__',INSIDE_IMG='__INSIDE_IMG__';
+const TURN_URL='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-turn-360.mp4?v=1792903920',TURN_POSTER='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-turn-poster.webp?v=1792903919',INSIDE_IMG='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-inside-led.webp?v=1792901528';
 const HUE={0:0,1:126,2:211,3:271,4:44,5:181,6:0};   // hue-rotate from the red glow of the product photo
 const FILTER=i=>i===6?'saturate(.1) brightness(1.28)':`hue-rotate(${HUE[i]}deg)`;
 function stageMarkup(){
@@ -260,7 +260,7 @@ function stageInit(){
 }
 
 /* ---------------- how-to-use tutorial (5 steps) ---------------- */
-const TUT_IMG=['__TUT1__','__TUT2__','__TUT3__','__TUT4__','__TUT5__'];
+const TUT_IMG=['https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-1.webp?v=1792903919','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-2.webp?v=1792903919','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-3.webp?v=1792903919','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-4.webp?v=1792903919','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-5.webp?v=1792903919'];
 function tutSteps(){return [
   {k:T('Cleanse','Limpia'),h:T('Start with a bare, clean face','Empieza con la cara limpia y sin maquillaje'),
    p:T('Wash with your usual cleanser and take off all makeup and sunscreen. Rinse with lukewarm water.','Lávate con tu limpiador habitual y quita todo el maquillaje y el protector solar. Enjuaga con agua tibia.'),

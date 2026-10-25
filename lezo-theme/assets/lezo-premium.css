@@ -426,3 +426,7 @@ html,body{overflow-x:clip}
   .px-stage .px-hud{padding:0 22px 22px;flex-direction:column;align-items:stretch;gap:14px}
   .px-stage .px-meta{flex-direction:row;justify-content:space-between;align-items:center}
 }
+@media(max-width:900px){
+  .px-stage .px-mode{position:static!important;bottom:auto!important;top:auto!important;left:auto!important;right:auto!important;margin-top:18px;padding-top:16px}
+  .px-stage .px-mode-desc{font-size:15px}
+}
