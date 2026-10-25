@@ -312,121 +312,95 @@ def creative_b():
 
 
 # ---------------------------------------------------------------- sound
-# Ambient bed: slow evolving pad (Am9 - Fmaj9 - Cmaj9 - G6), high shimmer, long reverb.
-# No beat and no whooshes; each light change is one crisp button click. Mixed quiet (~-20 LUFS).
+# Warm chill bed: soft ambient air + muted chords, a slow laid-back groove (80 BPM, one bar
+# = one 3 s light), warm sine bass. No bells or bright tones; every light change is a
+# muffled click with a soft low thump. The whole mix is rolled off above ~5 kHz.
+CHILL_BPM = 80
+
+
 def click(rng):
-    """Tactile switch: a bright press transient, a tiny body resonance, and a softer release."""
-    n = int(0.09 * SR); u = np.arange(n) / SR; out = np.zeros(n)
-    press = _filt(rng.normal(0, 1, n), lo=2000, hi=11000) * np.exp(-u * 1100)
-    body = np.sin(2 * np.pi * 2300 * u) * np.exp(-u * 260) * 0.35
-    out += press + body
-    j = int(0.045 * SR)
-    out[j:] += 0.45 * (_filt(rng.normal(0, 1, n - j), lo=2500, hi=10000) * np.exp(-u[:n - j] * 1400))
-    return out / np.abs(out).max()
+    """Muffled tactile click (low-passed so it never bites)."""
+    m = int(0.07 * SR); u = np.arange(m) / SR
+    x = _filt(rng.normal(0, 1, m), lo=600, hi=3500) * np.exp(-u * 700)
+    x += 0.5 * np.sin(2 * np.pi * 900 * u) * np.exp(-u * 300)
+    return x / np.abs(x).max()
 
 
-def piano_note(f0, dur, vel, rng):
-    """Soft felt-piano tone: slightly inharmonic partials, faster decay up high, gentle hammer."""
-    n = int(dur * SR); u = np.arange(n) / SR; out = np.zeros(n)
-    for k in range(1, 9):
-        fk = k * f0 * np.sqrt(1 + 0.0004 * k * k)
-        if fk > 9000: break
-        out += (vel ** (0.6 + 0.15 * k)) / k ** 1.6 * np.sin(2 * np.pi * fk * u + rng.uniform(0, 6.3)) * np.exp(-u * (0.55 + 0.45 * k) * (f0 / 260) ** 0.4)
-    out += 0.02 * vel * _filt(rng.normal(0, 1, n), lo=400, hi=3000) * np.exp(-u * 90)
-    return out * np.minimum(u / 0.004, 1) * np.clip((dur - u) / 0.3, 0, 1)
+def thump(dur=0.9, f0=55):
+    m = int(dur * SR); u = np.arange(m) / SR
+    return np.sin(2 * np.pi * np.cumsum(f0 + 35 * np.exp(-u * 20)) / SR) * np.exp(-u * 4.5) * np.minimum(u / .006, 1)
 
 
-def piano_bed(n, rng):
-    """Sparse ambient piano over Am9 - Fmaj9 - Cmaj9 - G6: low root, then a slow, airy figure."""
-    out = np.zeros(n)
-    bars = [(45, [69, 72, 76, 71, 67]), (41, [69, 72, 76, 79, 76]), (48, [67, 71, 74, 76, 71]), (43, [67, 71, 74, 69, 74])]
-    span = TOTAL / 4
-    figure = [0.35, 1.15, 1.95, 2.95, 3.7]
-    for c, (root, top) in enumerate(bars):
-        t0 = c * span
-        _add(out, piano_note(_note(root), 4.5, 0.45, rng), t0, 0.8)
-        _add(out, piano_note(_note(root + 12), 4.0, 0.35, rng), t0 + 0.02, 0.5)
-        for dt, m in zip(figure, top):
-            if t0 + dt < CTA_AT - 0.2 or c == 3:
-                _add(out, piano_note(_note(m), 3.0, 0.42 + 0.08 * rng.random(), rng), t0 + dt, 0.55)
-    for k, m in enumerate([57, 64, 67, 71, 76]):                       # rolled chord for the offer
-        _add(out, piano_note(_note(m), 3.0, 0.5, rng), CTA_AT + 0.06 * k, 0.5)
-    return _filt(out, lo=50, hi=4200)
-
-
-def soundtrack(path, chimes, power_on, bed='pad'):
+def soundtrack(path, chimes, power_on):
     n = int(TOTAL * SR); t = np.arange(n) / SR
-    rng = np.random.default_rng(11)
-    if bed == 'piano':
-        piano_soundtrack(path, chimes, power_on, n, t, rng)
-        return
-    chords = [[45, 57, 60, 64, 67, 71], [41, 53, 57, 60, 64, 67], [48, 55, 59, 62, 64, 71], [43, 55, 59, 62, 64, 69]]
-    span = TOTAL / len(chords)
-    pad = np.zeros(n); shim = np.zeros(n)
-    for c, notes in enumerate(chords):
-        t0 = c * span
-        env = np.clip((t - t0 + 1.2) / 2.0, 0, 1) * np.clip((t0 + span + 1.2 - t) / 2.0, 0, 1)
-        env = np.sin(env * np.pi / 2) ** 2
-        for m in notes:
-            f0 = _note(m)
-            for det in (-0.0018, 0.0, 0.0021):
-                pad += env * np.sin(2 * np.pi * f0 * (1 + det) * t + rng.uniform(0, 6.3)) * (0.6 if m < 50 else 1.0)
-            shim += env * np.sin(2 * np.pi * f0 * 4 * t) * (0.5 + 0.5 * np.sin(2 * np.pi * (0.13 + 0.02 * m % 3) * t)) * (m > 54)
-    swell = 1 + 0.35 * np.clip((t - CTA_AT) / 1.5, 0, 1)                 # lifts for the offer
-    pad = _filt(pad, lo=60, hi=1400) * (1 + 0.08 * np.sin(2 * np.pi * 0.21 * t)) * swell
-    shim = _filt(shim, hi=7000) * 0.05 * swell
-    L = pad + shim; R = pad * 0.98 + np.roll(shim, 700)
+    rng = np.random.default_rng(21)
+    beat = 60 / CHILL_BPM; bar = 4 * beat                              # bar = 3 s = one light
+    offset = chimes[0][0] % bar                                       # downbeats land on the light changes
+    start = chimes[0][0] - bar                                        # groove enters with the first light
+    stop = TOTAL - 1.2
+
+    # one-shots: soft kick, brushed snare, quiet shaker - all dark
+    km = int(.5 * SR); ku = np.arange(km) / SR
+    kick = np.sin(2 * np.pi * np.cumsum(46 + 50 * np.exp(-ku * 28)) / SR) * np.exp(-ku * 7)
+    sm = int(.35 * SR); su = np.arange(sm) / SR
+    snare = _filt(rng.normal(0, 1, sm), lo=300, hi=2600) * np.exp(-su * 14) + 0.3 * np.sin(2 * np.pi * 190 * su) * np.exp(-su * 25)
+    hm = int(.08 * SR); hu = np.arange(hm) / SR
+    shk = _filt(rng.normal(0, 1, hm), lo=2000, hi=4800) * np.sin(np.pi * hu / .08) ** 2
+
+    chords = [[57, 60, 64, 67], [53, 57, 60, 64], [48, 52, 55, 59], [55, 59, 62, 64]]
+    roots = [33, 29, 36, 31]
+    drums = np.zeros(n); bass = np.zeros(n); keys = np.zeros(n)
+    b_i = 0; tb = offset - bar * int(offset / bar + 1)
+    while tb < TOTAL:
+        ch, rt = chords[b_i % 4], roots[b_i % 4]
+        if tb + bar > 0:
+            # muted electric-piano chord, slow attack, held through the bar
+            m = int((bar + 1.5) * SR); u = np.arange(m) / SR
+            env = np.minimum(u / 0.25, 1) * np.exp(-u * 0.45)
+            stab = sum(np.sin(2 * np.pi * _note(x) * u) + 0.25 * np.sin(4 * np.pi * _note(x) * u) * np.exp(-u * 3) for x in ch)
+            _add(keys, stab * env / 4, max(tb, 0), 1.0)
+            if start - 0.01 <= tb < stop:
+                for k, (kind, pos, g) in enumerate([('k', 0, 1.0), ('s', 1, .55), ('k', 2.5, .7), ('s', 3, .55)]):
+                    _add(drums, kick if kind == 'k' else snare, tb + pos * beat, g)
+                for q in range(8):
+                    _add(drums, shk, tb + q * beat / 2 + 0.02, 0.12 if q % 2 else 0.07)
+                m2 = int(beat * 1.6 * SR); u2 = np.arange(m2) / SR
+                tone = np.sin(2 * np.pi * _note(rt) * u2) * np.minimum(u2 / .02, 1) * np.exp(-u2 * 1.2)
+                _add(bass, tone, tb, 0.9); _add(bass, tone * 0.7, tb + 2.5 * beat, 1.0)
+        tb += bar; b_i += 1
+    keys = _filt(keys, lo=120, hi=1400)
+    # ambient air: slow, dark, breathing (like a quiet room / distant waves)
+    air = [_filt(rng.normal(0, 1, n), lo=80, hi=900) for _ in range(2)]
+    swell = 0.6 + 0.4 * np.sin(2 * np.pi * t / 9.0) ** 2
+    air = [x / np.std(x) * swell for x in air]
+
     fx = np.zeros(n)
-    dry = np.zeros(n)                                                 # clicks stay close and dry
-    for t0 in [c for c, _ in chimes] + END_CYCLE + [CTA_AT - 0.25]:   # every light change
-        _add(dry, click(rng), t0 - 0.02, 0.9)
-    _add(dry, click(rng), power_on - 0.12, 0.9)                       # power-on: click + soft beep
-    m = int(.24 * SR); u = np.arange(m) / SR
-    _add(fx, np.sin(np.pi * u / .24) ** 2 * (np.sin(2 * np.pi * 1568 * u) + .15 * np.sin(2 * np.pi * 3136 * u)), power_on, 0.45)
-    ir_n = int(3.0 * SR); iu = np.arange(ir_n) / SR                    # long, soft hall
-    irs = [_filt(rng.normal(0, 1, ir_n), lo=150, hi=6000) * np.exp(-iu / 0.9) for _ in range(2)]
+    for t0 in [c for c, _ in chimes] + END_CYCLE + [CTA_AT - 0.25] + [power_on - 0.1]:
+        _add(fx, click(rng), t0 - 0.02, 0.8)
+    for t0 in [power_on] + [c for c, _ in chimes]:
+        _add(fx, thump(), t0, 0.6)
+    _add(fx, thump(1.8, 42), CTA_AT, 0.8)
+
+    ir_n = int(2.5 * SR); iu = np.arange(ir_n) / SR
+    irs = [_filt(rng.normal(0, 1, ir_n), lo=150, hi=3500) * np.exp(-iu / 0.8) for _ in range(2)]
     irs = [ir / np.sqrt((ir ** 2).sum()) * 0.5 for ir in irs]
-    wetL, wetR = RV._conv(L * 0.4 + fx, irs[0]), RV._conv(R * 0.4 + fx, irs[1])
-    norm = 1 / (np.sqrt(np.mean(L ** 2)) + 1e-9)
-    wetL += RV._conv(dry, irs[0]) * 0.15; wetR += RV._conv(dry, irs[1]) * 0.15
-    st = np.stack([(L + fx + dry * 3.2 + wetL) * norm, (R + fx + dry * 3.2 + wetR) * norm], 1)
-    st *= (np.clip(t / 1.2, 0, 1) * np.clip((TOTAL - t) / 1.0, 0, 1))[:, None]
-    st *= 10 ** (-22.4 / 20)                                          # quiet, ambient level
-    with wave.open(str(path), 'wb') as f:
-        f.setnchannels(2); f.setsampwidth(2); f.setframerate(SR)
-        f.writeframes((np.clip(st, -1, 1) * 32767).astype('<i2').tobytes())
-
-
-def piano_soundtrack(path, chimes, power_on, n, t, rng):
-    """Quiet ambient piano bed (~-24 LUFS) with the light-change clicks kept clear on top."""
-    p = piano_bed(n, rng)
-    ir_n = int(3.5 * SR); iu = np.arange(ir_n) / SR
-    irs = [_filt(rng.normal(0, 1, ir_n), lo=200, hi=5000) * np.exp(-iu / 1.1) for _ in range(2)]
-    irs = [ir / np.sqrt((ir ** 2).sum()) * 0.6 for ir in irs]
-    bedL = p + RV._conv(p, irs[0]); bedR = p * 0.97 + RV._conv(p, irs[1])
-    g = 10 ** (-34 / 20) / (np.sqrt(np.mean(bedL ** 2)) + 1e-9)             # bed sits low
-    dry = np.zeros(n)
-    for t0 in [c for c, _ in chimes] + END_CYCLE + [CTA_AT - 0.25]:
-        _add(dry, click(rng), t0 - 0.02, 1.0)
-    _add(dry, click(rng), power_on - 0.12, 1.0)
-    m = int(.24 * SR); u = np.arange(m) / SR
-    _add(dry, 0.25 * np.sin(np.pi * u / .24) ** 2 * (np.sin(2 * np.pi * 1568 * u) + .15 * np.sin(2 * np.pi * 3136 * u)), power_on, 1.0)
-    fxL = dry + RV._conv(dry, irs[0]) * 0.12; fxR = dry + RV._conv(dry, irs[1]) * 0.12
-    st = np.stack([bedL * g + fxL * 10 ** (-19 / 20), bedR * g + fxR * 10 ** (-19 / 20)], 1)
-    st *= (np.clip(t / 0.8, 0, 1) * np.clip((TOTAL - t) / 1.0, 0, 1))[:, None]
+    music = drums * 0.7 + bass * 0.4 + keys * 1.0
+    fade_in = np.clip(t / 1.0, 0, 1)
+    L = music + RV._conv(keys * 0.6 + drums * 0.15, irs[0]) + air[0] * 0.06 + fx * 0.8
+    R = music + RV._conv(keys * 0.6 + drums * 0.15, irs[1]) + air[1] * 0.06 + fx * 0.8
+    st = np.stack([_filt(L, hi=5000), _filt(R, hi=5000)], 1)           # nothing bright or piercing
+    st *= (fade_in * np.clip((TOTAL - t) / 1.0, 0, 1))[:, None]
+    st *= 10 ** (-23 / 20) / (np.sqrt(np.mean(st ** 2)) + 1e-9)         # ~ -22 LUFS, calm level
     with wave.open(str(path), 'wb') as f:
         f.setnchannels(2); f.setsampwidth(2); f.setframerate(SR)
         f.writeframes((np.clip(st, -1, 1) * 32767).astype('<i2').tobytes())
 
 
 # ---------------------------------------------------------------- render
-BEDS = {'a': 'pad', 'b': 'piano'}       # B: ambient piano, no instrumental pad
-
-
 def render(tag, build):
     frame, chimes, power_on = build()
     wav = OUT / f'creative-{tag}.wav'
-    soundtrack(wav, chimes, power_on, BEDS[tag])
+    soundtrack(wav, chimes, power_on)
     out = ROOT / f'LED-Creative-{tag.upper()}-18s.mp4'
     p = subprocess.Popen(['ffmpeg', '-nostdin', '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24',
                           '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-', '-i', str(wav),
