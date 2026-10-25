@@ -13,14 +13,13 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 import render_video as RV
-from render_video import (W, H, FPS, SR, BPM, INK, GREY, RED, F_BLACK, F_BOLD, F_SEMI,
+from render_video import (W, H, FPS, SR, INK, GREY, RED, F_BLACK, F_BOLD, F_SEMI,
                           ease, font, text_sprite, pill, put, rise, led_off,
-                          groove, _filt, _add, _env, _note)
+                          _filt, _add, _note)
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / 'render'; OUT.mkdir(exist_ok=True)
 TOTAL = 18.0
-BEAT = 60 / BPM
 
 # light, glow tint (applied to the red LED excess), text swatch, key benefit (cosmetic wording)
 LIGHTS = [('RED LIGHT', (1.0, 0.0, 0.0), RED, 'Firmer-looking skin'),
@@ -89,6 +88,25 @@ def backdrop(sw, glow, lift):
     return a
 
 
+def burst(a, t, lands, sw, cx, cy):
+    """Flash of the new light on each change: soft bloom plus a ring that expands out."""
+    col = np.array(sw, np.float32)
+    for L, strength in lands:
+        k = t - L
+        if 0 <= k < 0.8:
+            r = np.sqrt((XX - cx) ** 2 + (YY - cy) ** 2)
+            rad = 180 + 1300 * ease(k / 0.8)
+            ring = np.exp(-((r - rad) / (50 + 90 * k)) ** 2) * (1 - k / 0.8) ** 1.5
+            bloom = np.exp(-(r / 520) ** 2) * np.exp(-k * 5)
+            a = a + (np.minimum(col * 0.6 + 120, 255) - a) * (strength * (0.45 * ring + 0.35 * bloom))[..., None]
+    return a
+
+
+def punch(t, lands, amt):
+    """Zoom kick that decays after each change."""
+    return 1 + sum(amt * st * np.exp(-(t - L) * 6) for L, st in lands if t >= L)
+
+
 # ---------------------------------------------------------------- typography
 LABEL_F, BEN_F = font(F_SEMI, 40), font(F_BOLD, 76)
 LABELS = [text_sprite(l, LABEL_F, (255, 255, 255, 255), tracking=8) for l, *_ in LIGHTS]
@@ -124,7 +142,7 @@ def overlay(t, segs, sw, hook=False):
             a1, d1 = rise(t, t_in)
             a2, d2 = rise(t, t_in + 0.25)
             put(ov, tinted(LABELS[i], LIGHTS[i][2]), W / 2, 1460, a1 * out, d1)
-            put(ov, BENEFITS[i], W / 2, 1520, a2 * out, d2)
+            put(ov, BENEFITS[i], W / 2, 1520, a2 * out, d2, 1.14 - 0.14 * a2)
             dots(ov, i, sw, a1 * out)
     if END_AT <= t < CTA_AT:
         out = 1 - ease((t - (CTA_AT - 0.35)) / 0.3)
@@ -137,8 +155,7 @@ def overlay(t, segs, sw, hook=False):
         put(ov, OFF45, W / 2, 1420, k, 0, 0.86 + 0.14 * k)
         a, d = rise(t, CTA_AT + 0.6); put(ov, LIMIT, W / 2, 1632, a, d)
         a, d = rise(t, CTA_AT + 0.9)
-        ph = ((t - CTA_AT) * BPM / 60) % 1
-        put(ov, BUTTON, W / 2, 1700, a, d, 1 + 0.03 * np.exp(-ph * 6) * (t > CTA_AT + 1.0))
+        put(ov, BUTTON, W / 2, 1700, a, d, 1 + 0.025 * np.sin((t - CTA_AT) * 4) ** 2 * (t > CTA_AT + 1.0))
     return ov
 
 
@@ -198,19 +215,28 @@ def creative_a():
         lit = 0.0 if t < 0.85 else (0.4 + 0.2 * np.sin((t - 0.85) * 120) if t < 0.95 else min(1.0, 0.55 + (t - 0.95) * 3))
         rgb, al = tt.sprite(pos, tint, lit, blur)
         glow = lit * (0.9 + 0.1 * np.sin(t * 2.4))
-        bob = 12 * np.sin(t * 1.3)
-        zoom = scale * (0.94 + 0.06 * ease(t / 1.0)) * (1 + 0.012 * np.sin(t * 0.9))
-        a = backdrop(sw, glow, bob / 12)
+        bob = 16 * np.sin(t * 1.3)
+        drift = 34 * np.sin(2 * np.pi * t / 6.0)                     # mask glides across the frame
+        lift = 0.0; tilt = 3.0 * np.sin(2 * np.pi * t / 6.0 + 1.0)
+        for s in spins:                                             # leaps toward camera while spinning
+            if s <= t < s + 1.0:
+                u = (t - s); lift = 0.12 * np.sin(np.pi * u); tilt += 6 * np.sin(2 * np.pi * u)
+        hold = (t % SEG) / SEG
+        zoom = scale * (0.92 + 0.08 * ease(t / 1.0)) * (1 + lift) * (1 + 0.05 * hold) * punch(t, lands, 0.07)
+        a = backdrop(sw, glow, bob / 16)
         h0, w0 = al.shape
         nw, nh = int(w0 * zoom), int(h0 * zoom)
         spr = Image.fromarray(np.dstack([rgb, al * 255]).astype(np.uint8), 'RGBA').resize((nw, nh), Image.BICUBIC)
+        spr = spr.rotate(tilt, resample=Image.BICUBIC, expand=True)
         base = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)).convert('RGBA')
-        base.alpha_composite(spr, (int(W / 2 - nw / 2), int(800 + bob - nh / 2)))
-        a = np.asarray(base.convert('RGB')).astype(np.float32)
+        cx, cy = W / 2 + drift, 800 + bob
+        base.alpha_composite(spr, (int(cx - spr.width / 2), int(cy - spr.height / 2)))
+        a = burst(np.asarray(base.convert('RGB')).astype(np.float32), t, lands, sw, cx, cy)
         return finish(a, overlay(t, segs, sw, hook=True), t)
 
-    sfx = [(0.0, 1.0, None)] + [(s, 1.0, i) for i, s in enumerate(spins[1:4], 1)] + [(END_AT, 1.0, None)]
-    return frame, sfx, 0.95
+    lands = [(1.0, 1.0), (4.0, 1.0), (7.0, 1.0), (10.0, 1.0)] + [(tc, 0.5) for tc in END_CYCLE] + [(CTA_AT, 0.8)]
+    chimes = [(4.0, 1), (7.0, 2), (10.0, 3)]
+    return frame, chimes, 0.95
 
 
 # ---------------------------------------------------------------- creative B: glow macro
@@ -219,27 +245,36 @@ def creative_b():
     hero_a = np.asarray(hero).astype(np.float32)
     hero_off = led_off(hero_a).astype(np.float32)
     # per light: camera (zoom0, zoom1, cx0, cx1, cy0, cy1) on the floating mask
-    cams = [(1.00, 1.10, .50, .49, .46, .44),      # red: full float, push in
-            (1.62, 1.75, .40, .45, .43, .41),      # blue: close on the eye openings
-            (1.50, 1.62, .36, .36, .54, .49),      # green: nose + mouth, rising
-            (1.45, 1.52, .70, .64, .46, .45)]      # purple: strap + glowing rim, pan
-    end_cam = (1.10, 1.00, .50, .50, .44, .47)
+    cams = [(1.00, 1.18, .52, .48, .47, .43),      # red: full float, push in
+            (1.50, 1.80, .37, .47, .44, .40),      # blue: close on the eye openings, sliding
+            (1.40, 1.70, .36, .38, .58, .48),      # green: nose + mouth, rising
+            (1.35, 1.60, .74, .62, .47, .43)]      # purple: strap + glowing rim, pan
+    end_cam = (1.18, 1.00, .50, .50, .43, .47)
     changes = [(0.0, 0), (3.0, 1), (6.0, 2), (9.0, 3)] + [(tc, k % 4) for k, tc in enumerate(END_CYCLE)] + [(CTA_AT - 0.25, 0)]
     segs = [(0.9, SEG)] + [(s + 0.4, s + SEG) for s in (3.0, 6.0, 9.0)]
-    XFADE = 0.3
+    XFADE = 0.18
+    lands = [(0.6, 1.0), (3.0, 1.0), (6.0, 1.0), (9.0, 1.0), (END_AT, 1.0)] + [(tc, 0.5) for tc in END_CYCLE] + [(CTA_AT, 0.8)]
 
-    def shot(cam, u, t, tint, lit):
+    def shot(cam, u, t, tint, lit, whip=1.0):
         z0, z1, x0, x1, y0, y1 = cam
-        e = ease(u)
-        z = z0 + (z1 - z0) * e
+        e = 1 - (1 - min(max(u, 0), 1)) ** 2                          # fast start, gliding finish
+        z = (z0 + (z1 - z0) * e) * whip
         cx = (x0 + (x1 - x0) * e) * W * 2 + 10 * np.sin(t * 0.8)
         cy = (y0 + (y1 - y0) * e) * H * 2 + 24 * np.sin(t * 1.3)
         cw, ch = W * 2 / z, H * 2 / z
         cx = min(max(cx, cw / 2), W * 2 - cw / 2); cy = min(max(cy, ch / 2), H * 2 - ch / 2)
         box = (cx - cw / 2, cy - ch / 2, cx + cw / 2, cy + ch / 2)
         src = hero_a if lit >= 1 else hero_off * (1 - lit) + hero_a * lit
-        im = Image.fromarray(np.clip(src, 0, 255).astype(np.uint8)).transform((W, H), Image.EXTENT, box, Image.BICUBIC)
-        a = np.asarray(im).astype(np.float32)
+        srcim = Image.fromarray(np.clip(src, 0, 255).astype(np.uint8))
+        if whip > 1.02:                                                 # zoom blur while whipping
+            a = np.zeros((H, W, 3), np.float32)
+            ks = 1 + 0.11 * (whip - 1) * np.arange(8) / 7                   # blur length follows the whip
+            for k in ks:
+                cw2, ch2 = cw / k, ch / k
+                a += np.asarray(srcim.transform((W, H), Image.EXTENT, (cx - cw2 / 2, cy - ch2 / 2, cx + cw2 / 2, cy + ch2 / 2), Image.BILINEAR), np.float32)
+            a /= len(ks)
+        else:
+            a = np.asarray(srcim.transform((W, H), Image.EXTENT, box, Image.BICUBIC)).astype(np.float32)
         pulse = 1 + 0.06 * np.sin(t * 2.2)
         red = np.clip(a[..., 0] - np.maximum(a[..., 1], a[..., 2]) - 60, 0, None)[..., None] / 195
         a = a * (1 - red) + np.clip(a * pulse, 0, 255) * red
@@ -260,79 +295,71 @@ def creative_b():
             if en < TOTAL: w = min(w, 1 - ease((t - (en - XFADE / 2)) / XFADE))
             if w <= 0: continue
             seg_tint = np.array(LIGHTS[min(i, 3)][1], np.float32) if i < 4 else tint
-            f = shot(cam, (t - st + XFADE / 2) / (en - st + XFADE), t, seg_tint, lit) * w
+            whip = 1.0
+            if en < TOTAL: whip += 0.35 * ease((t - (en - 0.22)) / 0.22)        # rush into the next light
+            if st > 0: whip += 0.35 * (1 - ease((t - st) / 0.3))             # land from a zoom
+            whip *= punch(t, lands, 0.04)
+            f = shot(cam, (t - st + XFADE / 2) / (en - st + XFADE), t, seg_tint, lit, whip) * w
             acc = f if acc is None else acc + f; wsum += w
         a = acc / wsum
-        for st in (3.0, 6.0, 9.0, END_AT):                          # light sweep across each change
-            u = (t - (st - 0.35)) / 0.7
-            if 0 <= u <= 1:
-                band = np.exp(-(((XX * 0.8 + YY * 0.45) - (-400 + u * 2600)) / 220) ** 2)
-                light = np.array(sw, np.float32) * 0.35 + 255 * 0.65           # tinted white light pass
-                k = np.sin(np.pi * u)
-                a = a + (light - a) * (k * (0.32 * band + 0.10))[..., None]
+        a = burst(a, t, lands, sw, W / 2, 820)
         if any(s0 - 0.1 <= t <= s1 + 0.1 for s0, s1 in segs):               # keep the copy readable on macros
             a = a + (250 - a) * (np.asarray(RV.SCRIM.getchannel('A'), np.float32) / 255 * 0.85)[..., None]
         return finish(a, overlay(t, segs, sw), t)
 
-    sfx = [(0.0, 0.5, None)] + [(s - 0.4, 0.8, i) for i, s in enumerate((3.0, 6.0, 9.0), 1)] + [(END_AT - 0.4, 0.8, None)]
-    return frame, sfx, 0.55
+    chimes = [(3.0, 1), (6.0, 2), (9.0, 3)]
+    return frame, chimes, 0.55
 
 
 # ---------------------------------------------------------------- sound
-def swirl(dur, rng):
-    """Airy 360 'turn': band-passed noise whose centre sweeps up and back, panned round the head."""
-    n = int(dur * SR); u = np.arange(n) / n
-    noise = rng.normal(0, 1, n)
-    hop, win = 256, 1024; w = np.hanning(win); out = np.zeros(n + win)
-    f = np.fft.rfftfreq(win, 1 / SR)
-    for i in range(0, n, hop):
-        seg = np.zeros(win); m = min(win, n - i); seg[:m] = noise[i:i + m]
-        p = min(i / n, 1)
-        fc = 500 + 3800 * np.sin(np.pi * p) ** 1.5
-        out[i:i + win] += np.fft.irfft(np.fft.rfft(seg * w) * np.exp(-((f - fc) / (fc * 0.35)) ** 2), win) * w
-    out = out[:n] / (np.abs(out).max() + 1e-9) * np.sin(np.pi * u) ** 1.2
-    # soft gliding tone underneath (gives the turn a pitch, like a whirring disc)
-    ph = 2 * np.pi * np.cumsum(330 + 330 * np.sin(np.pi * u)) / SR
-    out = out * 0.8 + 0.12 * np.sin(ph) * np.sin(np.pi * u) ** 2
-    pan = 0.5 + 0.5 * np.sin(2 * np.pi * u - np.pi / 2)            # L -> R -> L : one revolution
-    return out * np.sqrt(1 - pan), out * np.sqrt(pan)
+# Ambient bed: slow evolving pad (Am9 - Fmaj9 - Cmaj9 - G6), high shimmer, long reverb.
+# No beat and no whooshes; each light change is one crisp button click. Mixed quiet (~-20 LUFS).
+def click(rng):
+    """Tactile switch: a bright press transient, a tiny body resonance, and a softer release."""
+    n = int(0.09 * SR); u = np.arange(n) / SR; out = np.zeros(n)
+    press = _filt(rng.normal(0, 1, n), lo=2000, hi=11000) * np.exp(-u * 1100)
+    body = np.sin(2 * np.pi * 2300 * u) * np.exp(-u * 260) * 0.35
+    out += press + body
+    j = int(0.045 * SR)
+    out[j:] += 0.45 * (_filt(rng.normal(0, 1, n - j), lo=2500, hi=10000) * np.exp(-u[:n - j] * 1400))
+    return out / np.abs(out).max()
 
 
-def bell(freq, dur=1.6):
-    n = int(dur * SR); u = np.arange(n) / SR
-    s = (np.sin(2 * np.pi * freq * u + 0.6 * np.sin(2 * np.pi * freq * 2 * u) * np.exp(-u * 6)) * np.exp(-u * 2.6)
-         + 0.25 * np.sin(2 * np.pi * freq * 2.76 * u) * np.exp(-u * 7))
-    return s * np.minimum(u / 0.003, 1)
-
-
-def soundtrack(path, sfx, power_on):
+def soundtrack(path, chimes, power_on):
     n = int(TOTAL * SR); t = np.arange(n) / SR
     rng = np.random.default_rng(11)
-    musicL, musicR = groove(TOTAL, 17.0, lambda tb: tb >= 1.0 and not (11.0 <= tb < 12.0), CTA_AT,
-                            [0, 1, 3, 12, 15, 18], [0.15, 0.45, 0.65, 0.8, 1.0, 1.0], rng)
-    L = np.zeros(n); R = np.zeros(n)
-    chime = {1: _note(76), 2: _note(79), 3: _note(81)}               # E5, G5, A5 - inside the A minor groove
-    for t0, dur, light in sfx:
-        sl, sr_ = swirl(dur, rng)
-        _add(L, sl, t0, 0.20); _add(R, sr_, t0, 0.20)
-        if light in chime:
-            b = bell(chime[light]); _add(L, b, t0 + dur, 0.10); _add(R, b, t0 + dur, 0.10)
-    for k, tc in enumerate(END_CYCLE):                                # light arpeggio under the long copy
-        b = bell(_note([76, 79, 81, 84, 88][k]), 1.0)
-        _add(L, b, tc, 0.06); _add(R, b, tc, 0.06)
-    m = int(.05 * SR); u = np.arange(m) / SR                         # power-on: click + soft beep
-    click = _filt(rng.normal(0, 1, m), lo=2500) * np.exp(-u * 900)
-    _add(L, click, power_on - 0.1, 0.5); _add(R, click, power_on - 0.1, 0.5)
+    chords = [[45, 57, 60, 64, 67, 71], [41, 53, 57, 60, 64, 67], [48, 55, 59, 62, 64, 71], [43, 55, 59, 62, 64, 69]]
+    span = TOTAL / len(chords)
+    pad = np.zeros(n); shim = np.zeros(n)
+    for c, notes in enumerate(chords):
+        t0 = c * span
+        env = np.clip((t - t0 + 1.2) / 2.0, 0, 1) * np.clip((t0 + span + 1.2 - t) / 2.0, 0, 1)
+        env = np.sin(env * np.pi / 2) ** 2
+        for m in notes:
+            f0 = _note(m)
+            for det in (-0.0018, 0.0, 0.0021):
+                pad += env * np.sin(2 * np.pi * f0 * (1 + det) * t + rng.uniform(0, 6.3)) * (0.6 if m < 50 else 1.0)
+            shim += env * np.sin(2 * np.pi * f0 * 4 * t) * (0.5 + 0.5 * np.sin(2 * np.pi * (0.13 + 0.02 * m % 3) * t)) * (m > 54)
+    swell = 1 + 0.35 * np.clip((t - CTA_AT) / 1.5, 0, 1)                 # lifts for the offer
+    pad = _filt(pad, lo=60, hi=1400) * (1 + 0.08 * np.sin(2 * np.pi * 0.21 * t)) * swell
+    shim = _filt(shim, hi=7000) * 0.05 * swell
+    L = pad + shim; R = pad * 0.98 + np.roll(shim, 700)
+    fx = np.zeros(n)
+    dry = np.zeros(n)                                                 # clicks stay close and dry
+    for t0 in [c for c, _ in chimes] + END_CYCLE + [CTA_AT - 0.25]:   # every light change
+        _add(dry, click(rng), t0 - 0.02, 0.9)
+    _add(dry, click(rng), power_on - 0.12, 0.9)                       # power-on: click + soft beep
     m = int(.24 * SR); u = np.arange(m) / SR
-    bp = np.sin(np.pi * u / .24) ** 2 * (np.sin(2 * np.pi * 1568 * u) + .15 * np.sin(2 * np.pi * 3136 * u))
-    _add(L, bp, power_on, 0.10); _add(R, bp, power_on, 0.10)
-    m = int(2.5 * SR); u = np.arange(m) / SR                         # low impact on the offer
-    boom = np.sin(2 * np.pi * np.cumsum(38 + 30 * np.exp(-u * 8)) / SR) * np.exp(-u * 2.2)
-    _add(L, boom, CTA_AT, 0.35); _add(R, boom, CTA_AT, 0.35)
-    st = np.stack([musicL * 0.55 + L, musicR * 0.55 + R], 1)
-    st *= np.clip((TOTAL - t) / 0.6, 0, 1)[:, None]
-    st = st / np.percentile(np.abs(st), 99.95) * 0.75
-    st = np.tanh(st * 1.2) / np.tanh(1.2) * 0.66                    # headroom for the swirls after AAC
+    _add(fx, np.sin(np.pi * u / .24) ** 2 * (np.sin(2 * np.pi * 1568 * u) + .15 * np.sin(2 * np.pi * 3136 * u)), power_on, 0.45)
+    ir_n = int(3.0 * SR); iu = np.arange(ir_n) / SR                    # long, soft hall
+    irs = [_filt(rng.normal(0, 1, ir_n), lo=150, hi=6000) * np.exp(-iu / 0.9) for _ in range(2)]
+    irs = [ir / np.sqrt((ir ** 2).sum()) * 0.5 for ir in irs]
+    wetL, wetR = RV._conv(L * 0.4 + fx, irs[0]), RV._conv(R * 0.4 + fx, irs[1])
+    norm = 1 / (np.sqrt(np.mean(L ** 2)) + 1e-9)
+    wetL += RV._conv(dry, irs[0]) * 0.15; wetR += RV._conv(dry, irs[1]) * 0.15
+    st = np.stack([(L + fx + dry * 3.2 + wetL) * norm, (R + fx + dry * 3.2 + wetR) * norm], 1)
+    st *= (np.clip(t / 1.2, 0, 1) * np.clip((TOTAL - t) / 1.0, 0, 1))[:, None]
+    st *= 10 ** (-22.4 / 20)                                          # quiet, ambient level
     with wave.open(str(path), 'wb') as f:
         f.setnchannels(2); f.setsampwidth(2); f.setframerate(SR)
         f.writeframes((np.clip(st, -1, 1) * 32767).astype('<i2').tobytes())
@@ -340,9 +367,9 @@ def soundtrack(path, sfx, power_on):
 
 # ---------------------------------------------------------------- render
 def render(tag, build):
-    frame, sfx, power_on = build()
+    frame, chimes, power_on = build()
     wav = OUT / f'creative-{tag}.wav'
-    soundtrack(wav, sfx, power_on)
+    soundtrack(wav, chimes, power_on)
     out = ROOT / f'LED-Creative-{tag.upper()}-18s.mp4'
     p = subprocess.Popen(['ffmpeg', '-nostdin', '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24',
                           '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-', '-i', str(wav),

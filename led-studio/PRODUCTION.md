@@ -50,6 +50,8 @@ Prompts (append to each: *"Same woman, same white robe, same white studio. Natur
 | 12–15 s | DISCOVER WHAT / EVERY SINGLE COLOR / OFFERS FOR YOUR ROUTINE: the light cycles on the beat |
 | 15–18 s | LED FACE MASK · 45% OFF · LIMITED-TIME OFFER · SHOP NOW |
 
-Sound: the same 120 BPM deep-house groove. Each light change gets an airy 360° swirl that pans left → right → left, as if the mask turns around you, then a soft bell (E5 / G5 / A5) when the new colour lands. A rising bell arpeggio plays under the colour cycle, and a low impact hits on the offer.
+Visuals: a zoom punch, colour bloom and expanding light ring on every light change. A spins toward the camera and glides with a slight tilt; B whip-zooms (with zoom blur) from one close-up to the next.
+
+Sound: a quiet ambient pad (Am9 – Fmaj9 – Cmaj9 – G6, long reverb) with no beat and no whooshes, around −20 LUFS. Every light change is a crisp button click. A soft beep plays at power-on, and the pad swells gently for the offer.
 
 Source clips in `clips-src/` (Higgsfield): `turn-red*` (360° turn, red glow), `turn-inside*` (360° turn showing the inside LEDs), `woman-blue` / `woman-green` (Kling, 3 s, real motion; not used yet).
