@@ -195,10 +195,10 @@ function stageMarkup(){
       <div class="px-view" data-view="out">
         <video class="px-turn" muted playsinline loop preload="none" poster="${TURN_POSTER}" aria-label="${T('360° view of the LEZO mask. Drag to rotate.','Vista 360° de la máscara LEZO. Arrastra para girarla.')}"></video>
         <img class="px-inside-img" src="${INSIDE_IMG}" alt="${T('Inside of the LEZO mask with the LED array lit','Interior de la máscara LEZO con la matriz de LEDs encendida')}" width="766" height="620" loading="lazy">
+        <div class="px-swatches" role="group" aria-label="${T('Choose a light mode','Elige un modo de luz')}">${sw}</div>
         <button type="button" class="px-tap" data-px-tap>${T('Tap to rotate','Toca para girar')}</button>
       </div>
       <div class="px-ctl">
-        <div class="px-swatches" role="group" aria-label="${T('Choose a light mode','Elige un modo de luz')}">${sw}</div>
         <div class="px-mode" aria-live="polite"><div class="px-mode-idx"></div><div class="px-mode-name"></div><div class="px-mode-nm"></div><div class="px-mode-desc"></div></div>
         <div class="px-meta"><button type="button" class="px-inside" data-px-inside aria-pressed="false">${T('See inside · LEDs','Ver por dentro · LEDs')}</button><button type="button" class="px-pause" data-px-pause aria-pressed="false">${T('Pause','Pausa')}</button><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span></div>
       </div>
@@ -232,7 +232,7 @@ class Stage{
   }
   bind(){
     const v=this.v,view=this.view;let x0=0,t0=0,id=null;
-    view.addEventListener('pointerdown',e=>{if(this.inside||!this.loaded)return;id=e.pointerId;view.setPointerCapture(id);this.dragging=true;v.pause();x0=e.clientX;t0=v.currentTime});
+    view.addEventListener('pointerdown',e=>{if(e.target.closest('.px-swatches'))return;if(this.inside||!this.loaded)return;id=e.pointerId;view.setPointerCapture(id);this.dragging=true;v.pause();x0=e.clientX;t0=v.currentTime});
     view.addEventListener('pointermove',e=>{if(!this.dragging||e.pointerId!==id)return;const d=v.duration||6,w=view.clientWidth;let t=(t0+(e.clientX-x0)/w*d*1.25)%d;if(t<0)t+=d;v.currentTime=t});
     const up=()=>{if(!this.dragging)return;this.dragging=false;id=null;this.resume=performance.now()+1500;setTimeout(()=>this.play(),1550)};
     view.addEventListener('pointerup',up);view.addEventListener('pointercancel',up);
