@@ -3,8 +3,6 @@
    re-applied whenever #app's children are replaced. */
 (()=>{
 'use strict';
-const MODEL_URL='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-mask-3d.glb?v=1792898992';
-const FALLBACK_IMG='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-pdp-front-2026.webp?v=1792897049';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
 const root=document.documentElement;
@@ -29,8 +27,6 @@ function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame)}}
 function frame(){
   ticking=false;
   const y=scrollY,vh=innerHeight,doc=document.documentElement;
-  const bar=document.querySelector('.px-progress');
-  if(bar)bar.style.transform=`scaleX(${clamp(y/Math.max(1,doc.scrollHeight-vh))})`;
   const h=document.querySelector('header');
   if(h&&!reduced){h.classList.toggle('px-hide',y>lastY+4&&y>260&&!document.querySelector('.mobile-nav.open'));if(y<lastY-4||y<260)h.classList.remove('px-hide')}
   lastY=y;
@@ -41,7 +37,6 @@ function frame(){
     const off=(box.top+box.height/2-vh/2)/vh;
     el.style.setProperty('--py',clamp(off*-34,-34,34).toFixed(1)+'px');
   }
-  if(stage)stage.scroll();
   shipScroll();
 }
 
@@ -122,12 +117,12 @@ function tabFunctions(){
 function marquee(){
   const anchor=document.querySelector('main .trustbar')?.closest('.wrap');
   if(!anchor||document.querySelector('.px-marquee'))return;
-  const items=[[T('Seven light modes','Siete modos de luz'),0],[T('Delivery in <em>5–12 days</em>','Entrega en <em>5–12 días</em>'),4],[T('One mask','Una sola máscara'),2],[T('30-day returns','Devoluciones en 30 días'),1],[T('Secure checkout','Pago seguro'),3],[T('Light, made personal','Luz a tu manera'),5]];
+  const items=[[T('Full-face LED mask','Máscara LED facial'),0],[T('Seven light modes','Siete modos de luz'),4],[T('Adjustable strap','Correa ajustable'),2],[T('Sculpted white shell','Diseño esculpido en blanco'),1],[T('Hands-free','Manos libres'),3],[T('Red to white','Del rojo al blanco'),5]];
   const row=items.map(([s,i])=>`<span style="--c:${COLORS[i].c}">${s}</span>`).join('');
   const m=document.createElement('div');m.className='px-marquee';m.setAttribute('role','presentation');
   m.innerHTML=`<div aria-hidden="true">${row}${row}${row}${row}</div>`;
-  const hidden=document.createElement('span');hidden.className='sr-only';hidden.style.cssText='position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)';
-  hidden.textContent=T('Seven light modes. Delivery in 5 to 12 days. 30-day returns. Secure checkout.','Siete modos de luz. Entrega de 5 a 12 días. Devoluciones en 30 días. Pago seguro.');
+  const hidden=document.createElement('span');hidden.className='sr-only';hidden.style.cssText='position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)';
+  hidden.textContent=T('Full-face LED mask. Seven light modes. Adjustable strap. Hands-free.','Máscara LED facial. Siete modos de luz. Correa ajustable. Manos libres.');
   m.appendChild(hidden);
   anchor.after(m);
 }
@@ -174,46 +169,63 @@ function stickyShip(){
   if(sm&&!sm.querySelector('.px-sticky-ship'))sm.insertAdjacentHTML('beforeend',`<span class="px-sticky-ship">· ${T('Delivery 5–12 days','Entrega 5–12 días')}</span>`);
 }
 
-/* ---------------- 3D stage ---------------- */
+/* ---------------- rotating product viewer (real-photo turntable) ---------------- */
+const TURN_URL='__TURN_VIDEO__',TURN_POSTER='__TURN_POSTER__',INSIDE_IMG='__INSIDE_IMG__';
+const HUE={0:0,1:126,2:211,3:271,4:44,5:181,6:0};   // hue-rotate from the red glow of the product photo
+const FILTER=i=>i===6?'saturate(.1) brightness(1.28)':`hue-rotate(${HUE[i]}deg)`;
 function stageMarkup(){
   const sw=COLORS.map((m,i)=>`<button type="button" style="--sw:${m.c}" data-px-mode="${i}" aria-pressed="${i===0}" aria-label="${T(m.en,m.es)}"><i></i></button>`).join('');
-  return `<div class="px-stage__track"><div class="px-stage__sticky">
-    <div class="px-stage__bg"></div><div class="px-stage__grid"></div>
-    <div class="px-fallback"><img src="${FALLBACK_IMG}" alt="${T('White LEZO LED mask','Máscara LED LEZO blanca')}" width="1536" height="1024" loading="lazy"></div>
-    <canvas class="px-canvas" role="img" aria-label="${T('Interactive 3D model of the LEZO mask. Drag to rotate.','Modelo 3D interactivo de la máscara LEZO. Arrastra para girarla.')}"></canvas>
-    <div class="px-copy"><span class="eyebrow">${T('Meet it in 3D','Conócela en 3D')}</span>
+  return `<div class="px-stage__sticky">
+    <div class="px-stage__bg"></div>
+    <div class="px-copy"><span class="eyebrow">${T('360° view','Vista 360°')}</span>
       <h2 class="px-keep">${T('Turn it.<br><em>Light it.</em>','Gírala.<br><em>Enciéndela.</em>')}</h2>
-      <p>${T('Seven lights, one mask. Pick a color and the whole mask glows with it, then drag to see every angle, inside and out.','Siete luces, una máscara. Elige un color y toda la máscara brilla con él; arrástrala para verla desde todos los ángulos, por dentro y por fuera.')}</p>
+      <p>${T('Drag the mask to spin it. Pick a color to change the light, or look inside to see the LEDs.','Arrastra la máscara para girarla. Elige un color para cambiar la luz o mira dentro para ver los LEDs.')}</p>
       <div class="px-mode" aria-live="polite"><div class="px-mode-idx"></div><div class="px-mode-name"></div><div class="px-mode-nm"></div><span class="px-mode-label">${T('Exact wording from the supplied product sheet:','Traducción del texto de la ficha del producto:')}</span><div class="px-mode-desc"></div></div>
     </div>
+    <div class="px-view" data-view="out">
+      <video class="px-turn" muted playsinline loop preload="none" poster="${TURN_POSTER}" aria-label="${T('360° view of the LEZO mask. Drag to rotate.','Vista 360° de la máscara LEZO. Arrastra para girarla.')}"></video>
+      <img class="px-inside-img" src="${INSIDE_IMG}" alt="${T('Inside of the LEZO mask with the LED array lit','Interior de la máscara LEZO con la matriz de LEDs encendida')}" width="766" height="620" loading="lazy">
+    </div>
     <div class="px-hud"><div class="px-swatches" role="group" aria-label="${T('Choose a light mode','Elige un modo de luz')}">${sw}</div>
-      <div class="px-meta"><button type="button" class="px-inside" data-px-inside>${T('See inside · LEDs','Ver por dentro · LEDs')}</button><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span><span class="px-ship-chip">${ICON_PARCEL}${T('Delivery in 5–12 days','Entrega en 5–12 días')}</span></div></div>
-  </div></div>`;
+      <div class="px-meta"><button type="button" class="px-inside" data-px-inside aria-pressed="false">${T('See inside · LEDs','Ver por dentro · LEDs')}</button><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span></div></div>
+  </div>`;
 }
 class Stage{
   constructor(el){
-    this.el=el;this.track=el.querySelector('.px-stage__track');this.idx=-1;this.drag=0;this.dragging=false;this.visible=false;this.p=0;this.disposed=false;
-    this.cache={};this.auto=-.3;this.holdUntil=0;this.userPicked=false;this.last=performance.now();
-    el.querySelectorAll('[data-px-mode]').forEach(b=>b.addEventListener('click',()=>this.pick(+b.dataset.pxMode)));
-    el.querySelector('[data-px-inside]')?.addEventListener('click',()=>this.pickP(.64));
-    this.setMode(0,true);
+    this.el=el;this.v=el.querySelector('.px-turn');this.view=el.querySelector('.px-view');
+    this.idx=-1;this.userPicked=false;this.visible=false;this.dragging=false;this.resume=0;this.inside=false;
+    el.querySelectorAll('[data-px-mode]').forEach(b=>b.addEventListener('click',()=>{this.userPicked=true;this.setMode(+b.dataset.pxMode)}));
+    el.querySelector('[data-px-inside]').addEventListener('click',e=>this.toggleInside(e.currentTarget));
+    this.setMode(0);
     this.cycle=setInterval(()=>{if(!this.userPicked&&this.visible&&!document.hidden&&!reduced)this.setMode((this.idx+1)%COLORS.length)},5200);
-    this.io=new IntersectionObserver(e=>{this.visible=e[0].isIntersecting;root.classList.toggle('px-in-stage',this.visible);if(this.visible&&!this.started)this.start()},{rootMargin:'200px'});
-    this.io.observe(el);
-    this.scroll();
+    this.io=new IntersectionObserver(e=>{this.visible=e[0].isIntersecting;root.classList.toggle('px-in-stage',this.visible);if(this.visible&&!this.loaded)this.load();this.visible?this.play():this.v.pause()},{rootMargin:'200px'});
+    this.io.observe(el);this.bind();
   }
-  pick(i){this.userPicked=true;this.setMode(i,false,true)}
-  pickP(){
-    // turn the mask to show its inside and hold it there for a few seconds
-    this.holdUntil=performance.now()+7000;
-    this.insideTarget=Math.PI+Math.round((this.auto-Math.PI)/(Math.PI*2))*Math.PI*2;
+  load(){
+    this.loaded=true;const v=this.v;
+    v.src=TURN_URL;v.playbackRate=1;
+    v.addEventListener('canplay',()=>{this.el.classList.add('is-live');this.play()},{once:true});
+    v.load();
   }
-  scroll(){}
-  setMode(i,force,user){
-    if(i===this.idx&&!force)return;
+  play(){if(this.loaded&&!this.dragging&&!this.inside&&!reduced&&performance.now()>this.resume)this.v.play().catch(()=>{})}
+  bind(){
+    const v=this.v,view=this.view;let x0=0,t0=0,id=null;
+    view.addEventListener('pointerdown',e=>{if(this.inside||!this.loaded)return;id=e.pointerId;view.setPointerCapture(id);this.dragging=true;v.pause();x0=e.clientX;t0=v.currentTime});
+    view.addEventListener('pointermove',e=>{if(!this.dragging||e.pointerId!==id)return;const d=v.duration||6,w=view.clientWidth;let t=(t0+(e.clientX-x0)/w*d*1.25)%d;if(t<0)t+=d;v.currentTime=t});
+    const up=()=>{if(!this.dragging)return;this.dragging=false;id=null;this.resume=performance.now()+1500;setTimeout(()=>this.play(),1550)};
+    view.addEventListener('pointerup',up);view.addEventListener('pointercancel',up);
+    this.v.addEventListener('timeupdate',()=>{});
+  }
+  toggleInside(btn){
+    this.inside=!this.inside;this.view.dataset.view=this.inside?'in':'out';
+    btn.setAttribute('aria-pressed',this.inside);btn.textContent=this.inside?T('Back to outside','Volver al exterior'):T('See inside · LEDs','Ver por dentro · LEDs');
+    this.inside?this.v.pause():this.play();
+  }
+  setMode(i){
+    if(i===this.idx)return;
     const first=this.idx===-1;this.idx=i;const m=COLORS[i];
-    this.target=m.c;
-    this.el.style.setProperty('--px-c',m.c==='#f3efe6'?'#e9dfd0':m.c);
+    this.el.style.setProperty('--px-c',m.c==='#f3efe6'?'#cfc6b8':m.c);
+    this.el.style.setProperty('--px-f',FILTER(i));
     this.el.querySelectorAll('[data-px-mode]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.pxMode===i));
     const box=this.el.querySelector('.px-mode');
     box.querySelector('.px-mode-idx').textContent=`0${i+1} / 07`;
@@ -221,187 +233,8 @@ class Stage{
     box.querySelector('.px-mode-nm').textContent=`${m.nm} · ${T('Supplier specification','Especificación del proveedor')}`;
     box.querySelector('.px-mode-desc').textContent=T(m.d[0],m.d[1]);
     if(!first){box.classList.remove('px-swap');void box.offsetWidth;box.classList.add('px-swap')}
-    // keep the light-studio section further down in sync
-    const b=document.querySelector(`[data-mode="${i}"]`);
-    if(user&&b&&b.getAttribute('aria-pressed')!=='true')b.click();
   }
-  async start(){
-    this.started=true;
-    try{
-      const canvas=this.el.querySelector('.px-canvas');
-      const probe=document.createElement('canvas');
-      if(!(probe.getContext('webgl2')||probe.getContext('webgl')))throw new Error('no webgl');
-      const THREE=await import('three');
-      const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');
-      const {RoomEnvironment}=await import('three/addons/environments/RoomEnvironment.js');
-      if(this.disposed||!this.el.isConnected)return;
-      this.THREE=THREE;
-      const renderer=this.renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
-      renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-      renderer.outputColorSpace=THREE.SRGBColorSpace;
-      renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-      const scene=this.scene=new THREE.Scene();
-      const pmrem=new THREE.PMREMGenerator(renderer);
-      scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
-      const cam=this.cam=new THREE.PerspectiveCamera(32,1,.1,50);cam.position.set(0,0,6.4);
-      const key=new THREE.DirectionalLight(0xffffff,1.1);key.position.set(2.5,3,4);scene.add(key);
-      const col=this.col=new THREE.Color(this.target);
-      const front=this.front=new THREE.PointLight(col,9,9,2);front.position.set(0,.2,2.6);scene.add(front);
-      const rim=this.rim=new THREE.PointLight(col,14,10,2);rim.position.set(-2.6,1.4,-2.2);scene.add(rim);
-      const rim2=this.rim2=new THREE.PointLight(col,8,10,2);rim2.position.set(2.8,-1,-1.8);scene.add(rim2);
-      // soft halo behind the mask
-      const gc=document.createElement('canvas');gc.width=gc.height=256;
-      const g=gc.getContext('2d'),gr=g.createRadialGradient(128,128,0,128,128,128);
-      gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.35,'rgba(255,255,255,.28)');gr.addColorStop(1,'rgba(255,255,255,0)');
-      g.fillStyle=gr;g.fillRect(0,0,256,256);
-      const gtex=new THREE.CanvasTexture(gc);
-      const halo=this.halo=new THREE.Sprite(new THREE.SpriteMaterial({map:gtex,color:col,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.75}));
-      halo.scale.set(7.5,7.5,1);halo.position.set(0,0,-1.6);scene.add(halo);
-      // drifting photons
-      const N=170,pos=new Float32Array(N*3),seed=[];
-      for(let i=0;i<N;i++){const a=Math.random()*Math.PI*2,r=1.7+Math.random()*2.2,y=(Math.random()-.5)*3.6;pos[i*3]=Math.cos(a)*r;pos[i*3+1]=y;pos[i*3+2]=Math.sin(a)*r-.4;seed.push(Math.random()*6)}
-      const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
-      const pm=new THREE.PointsMaterial({map:gtex,alphaTest:.01,size:.11,color:col,transparent:true,opacity:.85,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true});
-      const pts=this.pts=new THREE.Points(pg,pm);this.seed=seed;scene.add(pts);
-      const pivot=this.pivot=new THREE.Group();scene.add(pivot);
-      const model=await new Promise((res,rej)=>new GLTFLoader().load(MODEL_URL,g=>res(g.scene),undefined,rej));
-      if(this.disposed)return;
-      const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),ctr=box.getCenter(new THREE.Vector3());
-      model.position.sub(ctr);
-      const s=3.1/Math.max(size.x,size.y,size.z);
-      const holder=new THREE.Group();holder.add(model);holder.rotation.y=-Math.PI/2;holder.scale.setScalar(s);pivot.add(holder);   // GLB faces +X; turn it to face the camera
-      this.cplane=new THREE.Plane(new THREE.Vector3(0,0,1),3);
-      renderer.localClippingEnabled=true;
-      model.traverse(o=>{if(o.isMesh&&o.material){o.material.envMapIntensity=1.1;if(o.material.metalness>.8){o.material.metalness=.55}o.material.clippingPlanes=[this.cplane];(this.shellMats||(this.shellMats=[])).push(o.material)}});
-      pivot.updateMatrixWorld(true);
-      this.buildLeds(THREE,model,pivot,gtex);
-      this.bindPointer(canvas);
-      this.resize();addEventListener('resize',this.onResize=()=>this.resize());
-      this.el.classList.add('is-live');
-      this.clock=new THREE.Clock();this.rot=this.auto;this.zc=-3;this.loop();
-    }catch(err){
-      console.warn('[LEZO] 3D unavailable, using image fallback',err);
-      this.el.classList.add('no-gl');
-      this.bindTilt();
-    }
-  }
-  buildLeds(THREE,model,pivot,gtex){
-    // The reconstruction is a closed solid, so a ray fired from its core hits the front skin from the
-    // inside: that is the concave lining we light up with the LED array.
-    const meshes=[];model.traverse(o=>{if(o.isMesh)meshes.push(o)});
-    const sides=meshes.map(m=>m.material.side);meshes.forEach(m=>m.material.side=THREE.DoubleSide);
-    const rc=new THREE.Raycaster(),fwd=new THREE.Vector3(0,0,1),pts=[];
-    const step=.125,cols=Math.round(2.6/step)+1,rows=Math.round(3/(step*.866))+1;
-    const grid=[];
-    for(let r=0;r<rows;r++){grid.push([]);for(let c=0;c<cols;c++){
-      const x=-1.3+c*step+(r%2?step/2:0),y=-1.5+r*step*.866;
-      rc.set(new THREE.Vector3(x,y,.3),fwd);const h=rc.intersectObjects(meshes,false)[0];
-      let ok=null;
-      if(h&&h.face){const n=h.face.normal.clone().transformDirection(h.object.matrixWorld);if(n.dot(fwd)>0)n.negate();if(n.dot(fwd)<-.18)ok={p:h.point.clone().addScaledVector(n,.016)}}
-      grid[r].push(ok);
-    }}
-    // leave a clear ring around the eye / nose / mouth openings, like the real lining
-    const solid=(r,c)=>grid[r]?.[c]!==undefined&&grid[r][c]!==null;
-    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
-      const g=grid[r][c];if(!g)continue;
-      if(solid(r,c-1)&&solid(r,c+1)&&solid(r-1,c)&&solid(r+1,c)&&solid(r-2,c)&&solid(r+2,c))pts.push(g.p);
-    }
-    meshes.forEach((m,i)=>m.material.side=sides[i]);
-
-    if(pts.length<20)return;
-    this.leds=new THREE.Group();
-    // each LED = translucent domed lens + brighter core, with slight brightness variation per unit
-    const lensM=this.ledMat=new THREE.MeshBasicMaterial({color:this.col,toneMapped:false,transparent:true,opacity:.6});
-    const coreM=this.coreMat=new THREE.MeshBasicMaterial({color:this.col,toneMapped:false});
-    const lens=new THREE.InstancedMesh(new THREE.SphereGeometry(.033,14,10),lensM,pts.length);
-    const core=new THREE.InstancedMesh(new THREE.SphereGeometry(.014,10,8),coreM,pts.length);
-    const m4=new THREE.Matrix4(),tint=new THREE.Color();
-    pts.forEach((v,i)=>{m4.setPosition(v);lens.setMatrixAt(i,m4);core.setMatrixAt(i,m4);const k=.72+Math.random()*.4;tint.setScalar(k);lens.setColorAt(i,tint);core.setColorAt(i,tint)});
-    this.leds.add(lens,core);
-    const pg=new THREE.BufferGeometry().setFromPoints(pts);
-    this.ledGlow=new THREE.Points(pg,new THREE.PointsMaterial({map:gtex,alphaTest:.01,size:.26,color:this.col,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true}));
-    this.leds.add(this.ledGlow);
-    const inner=this.inner=new THREE.PointLight(this.col,6,5,2);inner.position.set(0,0,.15);this.leds.add(inner);
-    pivot.add(this.leds);
-    this.ledCount=pts.length;
-  }
-  bindPointer(canvas){
-    let x0=0,d0=0,id=null;
-    canvas.addEventListener('pointerdown',e=>{id=e.pointerId;canvas.setPointerCapture(id);this.dragging=true;x0=e.clientX;this.resumeAt=0});
-    canvas.addEventListener('pointermove',e=>{
-      if(this.dragging&&e.pointerId===id){this.auto+=(e.clientX-x0)*.009;x0=e.clientX;this.holdUntil=0}
-      else if(fine){const r=canvas.getBoundingClientRect();this.mx=(e.clientX-r.left)/r.width-.5;this.my=(e.clientY-r.top)/r.height-.5}
-    });
-    const up=()=>{this.dragging=false;id=null;this.resumeAt=performance.now()+1800};
-    canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
-    canvas.addEventListener('pointerleave',()=>{this.mx=this.my=0});
-    this.mx=this.my=0;
-  }
-  bindTilt(){
-    const fb=this.el.querySelector('.px-fallback');
-    if(!fine)return;
-    this.el.addEventListener('pointermove',e=>{const r=this.el.getBoundingClientRect();fb.style.setProperty('--ry',((e.clientX-r.left)/r.width-.5)*18+'deg');fb.style.setProperty('--rx',(.5-(e.clientY-r.top)/r.height)*10+'deg')});
-  }
-  rotAt(p){
-    const K=[[0,-.3],[.26,.5],[.5,Math.PI],[.8,Math.PI+.25],[1,Math.PI*2-.3]];
-    for(let i=1;i<K.length;i++)if(p<=K[i][0]){
-      const [a,ra]=K[i-1],[b,rb]=K[i],k=clamp((p-a)/(b-a)),e=k*k*(3-2*k);
-      return ra+(rb-ra)*e;
-    }
-    return K[K.length-1][1];
-  }
-  resize(){
-    const c=this.renderer.domElement,w=c.clientWidth,h=c.clientHeight;
-    if(!w||!h)return;
-    this.renderer.setSize(w,h,false);this.cam.aspect=w/h;
-    // on narrow screens pull the camera back and lift the mask above the controls
-    const narrow=w<760;
-    this.cam.position.z=narrow?14:7.4;
-    this.offsetX=narrow?0:1.35;this.offsetY=narrow?.12:0;
-    this.cam.updateProjectionMatrix();
-  }
-  loop(){
-    if(this.disposed||!this.el.isConnected){this.dispose();return}
-    requestAnimationFrame(()=>this.loop());
-    if(!this.visible||document.hidden)return;
-    const t=this.clock.getElapsedTime(),now=performance.now(),dt=Math.min((now-this.last)/1000,.05);this.last=now;
-    if(!this.dragging&&!reduced){
-      if(now<this.holdUntil)this.auto+=(this.insideTarget-this.auto)*(1-Math.exp(-dt*3.2));
-      else if(now>(this.resumeAt||0))this.auto+=dt*.24;
-    }
-    const targetRot=this.auto+(this.mx||0)*.3;
-    this.rot+=(targetRot-this.rot)*(1-Math.exp(-dt*5));
-    const P=this.pivot;
-    P.rotation.y=this.rot;P.rotation.x+=((-(this.my||0)*.25+Math.sin(t*.5)*.03)-P.rotation.x)*.06;
-    P.position.set(this.offsetX,this.offsetY+Math.sin(t*.9)*.06,0);
-    this.halo.position.x=this.offsetX;this.halo.position.y=this.offsetY;
-    const tgt=new this.THREE.Color(this.target);this.col.lerp(tgt,.07);
-    for(const l of [this.front,this.rim,this.rim2])l.color.copy(this.col);
-    this.front.position.x=this.offsetX;
-    const inside=clamp(-Math.cos(P.rotation.y)*1.4-.1);
-    this.zc+=(( -3+inside*inside*(3-2*inside)*3.34)-this.zc)*.1;
-    P.updateMatrixWorld(true);
-    this.cplane.set(new this.THREE.Vector3(0,0,1),-this.zc).applyMatrix4(P.matrixWorld);
-    if(this.shellMats){for(const m of this.shellMats){m.emissive.copy(this.col);m.emissiveIntensity=inside*.5}}
-    if(this.leds){
-      this.ledMat.color.copy(this.col).multiplyScalar(1+inside*.5);this.coreMat.color.copy(this.col).lerp(new this.THREE.Color(0xffffff),.85).multiplyScalar(2+inside*1.2);
-      this.ledGlow.material.color.copy(this.col);this.ledGlow.material.opacity=.15+inside*.35;
-      this.inner.color.copy(this.col);this.inner.intensity=3+inside*9;
-    }
-    if(this.el.dataset.inside!==String(inside>.55)){this.el.dataset.inside=String(inside>.55)}
-    this.halo.material.color.copy(this.col);this.pts.material.color.copy(this.col);
-    this.halo.material.opacity=.6+Math.sin(t*1.4)*.12;
-    this.pts.rotation.y=t*.06+this.rot*.3;this.pts.position.x=this.offsetX;
-    const pa=this.pts.geometry.attributes.position;
-    for(let i=0;i<pa.count;i++)pa.array[i*3+1]+=Math.sin(t*.6+this.seed[i])*.0016;
-    pa.needsUpdate=true;
-    this.renderer.render(this.scene,this.cam);
-  }
-  dispose(){
-    if(this.disposed&&!this.renderer)return;
-    this.disposed=true;clearInterval(this.cycle);this.io?.disconnect();root.classList.remove('px-in-stage');removeEventListener('resize',this.onResize);
-    if(this.renderer){this.renderer.dispose();this.renderer.forceContextLoss?.();this.renderer=null}
-  }
+  dispose(){clearInterval(this.cycle);this.io?.disconnect();this.v.pause();this.v.removeAttribute('src');this.v.load()}
 }
 const DETAIL={inside:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-inside-led.webp?v=1792901528',macro:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-macro-led.webp?v=1792901528',strap:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-strap-detail.webp?v=1792901528'};
 function detailSection(){
@@ -420,17 +253,117 @@ function detailSection(){
 function stageInit(){
   const anchor=document.querySelector('main .px-marquee')||document.querySelector('main .trustbar')?.closest('.wrap');
   if(document.querySelector('.px-stage')||!anchor||document.querySelector('.care-page'))return;
-  const sec=document.createElement('section');sec.className='px-stage';sec.id='mask3d';sec.setAttribute('aria-label',T('Interactive 3D mask','Máscara 3D interactiva'));
+  const sec=document.createElement('section');sec.className='px-stage';sec.id='mask3d';sec.setAttribute('aria-label',T('360° view of the mask','Vista 360° de la máscara'));
   sec.innerHTML=stageMarkup();
   anchor.after(sec);
-  if(reduced)root.classList.add('px-reduced');
   stage=new Stage(sec);
+}
+
+/* ---------------- how-to-use tutorial (5 steps) ---------------- */
+const TUT_IMG=['__TUT1__','__TUT2__','__TUT3__','__TUT4__','__TUT5__'];
+function tutSteps(){return [
+  {k:T('Cleanse','Limpia'),h:T('Start with a bare, clean face','Empieza con la cara limpia y sin maquillaje'),
+   p:T('Wash with your usual cleanser and take off all makeup and sunscreen. Rinse with lukewarm water.','Lávate con tu limpiador habitual y quita todo el maquillaje y el protector solar. Enjuaga con agua tibia.'),
+   c:[T('Makeup and sunscreen removed','Maquillaje y protector solar retirados'),T('Face rinsed with lukewarm water','Rostro enjuagado con agua tibia')],
+   tip:T('Nothing should sit between the mask and your skin.','Nada debe quedar entre la máscara y tu piel.')},
+  {k:T('Dry and prepare','Seca y prepara'),h:T('Dry off, clear the space, read the notes','Sécate, despeja y lee las indicaciones'),
+   p:T('Pat your face dry with a clean towel. Tie your hair back and take off earrings, glasses and anything that could press under the strap. Read the safety and eye-protection notes in the manual.','Sécate con una toalla limpia. Recoge el cabello y quítate aretes, lentes y todo lo que pueda presionar bajo la correa. Lee las notas de seguridad y protección ocular del manual.'),
+   c:[T('Face completely dry','Rostro completamente seco'),T('Hair tied back, accessories off','Cabello recogido, accesorios fuera'),T('Manual and eye-protection notes read','Manual y notas de protección ocular leídos')],
+   tip:T('Sit somewhere comfortable with the mask and its controls within reach.','Siéntate en un lugar cómodo con la máscara y sus controles al alcance.')},
+  {k:T('Fit the mask','Colócala'),h:T('Line up the openings, fasten the strap','Alinea las aberturas y ajusta la correa'),
+   p:T('Hold the mask by its edges and bring it to your face. Match the openings to your eyes, nose and mouth, then pull the strap around the back of your head and fasten it.','Sostén la máscara por los bordes y llévala a tu rostro. Haz coincidir las aberturas con ojos, nariz y boca, rodea la nuca con la correa y ábrochala.'),
+   c:[T('Openings aligned with eyes, nose and mouth','Aberturas alineadas con ojos, nariz y boca'),T('Strap snug but comfortable','Correa firme pero cómoda')],
+   tip:T('If it presses anywhere, loosen the strap one notch.','Si presiona en algún punto, afloja la correa un ajuste.')},
+  {k:T('Choose a light','Elige la luz'),h:T('Switch on and pick one of seven modes','Enciende y elige uno de los siete modos'),
+   p:T('Turn the mask on and select a mode: red, green, blue, purple, yellow, cyan or white. Sit back or recline and keep to the session time given in the manual.','Enciende la máscara y selecciona un modo: rojo, verde, azul, morado, amarillo, cian o blanco. Recuéstate o relájate y respeta el tiempo de sesión que indica el manual.'),
+   c:[T('Mode selected','Modo seleccionado'),T('Session length follows the manual','Duración de la sesión según el manual')],
+   tip:T('Tap a color below to preview how the light looks.','Toca un color para ver cómo se ve la luz.'),pick:true},
+  {k:T('Finish and care','Termina y cuida'),h:T('Switch off, wipe down, store','Apaga, limpia y guarda'),
+   p:T('Switch the mask off and undo the strap. Wipe the inside with a soft dry cloth, or as the manual directs, and store it somewhere clean and dry. Apply your usual skincare afterwards if you like.','Apaga la máscara y suelta la correa. Limpia el interior con un paño suave y seco, o como indique el manual, y guárdala en un lugar limpio y seco. Aplica después tu cuidado de piel habitual si lo deseas.'),
+   c:[T('Mask switched off','Máscara apagada'),T('Inside wiped and stored','Interior limpio y guardado')],
+   tip:T('Stop using it and ask a dermatologist if you notice irritation.','Deja de usarla y consulta a un dermatólogo si notas irritación.')}
+]}
+function tutorialSection(){
+  const slot=document.querySelector('.px-tut-slot')||document.getElementById('ritual');
+  if(!slot||slot.dataset.pxTut||document.querySelector('.care-page'))return;
+  slot.dataset.pxTut='1';slot.className='px-tut wrap section';slot.id='ritual';
+  const S=tutSteps(),N=S.length,total=S.reduce((a,x)=>a+x.c.length,0);
+  let cur=0,auto=true,prog=0,done=new Set(),color=0;
+  const sw=COLORS.map((m,i)=>`<button type="button" class="px-tut__sw" data-sw="${i}" style="--sw:${m.c}" aria-pressed="${i===0}" aria-label="${T(m.en,m.es)}"><i></i></button>`).join('');
+  slot.innerHTML=`<div class="px-tut__head"><div><span class="eyebrow">${T('How to use','Cómo usarla')}</span><h2>${T('Five steps,<br><em>start to finish.</em>','Cinco pasos,<br><em>de principio a fin.</em>')}</h2></div><p>${T('Follow them in order the first time. Details that depend on your exact model, such as session length, are in the manufacturer’s manual.','Síguelos en orden la primera vez. Lo que depende de tu modelo exacto, como la duración de la sesión, está en el manual del fabricante.')}</p></div>
+  <div class="px-tut__grid">
+    <div class="px-tut__stage" aria-live="polite">
+      <div class="px-tut__bar" aria-hidden="true">${S.map(()=>'<i><b></b></i>').join('')}</div>
+      ${S.map((x,i)=>`<figure class="px-tut__ph${i===0?' on':''}" data-ph="${i}"><img src="${TUT_IMG[i]}" alt="${T('Step','Paso')} ${i+1}: ${x.k}" width="1200" height="1500" ${i===0?'':'loading="lazy"'}></figure>`).join('')}
+      <div class="px-tut__glow" aria-hidden="true"></div>
+      <div class="px-tut__cap"><span class="px-tut__n">01<small>/0${N}</small></span><span class="px-tut__k">${S[0].k}</span></div>
+      <button type="button" class="px-tut__nav px-tut__nav--prev" aria-label="${T('Previous step','Paso anterior')}">←</button>
+      <button type="button" class="px-tut__nav px-tut__nav--next" aria-label="${T('Next step','Paso siguiente')}">→</button>
+    </div>
+    <ol class="px-tut__list">${S.map((x,i)=>`<li class="px-tut__item${i===0?' on':''}" data-i="${i}">
+      <button type="button" class="px-tut__btn" aria-expanded="${i===0}" aria-controls="px-tut-p${i}" id="px-tut-b${i}"><span class="px-tut__num">0${i+1}</span><span class="px-tut__t"><b>${x.k}</b><small>${x.h}</small></span><span class="px-tut__plus" aria-hidden="true"></span></button>
+      <div class="px-tut__panel" id="px-tut-p${i}" role="region" aria-labelledby="px-tut-b${i}"><div>
+        <p>${x.p}</p>
+        ${x.pick?`<div class="px-tut__pick"><div class="px-tut__sws" role="group" aria-label="${T('Preview a light mode','Previsualiza un modo de luz')}">${sw}</div><span class="px-tut__pname">${T(COLORS[0].en,COLORS[0].es)} · ${COLORS[0].nm}</span></div>`:''}
+        <ul class="px-tut__checks">${x.c.map((c,j)=>`<li><label><input type="checkbox" data-ck="${i}-${j}"><span class="px-tut__box" aria-hidden="true"></span><span>${c}</span></label></li>`).join('')}</ul>
+        <p class="px-tut__tip"><b>${T('Tip','Consejo')}</b>${x.tip}</p>
+      </div></div><i class="px-tut__timer" aria-hidden="true"></i></li>`).join('')}</ol>
+  </div>
+  <div class="px-tut__foot"><div class="px-tut__meter" role="status"><span class="px-tut__count">0 / ${total}</span><i><b></b></i><span class="px-tut__msg">${T('Tick each check as you go.','Marca cada punto a medida que avanzas.')}</span></div>
+    <p class="small">${T('Illustrative studio images. Eye protection, session length and care follow the manufacturer’s instructions.','Imágenes de estudio ilustrativas. La protección ocular, la duración de la sesión y el cuidado siguen las instrucciones del fabricante.')}</p></div>`;
+  const q=a=>slot.querySelector(a),qa=a=>[...slot.querySelectorAll(a)];
+  const items=qa('.px-tut__item'),phs=qa('.px-tut__ph'),segs=qa('.px-tut__bar i b');
+  function show(i,user){
+    cur=(i+N)%N;prog=0;
+    items.forEach((el,k)=>{const on=k===cur;el.classList.toggle('on',on);el.querySelector('.px-tut__btn').setAttribute('aria-expanded',on)});
+    phs.forEach((el,k)=>el.classList.toggle('on',k===cur));
+    q('.px-tut__n').innerHTML=`0${cur+1}<small>/0${N}</small>`;q('.px-tut__k').textContent=S[cur].k;
+    segs.forEach((b,k)=>{b.style.transform=`scaleX(${k<cur?1:0})`});
+    q('.px-tut__glow').classList.toggle('lit',!!S[cur].pick);
+    if(user)auto=false;
+  }
+  function setColor(i){color=i;const m=COLORS[i];slot.style.setProperty('--tc',m.c);
+    qa('.px-tut__sw').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.sw===i));
+    q('.px-tut__pname').textContent=`${T(m.en,m.es)} · ${m.nm}`}
+  function meter(){
+    const n=done.size;q('.px-tut__count').textContent=`${n} / ${total}`;
+    q('.px-tut__meter b').style.transform=`scaleX(${n/total})`;
+    q('.px-tut__msg').textContent=n===total?T('All set. Switch on and enjoy the session.','Todo listo. Enciende la máscara y disfruta la sesión.'):T('Tick each check as you go.','Marca cada punto a medida que avanzas.');
+    slot.classList.toggle('is-done',n===total);
+  }
+  slot.addEventListener('click',e=>{
+    const b=e.target.closest('.px-tut__btn');if(b){show(+b.closest('.px-tut__item').dataset.i,true);return}
+    if(e.target.closest('.px-tut__nav--next')){show(cur+1,true);return}
+    if(e.target.closest('.px-tut__nav--prev')){show(cur-1,true);return}
+    const w=e.target.closest('.px-tut__sw');if(w){auto=false;setColor(+w.dataset.sw)}
+  });
+  slot.addEventListener('change',e=>{const c=e.target.closest('[data-ck]');if(!c)return;c.checked?done.add(c.dataset.ck):done.delete(c.dataset.ck);meter()});
+  slot.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown'){if(e.target.closest('.px-tut__btn,.px-tut__nav')){e.preventDefault();show(cur+1,true)}}if(e.key==='ArrowLeft'||e.key==='ArrowUp'){if(e.target.closest('.px-tut__btn,.px-tut__nav')){e.preventDefault();show(cur-1,true)}}});
+  // swipe on the photo
+  let x0=null;const st=q('.px-tut__stage');
+  st.addEventListener('pointerdown',e=>{x0=e.clientX});
+  st.addEventListener('pointerup',e=>{if(x0===null)return;const d=e.clientX-x0;x0=null;if(Math.abs(d)>50&&!e.target.closest('button'))show(cur+(d<0?1:-1),true)});
+  let vis=false,hover=false;
+  new IntersectionObserver(en=>{vis=en[0].isIntersecting},{threshold:.35}).observe(slot);
+  slot.addEventListener('pointerenter',()=>hover=true);slot.addEventListener('pointerleave',()=>hover=false);
+  slot.addEventListener('focusin',()=>{hover=true});slot.addEventListener('focusout',()=>{hover=false});
+  const tick=setInterval(()=>{
+    if(!slot.isConnected){clearInterval(tick);return}
+    if(!auto||!vis||hover||reduced||document.hidden)return;
+    prog+=100/6500*100;                       // ~6.5 s per step
+    const k=Math.min(prog,100)/100;
+    segs[cur].style.transform=`scaleX(${k})`;
+    items[cur].querySelector('.px-tut__timer').style.transform=`scaleX(${k})`;
+    if(prog>=100){items[cur].querySelector('.px-tut__timer').style.transform='scaleX(0)';show(cur+1,false)}
+  },100);
+  slot.style.setProperty('--tc',COLORS[0].c);
+  show(0,false);meter();
 }
 
 /* ---------------- page transitions ---------------- */
 function chrome(){
-  if(!document.querySelector('.px-progress')){
-    document.body.insertAdjacentHTML('beforeend','<div class="px-progress" aria-hidden="true"></div><div class="px-leave" aria-hidden="true"></div>');
+  if(!document.querySelector('.px-leave')){
+    document.body.insertAdjacentHTML('beforeend','<div class="px-leave" aria-hidden="true"></div>');
   }
   const first=(()=>{try{if(sessionStorage.getItem('px-intro'))return false;sessionStorage.setItem('px-intro','1')}catch{}return true})();
   if(first&&!reduced&&!document.querySelector('.px-curtain')){
@@ -456,7 +389,7 @@ function enhance(){
   if(!app||!document.getElementById('main'))return;
   chrome();
   if(!document.querySelector('.px-stage')&&stage){stage.dispose();stage=null}
-  tabFunctions();marquee();stageInit();detailSection();shipSection();stickyShip();decorate();heroTilt();magnetic();
+  tabFunctions();marquee();stageInit();detailSection();tutorialSection();shipSection();decorate();heroTilt();magnetic();
   onScroll();
 }
 function boot(){

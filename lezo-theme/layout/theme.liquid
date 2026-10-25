@@ -9,10 +9,10 @@
 <link rel="canonical" href="{{ canonical_url }}">
 <meta property="og:title" content="{{ page_title | escape }}"><meta property="og:description" content="{{ 'lezo.description' | t | escape }}"><meta property="og:image" content="https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-hero-2026.webp?v=1792897033">
 <link rel="icon" type="image/svg+xml" href="{{ 'lezo-favicon.svg' | asset_url }}">
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 {{ 'lezo-studio.css' | asset_url | stylesheet_tag }}
 {{ 'lezo-premium.css' | asset_url | stylesheet_tag }}
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script src="{{ 'lezo-studio.js' | asset_url }}" defer></script>
 <script src="{{ 'lezo-premium.js' | asset_url }}" defer></script>
 {{ content_for_header }}
