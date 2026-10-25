@@ -37,14 +37,15 @@ SHOTS = [
     ('06-floating-hero', 15.0, 8.0, (1.07, 1.00, .50, .50, .47, .50), None, None),
 ]
 TOTAL = 23.0
-LED_ON = 12.55                 # LEDs power on (beep) inside shot 5
-COLORS_AT = 17.45              # "every single color" headline + mask colour cycle
-CTA_AT = 19.95
+BPM = 120                      # music grid: one shot = 6 beats, cues land on beats
+LED_ON = 12.5                  # LEDs power on (click + beep) inside shot 5
+COLORS_AT = 17.5               # "every single color" headline + mask colour cycle
+CTA_AT = 20.0                  # offer lands on a downbeat
 # LED colour keyframes for the hero (unit tint for the glow, swatch for the headline)
-LED_CYCLE = [(17.75, (.12, .42, 1.0), (38, 110, 240)),     # blue
-             (18.45, (.15, 1.0, .45), (18, 168, 92)),      # green
-             (19.15, (.72, .25, 1.0), (140, 64, 222)),     # purple
-             (19.85, (1.0, 0.0, 0.0), RED)]                # back to red for the offer
+LED_CYCLE = [(17.9, (.12, .42, 1.0), (38, 110, 240)),      # blue   (on the beat)
+             (18.4, (.15, 1.0, .45), (18, 168, 92)),       # green
+             (18.9, (.72, .25, 1.0), (140, 64, 222)),      # purple
+             (19.4, (1.0, 0.0, 0.0), RED)]                # back to red for the offer
 
 
 def led_color(t):
@@ -259,7 +260,8 @@ def overlay(t):
             a, d = rise(t, CTA_AT + 0.45)
             put(ov, LIMIT, W / 2, 1530, a, d)
             a, d = rise(t, CTA_AT + 0.8)
-            beat = 1 + 0.025 * max(0.0, np.sin((t - CTA_AT - 1.3) * 2 * np.pi / 1.1)) * (t > CTA_AT + 1.3)
+            ph = ((t - CTA_AT) * BPM / 60) % 1            # button pulses with the kick
+            beat = 1 + 0.03 * np.exp(-ph * 6) * (t > CTA_AT + 1.0)
             put(ov, BUTTON, W / 2, 1600, a, d, beat)
     if vis > 0:
         s = SCRIM.copy(); s.putalpha(s.getchannel('A').point(lambda v: int(v * vis)))
@@ -299,41 +301,153 @@ def compose(t, srcs):
 
 
 # ---------------------------------------------------------------- sound
+# Reference style (LED-mask / premium skincare ads): an original minimal deep-house
+# groove (~120 BPM, warm EP chords, soft kick, shaker) plus ASMR product foley synced
+# to the action: slipper steps, the shell being picked up, robe rustle, strap
+# adjust, button click + power-on beep. No whooshes on the cuts.
+SR = 48000
+
+
+def _filt(x, lo=None, hi=None):
+    X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / SR) + 1e-3
+    if hi: X = X / np.sqrt(1 + (f / hi) ** 4)
+    if lo: X = X / np.sqrt(1 + (lo / f) ** 4)
+    return np.fft.irfft(X, len(x))
+
+
+def _conv(x, ir):
+    m = len(x) + len(ir) - 1; k = 1 << (m - 1).bit_length()
+    return np.fft.irfft(np.fft.rfft(x, k) * np.fft.rfft(ir, k), k)[:len(x)]
+
+
+def _add(buf, sig, at, gain=1.0):
+    i = int(at * SR)
+    if i >= len(buf): return
+    sig = sig[:len(buf) - i]; buf[i:i + len(sig)] += sig * gain
+
+
+def _env(n, a, d):
+    u = np.arange(n) / SR
+    return np.minimum(u / max(a, 1e-4), 1) * np.exp(-u / d)
+
+
+def _note(m):
+    return 440 * 2 ** ((m - 69) / 12)
+
+
 def sound(path):
-    sr = 48000; n = int(TOTAL * sr); t = np.arange(n) / sr
+    n = int(TOTAL * SR); t = np.arange(n) / SR
     rng = np.random.default_rng(42)
+    beat = 60 / BPM; bar = 4 * beat
+    nbars = int(np.ceil(TOTAL / bar))
+    END = 22.0                                      # music resolves here, tail rings out
 
-    def lp(x, fc):                      # FFT brickwall-ish low-pass with soft knee
-        X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / sr)
-        return np.fft.irfft(X / np.sqrt(1 + (f / fc) ** 4), len(x))
+    # --- drum one-shots
+    kn = int(0.45 * SR); ku = np.arange(kn) / SR
+    kick = np.sin(2 * np.pi * np.cumsum(48 + 70 * np.exp(-ku * 32)) / SR) * np.exp(-ku * 7.5)
+    kick += 0.25 * _filt(rng.normal(0, 1, kn), lo=2500) * np.exp(-ku * 300)
+    hn = int(0.09 * SR)
+    hat = _filt(rng.normal(0, 1, hn), lo=7500) * _env(hn, 0.001, 0.025)
+    shk = _filt(rng.normal(0, 1, hn), lo=5500, hi=12000) * _env(hn, 0.006, 0.02)
+    cn = int(0.3 * SR); cl = _filt(rng.normal(0, 1, cn), lo=900, hi=4500)
+    cu = np.arange(cn) / SR
+    clap = cl * (np.exp(-cu * 22) + 0.6 * np.exp(-np.maximum(cu - .011, 0) * 60) * (cu > .011)
+                 + 0.5 * np.exp(-np.maximum(cu - .023, 0) * 60) * (cu > .023))
 
-    def hp(x, fc):
-        X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / sr)
-        return np.fft.irfft(X / np.sqrt(1 + (fc / np.maximum(f, 1e-3)) ** 4), len(x))
+    # --- harmony: Am9 | Fmaj9 | Dm9 | Em7  (A minor, deep-house voicings)
+    prog = [[57, 60, 64, 67, 71], [53, 57, 60, 64, 67], [50, 53, 57, 60, 64], [52, 55, 59, 62, 67]]
+    roots = [33, 29, 38, 28]
 
-    # white-noise room tone, softened top, gently breathing, stereo-decorrelated
-    room = [hp(lp(rng.normal(0, 1, n), 5200), 120) for _ in range(2)]
-    breathe = 1 + 0.18 * np.sin(2 * np.pi * 0.11 * t) + 0.08 * np.sin(2 * np.pi * 0.047 * t + 1)
-    room = [r / np.std(r) * 0.022 * breathe for r in room]
-    # airy pad (Cmaj9 voicing), very low, slow swell, lifts slightly for the CTA
-    pad = np.zeros(n)
-    for f0, amp in [(130.81, 1), (196.0, .8), (246.94, .55), (293.66, .5), (392.0, .35)]:
-        pad += amp * np.sin(2 * np.pi * f0 * t + 0.25 * np.sin(2 * np.pi * 0.13 * t + f0))
-    pad = lp(pad, 1800) * 0.012 * (1 + 0.6 * np.clip((t - CTA_AT) / 2.0, 0, 1))
-    # power-on beep: one soft, short tone with rounded edges + faint electrical hum after
-    beep = np.zeros(n); u = t - LED_ON
-    env = np.where((u >= 0) & (u < 0.22), np.sin(np.pi * np.clip(u / 0.22, 0, 1)) ** 2, 0)
-    beep += 0.075 * env * (np.sin(2 * np.pi * 1568 * u) + 0.18 * np.sin(2 * np.pi * 3136 * u))
-    hum_env = np.clip((t - LED_ON) / 0.6, 0, 1) * np.clip((15.4 - t) / 0.8, 0, 1)
-    beep += 0.004 * hum_env * (np.sin(2 * np.pi * 120 * t) + 0.5 * np.sin(2 * np.pi * 240 * t))
-    master = np.minimum(t / 0.8, 1) * np.clip((TOTAL - t) / 1.2, 0, 1)
-    L = (room[0] + pad + beep) * master
-    R = (room[1] + pad * 0.97 + beep) * master
-    st = np.tanh(np.stack([L, R], 1) * 1.4) / 1.4
-    st *= 10 ** (-1 / 20) / max(1e-9, np.abs(st).max()) * 0.5   # peaks ~ -7 dBFS
+    def ep(freqs, dur):                             # electric-piano stab
+        m = int(dur * SR); u = np.arange(m) / SR; out = np.zeros(m)
+        for f0 in freqs:
+            for h, a, dk in [(1, 1, 1.6), (2, .35, 3.5), (3, .12, 6), (4.02, .06, 9)]:
+                out += a * np.sin(2 * np.pi * f0 * h * u * (1 + 0.0015 * rng.normal())) * np.exp(-u * dk)
+        return out * np.minimum(u / 0.004, 1) / len(freqs)
+
+    drums = np.zeros(n); hats = np.zeros(n); keys = np.zeros(n); bass = np.zeros(n)
+    side = np.ones(n)                               # kick sidechain for keys/bass
+    for b in range(nbars):
+        t0 = b * bar
+        ch, rt = prog[b % 4], roots[b % 4]
+        # keys: stab on 1, the "and" of 2, and the "e" of 4 (classic deep-house push)
+        if t0 < END:
+            for off, ln, g in [(0, 1.2, 1.0), (1.5 * beat, .6, .7), (3.5 * beat, .5, .55)]:
+                _add(keys, ep([_note(m) for m in ch], ln), t0 + off, g)
+        for k in range(4):
+            tb = t0 + k * beat
+            if tb >= END: break
+            groove = tb >= 4.0 and not (11.0 <= tb < 13.0)          # drums in at 4 s, break round the power-on
+            if groove or tb >= 20.0:
+                _add(drums, kick, tb, 1.0 if tb != 20.0 else 1.4)
+                ku2 = np.arange(int(.25 * SR)) / SR
+                i = int(tb * SR); m = min(len(ku2), n - i)
+                side[i:i + m] = np.minimum(side[i:i + m], 1 - 0.55 * np.exp(-ku2[:m] * 9))
+                _add(hats, hat, tb + beat / 2, 0.55)
+                if k in (1, 3): _add(drums, clap, tb, 0.32)
+                # bass: offbeat root + octave pickup
+                bl = int(beat * 0.45 * SR); bu = np.arange(bl) / SR
+                f = _note(rt + 12)
+                tone = np.sin(2 * np.pi * f * bu) + 0.3 * np.sin(2 * np.pi * 2 * f * bu)
+                _add(bass, tone * np.minimum(bu / .008, 1) * np.exp(-bu * 4), tb + beat / 2, 0.55)
+            for q in range(4):                                         # 16th shaker, whole track
+                if tb + q * beat / 4 < END - 0.01:
+                    _add(hats, shk, tb + q * beat / 4, (0.22 if q % 2 else 0.12) * (1.0 if tb >= 2.0 else 0.6))
+    # filter automation: keys open up as the story moves to the product
+    cut = np.interp(t, [0, 4, 12, 13, 15, 20, 23], [0.0, 0.35, 0.55, 0.25, 0.8, 1.0, 1.0])
+    keys = _filt(keys, hi=700) * (1 - cut) + _filt(keys, hi=5000) * cut
+    keys *= side; bass = _filt(bass, hi=900) * side
+    ir_n = int(1.8 * SR); iu = np.arange(ir_n) / SR
+    irL = _filt(rng.normal(0, 1, ir_n), lo=200, hi=7000) * np.exp(-iu / 0.45)
+    irR = _filt(rng.normal(0, 1, ir_n), lo=200, hi=7000) * np.exp(-iu / 0.45)
+    irL /= np.abs(irL).sum() ** .5 * 6; irR /= np.abs(irR).sum() ** .5 * 6
+    pre = keys * 0.9 + drums * 0.08
+    musicL = keys + drums + hats * 0.8 + bass + _conv(pre, irL)
+    musicR = keys * 0.97 + drums + np.roll(hats, 90) * 0.8 + bass + _conv(pre, irR)
+
+    # --- ASMR foley synced to picture
+    fol = np.zeros(n); fr = np.zeros(n)
+    for k, ts in enumerate([0.55, 1.2, 1.85, 2.5]):                   # slipper steps
+        m = int(.18 * SR)
+        st = _filt(rng.normal(0, 1, m), lo=150, hi=1800) * _env(m, .015, .05)
+        _add(fol if k % 2 else fr, st, ts, 0.5)
+    m = int(.12 * SR); u = np.arange(m) / SR                            # shell picked up: plastic tock
+    tock = (np.sin(2 * np.pi * 1850 * u) + .6 * np.sin(2 * np.pi * 3170 * u) + .3 * np.sin(2 * np.pi * 760 * u)) * np.exp(-u * 70)
+    _add(fol, tock, 3.75, 0.22); _add(fr, tock, 3.75, 0.18)
+    _add(fol, _filt(rng.normal(0, 1, int(.5 * SR)), lo=1200, hi=7000) * np.sin(np.linspace(0, np.pi, int(.5 * SR))) ** 2, 3.6, 0.12)
+    for side_buf, g in [(fol, .07), (fr, .06)]:                          # robe rustle as she settles
+        m = int(1.4 * SR); u = np.arange(m) / SR
+        cloth = _filt(rng.normal(0, 1, m), lo=1500, hi=9000)
+        cloth *= np.sin(np.pi * u / 1.4) ** 2 * (0.6 + 0.4 * np.abs(_filt(rng.normal(0, 1, m), hi=12)) * 8)
+        _add(side_buf, cloth, 6.35, g)
+    m = int(.38 * SR); u = np.arange(m) / SR                            # strap adjust (velcro / elastic)
+    crack = _filt(rng.normal(0, 1, m) * (rng.random(m) < .08), lo=1800, hi=9000) * np.sin(np.pi * u / .38)
+    _add(fol, crack, 10.15, 0.55); _add(fr, crack, 10.2, 0.45)
+    m = int(.05 * SR); u = np.arange(m) / SR                            # button click
+    click = _filt(rng.normal(0, 1, m), lo=2500) * np.exp(-u * 900)
+    click2 = _filt(rng.normal(0, 1, m), lo=1500) * np.exp(-u * 600)
+    _add(fol, click, LED_ON - 0.12, 0.6); _add(fr, click, LED_ON - 0.12, 0.6)
+    _add(fol, click2, LED_ON - 0.07, 0.4); _add(fr, click2, LED_ON - 0.07, 0.4)
+    m = int(.24 * SR); u = np.arange(m) / SR                            # power-on beep
+    bp = np.sin(np.pi * np.clip(u / .24, 0, 1)) ** 2 * (np.sin(2 * np.pi * 1568 * u) + .15 * np.sin(2 * np.pi * 3136 * u))
+    _add(fol, bp, LED_ON, 0.11); _add(fr, bp, LED_ON, 0.11)
+    hum = np.clip((t - LED_ON) / .5, 0, 1) * np.clip((14.2 - t) / .8, 0, 1) * (np.sin(2 * np.pi * 120 * t) + .4 * np.sin(2 * np.pi * 240 * t))
+    m = int(2.5 * SR); u = np.arange(m) / SR                            # offer: low impact under the kick
+    boom = np.sin(2 * np.pi * np.cumsum(38 + 30 * np.exp(-u * 8)) / SR) * np.exp(-u * 2.2)
+    _add(fol, boom, CTA_AT, 0.35); _add(fr, boom, CTA_AT, 0.35)
+    air = [_filt(rng.normal(0, 1, n), lo=200, hi=6000) for _ in range(2)]
+    air = [a / np.std(a) * 0.004 for a in air]                       # barely-there room tone
+
+    mus_gain = np.interp(t, [0, 1.2, 22.0, TOTAL], [0.35, 1, 1, 1])
+    L = musicL * 0.55 * mus_gain + fol + hum * .006 + air[0]
+    Rr = musicR * 0.55 * mus_gain + fr + hum * .006 + air[1]
+    st = np.stack([L, Rr], 1)
+    st *= np.clip((TOTAL - t) / 0.6, 0, 1)[:, None]
+    st = st / np.percentile(np.abs(st), 99.95) * 0.75
+    st = np.tanh(st * 1.2) / np.tanh(1.2) * 0.78                    # soft limiter, peaks ~ -1 dBFS
     with wave.open(str(path), 'wb') as f:
-        f.setnchannels(2); f.setsampwidth(2); f.setframerate(sr)
-        f.writeframes((st * 32767).astype('<i2').tobytes())
+        f.setnchannels(2); f.setsampwidth(2); f.setframerate(SR)
+        f.writeframes((np.clip(st, -1, 1) * 32767).astype('<i2').tobytes())
 
 
 # ---------------------------------------------------------------- render
