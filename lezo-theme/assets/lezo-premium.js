@@ -58,7 +58,7 @@ function decorate(){
   const lines=main.querySelectorAll('h1,h2:not(.px-keep)');
   lines.forEach(h=>{if(!h.closest('.px-stage'))splitLines(h)});
   const groups={
-    fade:'.eyebrow,.hero-copy>p,.hero-price,.hero-copy>.btn,.hero-color-link,.hero-note,.section-head p,.study-intro,.light-invitation,.mode-info>*,.results-copy>*:not(h2),.faq-grid>div:first-child>*:not(h2),.buy-copy>*,.numbered,.step-line,.result-points div,.science-top p,.science-bottom article,.depth-captions article,.depth-heading>*:not(h2),.pdp-ritual-copy>*:not(h2),.pdp-copy>*:not(h1),.ritual-layout>div:last-child>.text-link,.service-band>div,.faq-list details,.trustbar>div,.mode-tabs .swatch,.px-detail__head>*,.px-detail__note,.px-ship__lede,.px-dates,.px-ship__note,.px-steps li,.px-big',
+    fade:'.eyebrow,.hero-copy>p,.hero-price,.hero-copy>.btn,.hero-color-link,.hero-note,.section-head p,.study-intro,.light-invitation,.mode-info>*,.results-copy>*:not(h2),.faq-grid>div:first-child>*:not(h2),.buy-copy>*,.numbered,.step-line,.result-points div,.science-top p,.science-bottom article,.depth-captions article,.depth-heading>*:not(h2),.pdp-ritual-copy>*:not(h2),.pdp-copy>*:not(h1),.ritual-layout>div:last-child>.text-link,.service-band>div,.faq-list details,.trustbar>div,.mode-tabs .swatch,.px-detail__head>*,.px-detail__note,.px-pdp-head>*,.px-chips li,.px-how__note,.px-split__t>*,.px-cards article h3,.px-cards article p,.px-spec__t>*,.px-ship__lede,.px-dates,.px-ship__note,.px-steps li,.px-big',
     img:'.px-fig,.image-frame,.hero-art,.results-photo,.depth-image,.pdp-ritual-photo,.gallery-main'
   };
   const seen=new Map();
@@ -275,9 +275,9 @@ function detailSection(){
   const s=document.createElement('section');s.className='px-detail wrap section';s.id='por-dentro';
   s.innerHTML=`<div class="px-detail__head"><div><span class="eyebrow">${T('Inside the mask','Por dentro')}</span><h2>${T('The light is<br><em>on the inside.</em>','La luz está<br><em>por dentro.</em>')}</h2></div><p>${T('LEDs spread across the whole inner face, so the light wraps around you. An adjustable strap with a buckle keeps your hands free to do whatever you like.','LEDs repartidos por toda la cara interior, para que la luz te envuelva. Una correa ajustable con hebilla te deja las manos libres para hacer lo que quieras.')}</p></div>
   <div class="px-detail__grid">
-    <figure class="px-fig px-fig--big"><img src="${DETAIL.inside}" alt="${T('Inside of the LEZO mask with the LED array lit','Interior de la máscara LEZO con la matriz de LEDs encendida')}" width="766" height="620" loading="lazy"><figcaption><b>01</b>${T('Light all around your face','Luz por todo tu rostro')}</figcaption></figure>
-    <figure class="px-fig"><img src="${DETAIL.macro}" alt="${T('Close-up of the individual LEDs','Detalle de los LEDs individuales')}" width="570" height="399" loading="lazy"><figcaption><b>02</b>${T('Every LED, up close','Cada LED, de cerca')}</figcaption></figure>
-    <figure class="px-fig"><img src="${DETAIL.strap}" alt="${T('Adjustable strap with buckle','Correa ajustable con hebilla')}" width="495" height="399" loading="lazy"><figcaption><b>03</b>${T('Adjustable strap, hands free','Correa ajustable, manos libres')}</figcaption></figure>
+    <figure class="px-fig px-zoomable px-fig--big"><img src="${DETAIL.inside}" alt="${T('Inside of the LEZO mask with the LED array lit','Interior de la máscara LEZO con la matriz de LEDs encendida')}" width="766" height="620" loading="lazy"><figcaption><b>01</b>${T('Light all around your face','Luz por todo tu rostro')}</figcaption></figure>
+    <figure class="px-fig px-zoomable"><img data-full="${DETAIL.macro}" src="${DETAIL.macro}" alt="${T('Close-up of the individual LEDs','Detalle de los LEDs individuales')}" width="570" height="399" loading="lazy"><figcaption><b>02</b>${T('Every LED, up close','Cada LED, de cerca')}</figcaption></figure>
+    <figure class="px-fig px-zoomable"><img data-full="${DETAIL.strap}" src="${DETAIL.strap}" alt="${T('Adjustable strap with buckle','Correa ajustable con hebilla')}" width="495" height="399" loading="lazy"><figcaption><b>03</b>${T('Adjustable strap, hands free','Correa ajustable, manos libres')}</figcaption></figure>
   </div>
   <p class="small px-detail__note">${T('Illustrative reference images. Colors and LED layout are approximate.','Imágenes ilustrativas de referencia. Los colores y la distribución de los LEDs son aproximados.')}</p>`;
   stageEl.after(s);
@@ -389,6 +389,70 @@ function buildTutorial(slot){
   show(0,false);meter();
 }
 
+
+/* ---------------- new imagery: home sections + product-page sections ---------------- */
+const IMG={sci:'__IMG_SCI__',res:'__IMG_RES__',box:'__IMG_BOX__',modes:'__IMG_P1__',lining:'__IMG_P2__',strap:'__IMG_P3__',shell:'__IMG_P4__',profile:'__IMG_P5__',back:'__IMG_P6__',rim:'__IMG_P7__'};
+function fig(src,alt,w,h,cls='',cap=''){return `<figure class="px-fig px-zoomable ${cls}" style="aspect-ratio:${w}/${h}"><img src="${src}" alt="${alt}" width="${w}" height="${h}" loading="lazy" data-full="${src}">${cap?`<figcaption>${cap}</figcaption>`:''}</figure>`}
+function homeImages(){
+  const sci=document.querySelector('.science .wrap');
+  if(sci&&!sci.querySelector('.px-sci-fig')){
+    const bottom=sci.querySelector('.science-bottom');
+    if(bottom)bottom.insertAdjacentHTML('beforebegin',fig(IMG.sci,T('Macro of the LED lenses inside the mask','Macro de los LEDs dentro de la máscara'),1792,1008,'px-sci-fig',`<b>01</b>${T('A single LED lens, magnified','Un solo LED, ampliado')}`));
+  }
+  const rc=document.querySelector('.results-copy');
+  if(rc&&!rc.querySelector('.px-res-fig'))rc.insertAdjacentHTML('beforeend',fig(IMG.res,T('The LEZO mask, three-quarter view','La máscara LEZO, vista tres cuartos'),1432,1792,'px-res-fig'));
+  const ship=document.getElementById('envio');
+  if(ship&&!ship.querySelector('.px-box-fig')){
+    const note=ship.querySelector('.px-ship__note');
+    if(note)note.insertAdjacentHTML('beforebegin',fig(IMG.box,T('The LEZO mask in its white box','La máscara LEZO en su caja blanca'),2016,864,'px-box-fig',`<b>→</b>${T('Packed in a plain white box','Empacada en una caja blanca lisa')}`));
+  }
+}
+function pdpSections(){
+  const slot=document.querySelector('.px-pdp-slot');
+  if(!slot||slot.dataset.pxDone)return;slot.dataset.pxDone='1';
+  const chips=[[0,'630'],[1,'520'],[2,'470'],[3,'630 + 470'],[4,'630 + 520'],[5,'470 + 520'],[6,'470 + 520 + 630']].map(([i,nm])=>`<li style="--c:${COLORS[i].c}"><i></i><b>${T(COLORS[i].en,COLORS[i].es)}</b><span>${nm} nm</span></li>`).join('');
+  const spec=[[T('Format','Formato'),T('Full-face LED mask','Máscara LED facial completa')],[T('Light modes','Modos de luz'),T('7 built in','7 integrados')],[T('Channels','Canales'),T('630 nm red · 520 nm green · 470 nm blue (supplier-listed)','630 nm rojo · 520 nm verde · 470 nm azul (según el proveedor)')],[T('Fit','Ajuste'),T('Adjustable strap with buckle','Correa ajustable con hebilla')],[T('Finish','Acabado'),T('Sculpted glossy white','Blanco esculpido y brillante')],[T('Returns','Devoluciones'),T('30 days from delivery','30 días desde la entrega')],[T('Delivery','Entrega'),T('Estimated 5–12 days','Estimada de 5 a 12 días')]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
+  slot.innerHTML=`<section class="px-how wrap section" id="como-funciona">
+    <div class="px-pdp-head"><div><span class="eyebrow">${T('How it works','Funcionamiento')}</span><h2>${T('Seven lights,<br><em>one device.</em>','Siete luces,<br><em>un solo equipo.</em>')}</h2></div><p>${T('Red, green and blue LED channels combine into seven modes. Pick one and the whole inner face of the mask lights up in that color.','Los canales LED rojo, verde y azul se combinan en siete modos. Elige uno y toda la cara interior de la máscara se ilumina de ese color.')}</p></div>
+    ${fig(IMG.modes,T('Seven LEZO masks, each lit in a different color','Siete máscaras LEZO, cada una encendida en un color distinto'),1792,1008,'px-wide')}
+    <ul class="px-chips" aria-label="${T('Light modes and supplier-listed wavelengths','Modos de luz y longitudes de onda según el proveedor')}">${chips}</ul>
+    <p class="small px-how__note">${T('Wavelengths are supplier-listed and not independently measured.','Las longitudes de onda son las indicadas por el proveedor y no se han medido de forma independiente.')}</p>
+    <div class="px-split">${fig(IMG.lining,T('Close-up of the LED lining inside the mask','Detalle del forro de LEDs dentro de la máscara'),1536,1152)}<div class="px-split__t"><span class="eyebrow">01 / ${T('The light','La luz')}</span><h3>${T('LEDs across the whole inner face','LEDs por toda la cara interior')}</h3><p>${T('Staggered rows of LED lenses line the inside of the shell, with cut-outs for the eyes, nose and mouth, so the light reaches the whole face.','Filas escalonadas de LEDs recubren el interior de la carcasa, con aberturas para ojos, nariz y boca, para que la luz llegue a todo el rostro.')}</p></div></div>
+    <div class="px-split px-split--r"><div class="px-split__t"><span class="eyebrow">02 / ${T('The fit','El ajuste')}</span><h3>${T('An adjustable strap, hands free','Una correa ajustable, manos libres')}</h3><p>${T('A woven strap with a buckle wraps around the back of the head. Adjust it once, then sit back and leave your hands free.','Una correa tejida con hebilla rodea la nuca. Ajústala una vez y quedan las manos libres.')}</p></div>${fig(IMG.back,T('The strap fastened at the back, shown on a mannequin','La correa abrochada por detrás, sobre un maniquí'),1432,1792)}</div>
+  </section>
+  <section class="px-qual wrap section" id="calidad">
+    <div class="px-pdp-head"><div><span class="eyebrow">${T('Build quality','Calidad')}</span><h2>${T('Details you can<br><em>see up close.</em>','Detalles que se<br><em>ven de cerca.</em>')}</h2></div><p>${T('Tap any image to zoom in.','Toca cualquier imagen para ampliarla.')}</p></div>
+    <div class="px-cards">
+      <article>${fig(IMG.shell,T('Macro of the glossy white shell','Macro de la carcasa blanca brillante'),1536,1152)}<h3>${T('Sculpted glossy shell','Carcasa esculpida y brillante')}</h3><p>${T('A smooth, sculpted white shell with a glossy finish.','Una carcasa blanca esculpida, lisa y de acabado brillante.')}</p></article>
+      <article>${fig(IMG.strap,T('Macro of the woven strap and buckle','Macro de la correa tejida y la hebilla'),1536,1152)}<h3>${T('Woven strap, secure buckle','Correa tejida, hebilla segura')}</h3><p>${T('A textured fabric strap with a buckle for quick, repeatable adjustment.','Una correa de tela texturizada con hebilla para ajustarla rápido y siempre igual.')}</p></article>
+      <article>${fig(IMG.rim,T('Macro of an eye opening with a soft glowing rim','Macro de una abertura de ojo con un borde luminoso suave'),1536,1152)}<h3>${T('Clean-cut openings','Aberturas bien recortadas')}</h3><p>${T('Precisely cut openings for the eyes, nose and mouth, with a soft light along the edge.','Aberturas recortadas con precisión para ojos, nariz y boca, con una luz suave en el borde.')}</p></article>
+    </div>
+    <div class="px-spec">${fig(IMG.profile,T('Side profile of the LEZO mask','Perfil de la máscara LEZO'),1432,1792,'px-spec__img')}<div class="px-spec__t"><span class="eyebrow">${T('Specifications','Especificaciones')}</span><h3>${T('At a glance','De un vistazo')}</h3><div class="px-spec__list">${spec}</div></div></div>
+  </section>`;
+}
+/* click-to-zoom on detail images */
+let zoomDlg=null;
+function zoomInit(){
+  document.addEventListener('click',e=>{
+    const f=e.target.closest?.('.px-zoomable');if(!f||e.target.closest('dialog'))return;
+    const im=f.querySelector('img');if(!im)return;
+    if(!zoomDlg){
+      zoomDlg=document.createElement('dialog');zoomDlg.className='px-zoom';zoomDlg.setAttribute('aria-label',T('Zoomed image','Imagen ampliada'));
+      zoomDlg.innerHTML=`<button type="button" class="px-zoom__x" aria-label="${T('Close','Cerrar')}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button><div class="px-zoom__stage"><img alt=""></div><p class="px-zoom__hint">${T('Click to zoom · move to pan','Clic para ampliar · mueve para recorrer')}</p>`;
+      document.body.appendChild(zoomDlg);
+      const st=zoomDlg.querySelector('.px-zoom__stage'),zi=st.querySelector('img');
+      zoomDlg.querySelector('.px-zoom__x').addEventListener('click',()=>zoomDlg.close());
+      zoomDlg.addEventListener('click',e=>{if(e.target===zoomDlg)zoomDlg.close()});
+      st.addEventListener('click',()=>st.classList.toggle('z2'));
+      st.addEventListener('pointermove',e=>{if(!st.classList.contains('z2'))return;const r=st.getBoundingClientRect();zi.style.transformOrigin=`${(e.clientX-r.left)/r.width*100}% ${(e.clientY-r.top)/r.height*100}%`});
+      zoomDlg.addEventListener('close',()=>{st.classList.remove('z2');root.classList.remove('px-lock')});
+    }
+    const zi=zoomDlg.querySelector('img');zi.src=im.dataset.full||im.currentSrc||im.src;zi.alt=im.alt;
+    root.classList.add('px-lock');zoomDlg.showModal();
+  });
+}
+zoomInit();
+
 /* ---------------- tutorial lives inside a button (full-screen sheet) ---------------- */
 let tutDlg=null,tutLast=null;
 function openTutorial(from){
@@ -440,7 +504,7 @@ function enhance(){
   if(!app||!document.getElementById('main'))return;
   chrome();
   if(!document.querySelector('.px-stage')&&stage){stage.dispose();stage=null}
-  tabFunctions();marquee();stageInit();detailSection();shipSection();decorate();heroTilt();magnetic();
+  tabFunctions();marquee();stageInit();if(!location.pathname.includes('/products/'))detailSection();shipSection();pdpSections();homeImages();decorate();heroTilt();magnetic();
   onScroll();
 }
 function boot(){
