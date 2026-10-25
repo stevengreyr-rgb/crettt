@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 {{ 'lezo-studio.css' | asset_url | stylesheet_tag }}
 {{ 'lezo-premium.css' | asset_url | stylesheet_tag }}
+<script>window.LEZO_PX={turn:{{ 'lezo-turn.mp4' | asset_url | json }},poster:{{ 'lezo-turn-poster.webp' | asset_url | json }}};</script>
 <script src="{{ 'lezo-studio.js' | asset_url }}" defer></script>
 <script src="{{ 'lezo-premium.js' | asset_url }}" defer></script>
 {{ content_for_header }}
