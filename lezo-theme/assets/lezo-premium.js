@@ -315,7 +315,7 @@ function tutSteps(){return [
   {k:T('Choose a light','Elige la luz'),h:T('Switch on and pick one of seven modes','Enciende y elige uno de los siete modos'),
    p:T('Turn the mask on and select a mode: red, green, blue, purple, yellow, cyan or white. Sit back or recline and keep to the session time given in the manual.','Enciende la máscara y selecciona un modo: rojo, verde, azul, morado, amarillo, cian o blanco. Recuéstate o relájate y respeta el tiempo de sesión que indica el manual.'),
    c:[T('Mode selected','Modo seleccionado'),T('Session length follows the manual','Duración de la sesión según el manual')],
-   tip:T('Tap a color below to preview how the light looks.','Toca un color para ver cómo se ve la luz.'),pick:true},
+   tip:T('Tap a color to see its light and what it does.','Toca un color para ver su luz y para qué sirve.'),pick:true},
   {k:T('Finish and care','Termina y cuida'),h:T('Switch off, wipe down, store','Apaga, limpia y guarda'),
    p:T('Switch the mask off and undo the strap. Wipe the inside with a soft dry cloth, or as the manual directs, and store it somewhere clean and dry. Apply your usual skincare afterwards if you like.','Apaga la máscara y suelta la correa. Limpia el interior con un paño suave y seco, o como indique el manual, y guárdala en un lugar limpio y seco. Aplica después tu cuidado de piel habitual si lo deseas.'),
    c:[T('Mask switched off','Máscara apagada'),T('Inside wiped and stored','Interior limpio y guardado')],
@@ -339,7 +339,7 @@ function buildTutorial(slot){
       <button type="button" class="px-tut__btn" aria-expanded="${i===0}" aria-controls="px-tut-p${i}" id="px-tut-b${i}"><span class="px-tut__num">0${i+1}</span><span class="px-tut__t"><b>${x.k}</b><small>${x.h}</small></span><span class="px-tut__plus" aria-hidden="true"></span></button>
       <div class="px-tut__panel" id="px-tut-p${i}" role="region" aria-labelledby="px-tut-b${i}"><div>
         <p>${x.p}</p>
-        ${x.pick?`<div class="px-tut__pick"><div class="px-tut__sws" role="group" aria-label="${T('Preview a light mode','Previsualiza un modo de luz')}">${sw}</div><span class="px-tut__pname">${T(COLORS[0].en,COLORS[0].es)} · ${COLORS[0].nm}</span></div>`:''}
+        ${x.pick?`<div class="px-tut__pick"><div class="px-tut__sws" role="group" aria-label="${T('Preview a light mode','Previsualiza un modo de luz')}">${sw}</div><span class="px-tut__pname">${T(COLORS[0].en,COLORS[0].es)} · ${COLORS[0].nm}</span><span class="px-tut__pfn">${T(COLORS[0].d[0],COLORS[0].d[1])}</span></div>`:''}
         <ul class="px-tut__checks">${x.c.map((c,j)=>`<li><label><input type="checkbox" data-ck="${i}-${j}"><span class="px-tut__box" aria-hidden="true"></span><span>${c}</span></label></li>`).join('')}</ul>
         <p class="px-tut__tip"><b>${T('Tip','Consejo')}</b>${x.tip}</p>
       </div></div></li>`).join('')}</ol>
@@ -358,7 +358,7 @@ function buildTutorial(slot){
   }
   function setColor(i){color=i;const m=COLORS[i];slot.style.setProperty('--tc',m.c);slot.style.setProperty('--tf',FILTER(i));
     qa('.px-tut__sw').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.sw===i));
-    q('.px-tut__pname').textContent=`${T(m.en,m.es)} · ${m.nm}`}
+    q('.px-tut__pname').textContent=`${T(m.en,m.es)} · ${m.nm}`;q('.px-tut__pfn').textContent=T(m.d[0],m.d[1])}
   function meter(){
     const n=done.size;q('.px-tut__count').textContent=`${n} / ${total}`;
     q('.px-tut__meter b').style.transform=`scaleX(${n/total})`;
@@ -408,7 +408,7 @@ function homeImages(){
 function pdpSections(){
   const slot=document.querySelector('.px-pdp-slot');
   if(!slot||slot.dataset.pxDone)return;slot.dataset.pxDone='1';
-  const chips=[[0,'630'],[1,'520'],[2,'470'],[3,'630 + 470'],[4,'630 + 520'],[5,'470 + 520'],[6,'470 + 520 + 630']].map(([i,nm])=>`<li style="--c:${COLORS[i].c}"><i></i><b>${T(COLORS[i].en,COLORS[i].es)}</b><span>${nm} nm</span></li>`).join('');
+  const chips=[[0,'630'],[1,'520'],[2,'470'],[3,'630 + 470'],[4,'630 + 520'],[5,'470 + 520'],[6,'470 + 520 + 630']].map(([i,nm])=>`<li style="--c:${COLORS[i].c}"><i></i><b>${T(COLORS[i].en,COLORS[i].es)}</b><span>${nm} nm</span><em>${T(COLORS[i].d[0],COLORS[i].d[1])}</em></li>`).join('');
   const spec=[[T('Format','Formato'),T('Full-face LED mask','Máscara LED facial completa')],[T('Light modes','Modos de luz'),T('7 built in','7 integrados')],[T('Channels','Canales'),T('630 nm red · 520 nm green · 470 nm blue ','630 nm rojo · 520 nm verde · 470 nm azul ')],[T('Fit','Ajuste'),T('Adjustable strap with buckle','Correa ajustable con hebilla')],[T('Finish','Acabado'),T('Sculpted glossy white','Blanco esculpido y brillante')],[T('Returns','Devoluciones'),T('30 days from delivery','30 días desde la entrega')],[T('Delivery','Entrega'),T('Estimated 5–12 days','Estimada de 5 a 12 días')]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
   slot.innerHTML=`<section class="px-how wrap section" id="como-funciona">
     <div class="px-pdp-head"><div><span class="eyebrow">${T('How it works','Funcionamiento')}</span><h2>${T('Seven lights,<br><em>one device.</em>','Siete luces,<br><em>un solo equipo.</em>')}</h2></div><p>${T('Red, green and blue LED channels combine into seven modes. Pick one and the whole inner face of the mask lights up in that color.','Los canales LED rojo, verde y azul se combinan en siete modos. Elige uno y toda la cara interior de la máscara se ilumina de ese color.')}</p></div>
@@ -460,7 +460,7 @@ function chHead(n,label,title,lede){return `<div class="px-ch__h"><span class="p
 function journey(){
   const slot=document.querySelector('.px-journey-slot');
   if(!slot||slot.dataset.pxDone||document.querySelector('.care-page'))return;slot.dataset.pxDone='1';
-  const chips=[[0,'630'],[1,'520'],[2,'470'],[3,'630 + 470'],[4,'630 + 520'],[5,'470 + 520'],[6,'470 + 520 + 630']].map(([i,nm])=>`<li style="--c:${COLORS[i].c}"><i></i><b>${T(COLORS[i].en,COLORS[i].es)}</b><span>${nm} nm</span></li>`).join('');
+  const chips=[[0,'630'],[1,'520'],[2,'470'],[3,'630 + 470'],[4,'630 + 520'],[5,'470 + 520'],[6,'470 + 520 + 630']].map(([i,nm])=>`<li style="--c:${COLORS[i].c}"><i></i><b>${T(COLORS[i].en,COLORS[i].es)}</b><span>${nm} nm</span><em>${T(COLORS[i].d[0],COLORS[i].d[1])}</em></li>`).join('');
   const facts=[[T('Format','Formato'),T('Full-face LED mask','Máscara LED facial completa')],[T('Light modes','Modos de luz'),T('7 built in','7 integrados')],[T('Fit','Ajuste'),T('Adjustable strap with buckle','Correa ajustable con hebilla')],[T('Finish','Acabado'),T('Sculpted glossy white','Blanco esculpido y brillante')]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
   const D=DETAIL;
   slot.innerHTML=`
@@ -470,7 +470,7 @@ function journey(){
   </section>
   <section class="px-ch wrap section" id="la-luz">
     ${chHead('02',T('The light','La luz'),T('Seven modes,<br><em>seven colors.</em>','Siete modos,<br><em>siete colores.</em>'),T('Red, green and blue LED channels combine into seven modes. Try each one in the viewer at the top of the page.','Los canales LED rojo, verde y azul se combinan en siete modos. Pruébalos en el visor de la parte superior.'))}
-    <div class="px-tri">${[['green',1],['blue',2],['purple',3]].map(([k,i])=>fig(IMGH[k],T(COLORS[i].en+' light on the LEZO mask',`Luz ${COLORS[i].es.toLowerCase()} en la máscara LEZO`),1536,2048,'',`<b style="color:${COLORS[i].c}">●</b>${T(COLORS[i].en,COLORS[i].es)}`)).join('')}</div>
+    <div class="px-tri">${[['green',1],['blue',2],['purple',3]].map(([k,i])=>fig(IMGH[k],T(COLORS[i].en+' light on the LEZO mask',`Luz ${COLORS[i].es.toLowerCase()} en la máscara LEZO`),1536,2048,'',`<b style="color:${COLORS[i].c}">●</b><span class="px-cap2">${T(COLORS[i].en,COLORS[i].es)}<small>${T(COLORS[i].d[0],COLORS[i].d[1])}</small></span>`)).join('')}</div>
     <ul class="px-chips" aria-label="${T('Light modes and wavelengths','Modos de luz y longitudes de onda')}">${chips}</ul>
   </section>
   <section class="px-ch wrap section" id="el-interior">

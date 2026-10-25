@@ -732,3 +732,18 @@ header .nav .brand{margin-right:auto}
 @media(max-width:760px){.px-back--page span{display:none}.px-back--page{margin-right:14px!important}}
 
 .px-use-wide{margin:0 0 clamp(40px,6vw,88px);background:#f3f3f3;min-height:0}
+
+/* the function of each colour travels with the colour */
+.px-chips em{font-style:normal;font-size:12px;line-height:1.45;color:#444;margin-top:2px;max-width:170px}
+.px-chips li{padding-bottom:6px}
+.px-cap2{display:grid;gap:2px}
+.px-cap2 small{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:0;line-height:1.35;opacity:.92}
+.px-tut__pick{align-items:flex-start;flex-direction:column;gap:10px}
+.px-tut__pname{display:block}
+.px-tut__pfn{display:block;font-size:13px;font-weight:500;color:#141414;line-height:1.5;max-width:420px}
+
+.px-chips li{align-content:start}
+.px-tri .px-fig:after{display:none}
+.px-tri .px-fig figcaption{color:#141414;text-shadow:none}
+.px-tri .px-fig figcaption .px-cap2{font-weight:700}
+.px-tri .px-fig figcaption .px-cap2 small{color:#444;opacity:1}
