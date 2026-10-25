@@ -325,9 +325,41 @@ def click(rng):
     return out / np.abs(out).max()
 
 
-def soundtrack(path, chimes, power_on):
+def piano_note(f0, dur, vel, rng):
+    """Soft felt-piano tone: slightly inharmonic partials, faster decay up high, gentle hammer."""
+    n = int(dur * SR); u = np.arange(n) / SR; out = np.zeros(n)
+    for k in range(1, 9):
+        fk = k * f0 * np.sqrt(1 + 0.0004 * k * k)
+        if fk > 9000: break
+        out += (vel ** (0.6 + 0.15 * k)) / k ** 1.6 * np.sin(2 * np.pi * fk * u + rng.uniform(0, 6.3)) * np.exp(-u * (0.55 + 0.45 * k) * (f0 / 260) ** 0.4)
+    out += 0.02 * vel * _filt(rng.normal(0, 1, n), lo=400, hi=3000) * np.exp(-u * 90)
+    return out * np.minimum(u / 0.004, 1) * np.clip((dur - u) / 0.3, 0, 1)
+
+
+def piano_bed(n, rng):
+    """Sparse ambient piano over Am9 - Fmaj9 - Cmaj9 - G6: low root, then a slow, airy figure."""
+    out = np.zeros(n)
+    bars = [(45, [69, 72, 76, 71, 67]), (41, [69, 72, 76, 79, 76]), (48, [67, 71, 74, 76, 71]), (43, [67, 71, 74, 69, 74])]
+    span = TOTAL / 4
+    figure = [0.35, 1.15, 1.95, 2.95, 3.7]
+    for c, (root, top) in enumerate(bars):
+        t0 = c * span
+        _add(out, piano_note(_note(root), 4.5, 0.45, rng), t0, 0.8)
+        _add(out, piano_note(_note(root + 12), 4.0, 0.35, rng), t0 + 0.02, 0.5)
+        for dt, m in zip(figure, top):
+            if t0 + dt < CTA_AT - 0.2 or c == 3:
+                _add(out, piano_note(_note(m), 3.0, 0.42 + 0.08 * rng.random(), rng), t0 + dt, 0.55)
+    for k, m in enumerate([57, 64, 67, 71, 76]):                       # rolled chord for the offer
+        _add(out, piano_note(_note(m), 3.0, 0.5, rng), CTA_AT + 0.06 * k, 0.5)
+    return _filt(out, lo=50, hi=4200)
+
+
+def soundtrack(path, chimes, power_on, bed='pad'):
     n = int(TOTAL * SR); t = np.arange(n) / SR
     rng = np.random.default_rng(11)
+    if bed == 'piano':
+        piano_soundtrack(path, chimes, power_on, n, t, rng)
+        return
     chords = [[45, 57, 60, 64, 67, 71], [41, 53, 57, 60, 64, 67], [48, 55, 59, 62, 64, 71], [43, 55, 59, 62, 64, 69]]
     span = TOTAL / len(chords)
     pad = np.zeros(n); shim = np.zeros(n)
@@ -365,11 +397,36 @@ def soundtrack(path, chimes, power_on):
         f.writeframes((np.clip(st, -1, 1) * 32767).astype('<i2').tobytes())
 
 
+def piano_soundtrack(path, chimes, power_on, n, t, rng):
+    """Quiet ambient piano bed (~-24 LUFS) with the light-change clicks kept clear on top."""
+    p = piano_bed(n, rng)
+    ir_n = int(3.5 * SR); iu = np.arange(ir_n) / SR
+    irs = [_filt(rng.normal(0, 1, ir_n), lo=200, hi=5000) * np.exp(-iu / 1.1) for _ in range(2)]
+    irs = [ir / np.sqrt((ir ** 2).sum()) * 0.6 for ir in irs]
+    bedL = p + RV._conv(p, irs[0]); bedR = p * 0.97 + RV._conv(p, irs[1])
+    g = 10 ** (-28 / 20) / (np.sqrt(np.mean(bedL ** 2)) + 1e-9)             # bed sits low
+    dry = np.zeros(n)
+    for t0 in [c for c, _ in chimes] + END_CYCLE + [CTA_AT - 0.25]:
+        _add(dry, click(rng), t0 - 0.02, 1.0)
+    _add(dry, click(rng), power_on - 0.12, 1.0)
+    m = int(.24 * SR); u = np.arange(m) / SR
+    _add(dry, 0.25 * np.sin(np.pi * u / .24) ** 2 * (np.sin(2 * np.pi * 1568 * u) + .15 * np.sin(2 * np.pi * 3136 * u)), power_on, 1.0)
+    fxL = dry + RV._conv(dry, irs[0]) * 0.12; fxR = dry + RV._conv(dry, irs[1]) * 0.12
+    st = np.stack([bedL * g + fxL * 10 ** (-13 / 20), bedR * g + fxR * 10 ** (-13 / 20)], 1)
+    st *= (np.clip(t / 0.8, 0, 1) * np.clip((TOTAL - t) / 1.0, 0, 1))[:, None]
+    with wave.open(str(path), 'wb') as f:
+        f.setnchannels(2); f.setsampwidth(2); f.setframerate(SR)
+        f.writeframes((np.clip(st, -1, 1) * 32767).astype('<i2').tobytes())
+
+
 # ---------------------------------------------------------------- render
+BEDS = {'a': 'pad', 'b': 'piano'}       # B: ambient piano, no instrumental pad
+
+
 def render(tag, build):
     frame, chimes, power_on = build()
     wav = OUT / f'creative-{tag}.wav'
-    soundtrack(wav, chimes, power_on)
+    soundtrack(wav, chimes, power_on, BEDS[tag])
     out = ROOT / f'LED-Creative-{tag.upper()}-18s.mp4'
     p = subprocess.Popen(['ffmpeg', '-nostdin', '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24',
                           '-s', f'{W}x{H}', '-r', str(FPS), '-i', '-', '-i', str(wav),

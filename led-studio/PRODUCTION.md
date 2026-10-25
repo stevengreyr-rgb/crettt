@@ -52,6 +52,8 @@ Prompts (append to each: *"Same woman, same white robe, same white studio. Natur
 
 Visuals: a zoom punch, colour bloom and expanding light ring on every light change. A spins toward the camera and glides with a slight tilt; B whip-zooms (with zoom blur) from one close-up to the next.
 
-Sound: a quiet ambient pad (Am9 – Fmaj9 – Cmaj9 – G6, long reverb) with no beat and no whooshes, around −20 LUFS. Every light change is a crisp button click. A soft beep plays at power-on, and the pad swells gently for the offer.
+Sound (A): a quiet ambient pad (Am9 – Fmaj9 – Cmaj9 – G6, long reverb) with no beat and no whooshes, around −20 LUFS. Every light change is a crisp button click. A soft beep plays at power-on, and the pad swells gently for the offer.
+
+Sound (B): no pad. A sparse ambient felt-piano figure over the same chords, with a long reverb, a rolled chord on the offer and the same clicks on top, at around −25 LUFS.
 
 Source clips in `clips-src/` (Higgsfield): `turn-red*` (360° turn, red glow), `turn-inside*` (360° turn showing the inside LEDs), `woman-blue` / `woman-green` (Kling, 3 s, real motion; not used yet).
