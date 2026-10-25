@@ -407,7 +407,7 @@ class Stage{
     if(this.renderer){this.renderer.dispose();this.renderer.forceContextLoss?.();this.renderer=null}
   }
 }
-const DETAIL={inside:'__IMG_INSIDE__',macro:'__IMG_MACRO__',strap:'__IMG_STRAP__'};
+const DETAIL={inside:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-inside-led.webp?v=1792901528',macro:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-macro-led.webp?v=1792901528',strap:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-strap-detail.webp?v=1792901528'};
 function detailSection(){
   const stageEl=document.querySelector('.px-stage');
   if(!stageEl||document.getElementById('por-dentro')||document.querySelector('.care-page'))return;
