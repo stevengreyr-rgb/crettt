@@ -171,7 +171,7 @@ function stickyShip(){
 
 /* ---------------- rotating product viewer (real-photo turntable) ---------------- */
 const PXA=window.LEZO_PX||{};
-const TURN_URL=PXA.turn||'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-turn-360-led.mp4?v=1792904416',TURN_POSTER=PXA.poster||'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-turn-poster-2.webp?v=1792904415',INSIDE_IMG='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-inside-led.webp?v=1792901528';
+const TURN_URL=PXA.turn||'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-turn-360-led.mp4?v=1792904416',TURN_POSTER=PXA.poster||'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-turn-poster-2.webp?v=1792904415',INSIDE_IMG='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-inside-hd.webp?v=1792905330';
 const HUE={0:0,1:126,2:211,3:271,4:44,5:181,6:0};   // hue-rotate from the red glow of the product photo
 const FILTER=i=>i===6?'saturate(.1) brightness(1.28)':`hue-rotate(${HUE[i]}deg)`;
 function stageMarkup(){
@@ -268,9 +268,9 @@ class Stage{
   }
   dispose(){clearInterval(this.cycle);this.io?.disconnect();this.v.pause();this.v.removeAttribute('src');this.v.load()}
 }
-const DETAIL={inside:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-inside-led.webp?v=1792901528',macro:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-macro-led.webp?v=1792901528',strap:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-strap-detail.webp?v=1792901528'};
+const DETAIL={inside:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-inside-hd.webp?v=1792905330',macro:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-macro-hd.webp?v=1792905330',strap:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-strap-hd.webp?v=1792905330'};
 function detailSection(){
-  const stageEl=document.querySelector('.px-stage');
+  const stageEl=document.querySelector('.px-marquee')||document.querySelector('.px-stage');
   if(!stageEl||document.getElementById('por-dentro')||document.querySelector('.care-page'))return;
   const s=document.createElement('section');s.className='px-detail wrap section';s.id='por-dentro';
   s.innerHTML=`<div class="px-detail__head"><div><span class="eyebrow">${T('Inside the mask','Por dentro')}</span><h2>${T('The light is<br><em>on the inside.</em>','La luz está<br><em>por dentro.</em>')}</h2></div><p>${T('LEDs spread across the whole inner face, so the light wraps around you. An adjustable strap with a buckle keeps your hands free to do whatever you like.','LEDs repartidos por toda la cara interior, para que la luz te envuelva. Una correa ajustable con hebilla te deja las manos libres para hacer lo que quieras.')}</p></div>
@@ -294,7 +294,7 @@ function stageInit(){
 }
 
 /* ---------------- how-to-use tutorial (5 steps) ---------------- */
-const TUT_IMG=['https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-1.webp?v=1792903919','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-2.webp?v=1792903919','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-3.webp?v=1792903919','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-4.webp?v=1792903919','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-tut-5.webp?v=1792903919'];
+const TUT_IMG=['https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-step-1.webp?v=1792905330','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-step-2.webp?v=1792905330','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-step-3.webp?v=1792905330','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-step-4.webp?v=1792905330','https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-step-5.webp?v=1792905330'];
 function tutSteps(){return [
   {k:T('Cleanse','Limpia'),h:T('Start with a bare, clean face','Empieza con la cara limpia y sin maquillaje'),
    p:T('Wash with your usual cleanser and take off all makeup and sunscreen. Rinse with lukewarm water.','Lávate con tu limpiador habitual y quita todo el maquillaje y el protector solar. Enjuaga con agua tibia.'),
