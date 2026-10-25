@@ -454,7 +454,7 @@ zoomInit();
 
 
 /* ---------------- home: the visual journey (what you are buying, chapter by chapter) ---------------- */
-const IMGU={a:'__IMG_UA__',b:'__IMG_UB__',c:'__IMG_UC__',d:'__IMG_UD__'};
+const IMGU={a:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-u-a.webp?v=1792907341',b:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-u-b.webp?v=1792907341',c:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-u-c.webp?v=1792907341',d:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-u-d.webp?v=1792907341'};
 const IMGH={green:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-hg.webp?v=1792906273',blue:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-hb.webp?v=1792906273',purple:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-hp.webp?v=1792906273',fit:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-hf.webp?v=1792906273'};
 function chHead(n,label,title,lede){return `<div class="px-ch__h"><span class="px-ch__n" aria-hidden="true">${n}</span><div><span class="eyebrow">${n} / ${label}</span><h2>${title}</h2></div>${lede?`<p>${lede}</p>`:''}</div>`}
 function journey(){
