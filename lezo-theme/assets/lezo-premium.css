@@ -671,3 +671,18 @@ html.px-lock{overflow:hidden}
   .px-howto__list{grid-template-columns:1fr 1fr}
   .px-howto__list li{padding-bottom:16px}
 }
+
+.px-ch .px-split{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(32px,6vw,88px)}
+.px-ch .px-split--r{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+.px-ch .px-split .px-fig{max-width:560px;width:100%}
+.px-ch .px-split--r .px-fig{justify-self:end}
+@media(max-width:900px){.px-ch .px-split,.px-ch .px-split--r{grid-template-columns:1fr}.px-ch .px-split .px-fig{max-width:none}}
+/* keep wide studio shots uncropped: no parallax scale on zoomable images */
+.px-motion .px-zoomable[data-rv="img"] img{transform:scale(1.02)}
+.px-motion .px-zoomable[data-rv="img"]:hover img{transform:scale(1.05)}
+@media(max-width:900px){
+  .px-tri{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -22px;padding:0 22px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .px-tri::-webkit-scrollbar{display:none}
+  .px-tri .px-fig{flex:0 0 76vw;scroll-snap-align:center}
+  .px-tri .px-fig figcaption{font-size:15px}
+}

@@ -455,8 +455,8 @@ zoomInit();
 
 
 /* ---------------- home: the visual journey (what you are buying, chapter by chapter) ---------------- */
-const IMGH={green:'__IMG_HG__',blue:'__IMG_HB__',purple:'__IMG_HP__',fit:'__IMG_HF__'};
-function chHead(n,label,title,lede){return `<header class="px-ch__h"><span class="px-ch__n" aria-hidden="true">${n}</span><div><span class="eyebrow">${n} / ${label}</span><h2>${title}</h2></div>${lede?`<p>${lede}</p>`:''}</header>`}
+const IMGH={green:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-hg.webp?v=1792906273',blue:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-hb.webp?v=1792906273',purple:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-hp.webp?v=1792906273',fit:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-hf.webp?v=1792906273'};
+function chHead(n,label,title,lede){return `<div class="px-ch__h"><span class="px-ch__n" aria-hidden="true">${n}</span><div><span class="eyebrow">${n} / ${label}</span><h2>${title}</h2></div>${lede?`<p>${lede}</p>`:''}</div>`}
 function journey(){
   const slot=document.querySelector('.px-journey-slot');
   if(!slot||slot.dataset.pxDone||document.querySelector('.care-page'))return;slot.dataset.pxDone='1';
