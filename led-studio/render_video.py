@@ -335,12 +335,14 @@ def _note(m):
     return 440 * 2 ** ((m - 69) / 12)
 
 
-def sound(path):
-    n = int(TOTAL * SR); t = np.arange(n) / SR
-    rng = np.random.default_rng(42)
+def groove(total, end, drums_on, accent, cut_t, cut_v, rng):
+    """Original minimal deep-house cue. drums_on(t) gates the kit per beat, `accent` is the
+    downbeat that gets the heavier kick, cut_t/cut_v automate the keys' low-pass (0 dark, 1 open).
+    Returns the (left, right) music stems, `total` seconds long; music stops at `end`."""
+    n = int(total * SR); t = np.arange(n) / SR
     beat = 60 / BPM; bar = 4 * beat
-    nbars = int(np.ceil(TOTAL / bar))
-    END = 22.0                                      # music resolves here, tail rings out
+    nbars = int(np.ceil(total / bar))
+    END = end
 
     # --- drum one-shots
     kn = int(0.45 * SR); ku = np.arange(kn) / SR
@@ -377,9 +379,8 @@ def sound(path):
         for k in range(4):
             tb = t0 + k * beat
             if tb >= END: break
-            groove = tb >= 4.0 and not (11.0 <= tb < 13.0)          # drums in at 4 s, break round the power-on
-            if groove or tb >= 20.0:
-                _add(drums, kick, tb, 1.0 if tb != 20.0 else 1.4)
+            if drums_on(tb):
+                _add(drums, kick, tb, 1.4 if abs(tb - accent) < 1e-6 else 1.0)
                 ku2 = np.arange(int(.25 * SR)) / SR
                 i = int(tb * SR); m = min(len(ku2), n - i)
                 side[i:i + m] = np.minimum(side[i:i + m], 1 - 0.55 * np.exp(-ku2[:m] * 9))
@@ -394,7 +395,7 @@ def sound(path):
                 if tb + q * beat / 4 < END - 0.01:
                     _add(hats, shk, tb + q * beat / 4, (0.22 if q % 2 else 0.12) * (1.0 if tb >= 2.0 else 0.6))
     # filter automation: keys open up as the story moves to the product
-    cut = np.interp(t, [0, 4, 12, 13, 15, 20, 23], [0.0, 0.35, 0.55, 0.25, 0.8, 1.0, 1.0])
+    cut = np.interp(t, cut_t, cut_v)
     keys = _filt(keys, hi=700) * (1 - cut) + _filt(keys, hi=5000) * cut
     keys *= side; bass = _filt(bass, hi=900) * side
     ir_n = int(1.8 * SR); iu = np.arange(ir_n) / SR
@@ -404,6 +405,15 @@ def sound(path):
     pre = keys * 0.9 + drums * 0.08
     musicL = keys + drums + hats * 0.8 + bass + _conv(pre, irL)
     musicR = keys * 0.97 + drums + np.roll(hats, 90) * 0.8 + bass + _conv(pre, irR)
+    return musicL, musicR
+
+
+def sound(path):
+    n = int(TOTAL * SR); t = np.arange(n) / SR
+    rng = np.random.default_rng(42)
+    # drums in at 4 s, a break around the power-on, heavy downbeat on the offer
+    musicL, musicR = groove(TOTAL, 22.0, lambda tb: (tb >= 4.0 and not 11.0 <= tb < 13.0) or tb >= CTA_AT,
+                            CTA_AT, [0, 4, 12, 13, 15, 20, 23], [0.0, 0.35, 0.55, 0.25, 0.8, 1.0, 1.0], rng)
 
     # --- ASMR foley synced to picture
     fol = np.zeros(n); fr = np.zeros(n)

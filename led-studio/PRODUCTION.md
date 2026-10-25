@@ -33,3 +33,23 @@ Prompts (append to each: *"Same woman, same white robe, same white studio. Natur
 4. Reclined, she places the unlit mask on her face and adjusts both sides with her hands.
 5. Hands resting on her abdomen, breathing slowly; the mask's red LEDs softly turn on.
 6. The glowing mask floats and rotates very slightly in the white studio; slow push-in.
+
+## 3D colour creatives (18 s each)
+
+`python3 creatives.py` → `LED-Creative-A-18s.mp4`, `LED-Creative-B-18s.mp4` (1080×1920, 30 fps, ~-15 LUFS).
+
+- **A · 360 Spin**: the Higgsfield turntable clip (`clips-src/turn-inside-alpha.mp4`, background removed) keyed onto a white studio. Every light change is a full 360° turn that shows the LED field inside the shell.
+- **B · Glow Macro**: the floating hero render, with a different close angle per light and a tinted light sweep on each change.
+
+| Time | On screen |
+|---|---|
+| 0–3 s | Power-on (click + beep) → RED LIGHT · Firmer-looking skin |
+| 3–6 s | BLUE LIGHT · Clearer-looking skin |
+| 6–9 s | GREEN LIGHT · More even-looking tone |
+| 9–12 s | PURPLE LIGHT · A calm, refreshed look |
+| 12–15 s | DISCOVER WHAT / EVERY SINGLE COLOR / OFFERS FOR YOUR ROUTINE: the light cycles on the beat |
+| 15–18 s | LED FACE MASK · 45% OFF · LIMITED-TIME OFFER · SHOP NOW |
+
+Sound: the same 120 BPM deep-house groove. Each light change gets an airy 360° swirl that pans left → right → left, as if the mask turns around you, then a soft bell (E5 / G5 / A5) when the new colour lands. A rising bell arpeggio plays under the colour cycle, and a low impact hits on the offer.
+
+Source clips in `clips-src/` (Higgsfield): `turn-red*` (360° turn, red glow), `turn-inside*` (360° turn showing the inside LEDs), `woman-blue` / `woman-green` (Kling, 3 s, real motion; not used yet).
