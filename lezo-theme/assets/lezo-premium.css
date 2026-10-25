@@ -201,3 +201,47 @@
   .px-mode{top:auto;bottom:196px}
 }
 @media(max-width:760px){.px-copy{bottom:0}}
+
+/* function text under each colour */
+.px-mode-label{display:block;font-size:9px;letter-spacing:.06em;color:#f6f2ed99;margin:6px 0 6px}
+.px-mode-desc{font-family:var(--serif);font-size:20px;line-height:1.3;letter-spacing:-.02em;color:#fff}
+.px-mode{min-height:0}
+.mode-tabs .swatch{height:auto!important;min-height:150px;align-items:center;text-align:center}
+.px-tab-fn{font-size:10px;line-height:1.4;color:var(--muted);text-transform:none;letter-spacing:0;max-width:130px;margin-top:2px}
+.mode-tabs .swatch[aria-pressed=true] .px-tab-fn{color:var(--ink)}
+@media(max-width:760px){
+  .px-tab-fn{display:none}
+  .mode-tabs .swatch{min-height:100px}
+  .px-mode-fine{display:block;font-size:8.5px;margin-top:6px}
+  .px-mode-desc{font-size:15px;min-height:0}
+  .px-mode{bottom:190px}
+}
+
+/* ---------- white + neutral palette (no cream) ---------- */
+:root{--cream:#fff;--paper:#fff;--ink:#141414;--muted:#6a6a6a;--line:#e4e4e4;--pink:#f1f1f1;--px-neutral:#f5f5f5}
+body{background:#fff;color:var(--ink)}
+header{background:#fffffff2}
+.modes-section,.light-studio{background:var(--px-neutral)}
+.results{background:var(--px-neutral)}
+.skin-depth{background:var(--px-neutral)}
+.skin-comparison{background:#efefef;border-color:var(--line)}
+.hero-art,.gallery-main,.buy-grid .image-frame,.intro-grid .image-frame,.mode-display .mode-visual,.mode-visual{background:#efefef}
+.mode-tabs .swatch{background:#fff;border-color:#e4e4e4}
+.mode-tabs .swatch:hover,.mode-tabs .swatch[aria-pressed=true]{background:#fff}
+.mode-facts{border-top-color:#dcdcdc}
+.sale-tag{background:#f0f0f0}
+.sticky-buy{background:#fffffff5}
+footer{background:#f5f5f5}
+.footer-links a,.footer-links button{color:#555}
+.footer-bottom{border-top-color:#dedede;color:#777}
+.concept-tag{border-color:#d0d0d0;color:#444}
+.study-disclosure{color:#666}
+.depth-captions article,.result-points div{border-color:#dcdcdc}
+.px-ship{background:#fff}
+.px-dates{background:#fff;border-color:#e4e4e4}
+.px-detail{background:#fff}
+dialog{background:#fff}
+#zoom{background:#f5f5f5}
+.px-leave{background:#fff}
+.mode-live{background:#fffffff0}
+.hero-note{color:#555}

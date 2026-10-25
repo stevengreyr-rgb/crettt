@@ -112,6 +112,13 @@ function magnetic(){
 }
 
 /* ---------------- marquee ---------------- */
+function tabFunctions(){
+  document.querySelectorAll('.mode-tabs .swatch:not([data-px-fn])').forEach(b=>{
+    const m=COLORS[+b.dataset.mode];if(!m)return;
+    b.dataset.pxFn='1';
+    b.insertAdjacentHTML('beforeend',`<span class="px-tab-fn">${T(m.d[0],m.d[1])}</span>`);
+  });
+}
 function marquee(){
   const anchor=document.querySelector('main .trustbar')?.closest('.wrap');
   if(!anchor||document.querySelector('.px-marquee'))return;
@@ -134,7 +141,7 @@ function shipSection(){
   if(document.getElementById('envio')||!faq||document.querySelector('.care-page'))return;
   const d0=new Date(),a=new Date(d0),b=new Date(d0);a.setDate(a.getDate()+5);b.setDate(b.getDate()+12);
   const s=document.createElement('section');s.className='px-ship wrap section';s.id='envio';s.setAttribute('aria-labelledby','px-ship-title');
-  s.innerHTML=`<div class="px-ship__top"><div><span class="eyebrow">${T('Delivery','Envío')}</span><h2 id="px-ship-title">${T('Your LEZO,<br><em>at your door.</em>','Tu LEZO,<br><em>en tu puerta.</em>')}</h2><p class="px-ship__lede">${T('Estimated delivery is <b>5 to 12 days</b> after you order. You will get updates by email, and tracking details if available.','La entrega estimada es de <b>5 a 12 días</b> después de tu pedido. Recibirás novedades por correo y, si hay seguimiento disponible, sus datos.')}</p><div class="px-dates">${ICON_PARCEL.replace('<svg','<svg width="22" height="22"')}<div><span>${T('Order today · estimated arrival','Pide hoy · llegada estimada')}</span><br><strong>${fmt(a)} – ${fmt(b)}</strong></div></div></div><div class="px-big" aria-hidden="true"><span data-count="5">5</span><em>–</em><span data-count="12">12</span><small>${T('days','días')}</small></div></div>
+  s.innerHTML=`<div class="px-ship__top"><div><span class="eyebrow">${T('Delivery','Envío')}</span><h2 id="px-ship-title">${T('Order today.<br><em>Open it soon.</em>','Pídela hoy.<br><em>Ábrela pronto.</em>')}</h2><p class="px-ship__lede">${T('Your LEZO should arrive in <b>5 to 12 days</b>. We email you at every step and send tracking details when available, so you always know where it is.','Tu LEZO debería llegar en <b>5 a 12 días</b>. Te escribimos en cada paso y te enviamos el seguimiento cuando esté disponible, para que siempre sepas dónde está.')}</p><div class="px-dates">${ICON_PARCEL.replace('<svg','<svg width="22" height="22"')}<div><span>${T('Order today · estimated arrival','Pide hoy · llegada estimada')}</span><br><strong>${fmt(a)} – ${fmt(b)}</strong></div></div></div><div class="px-big" aria-hidden="true"><span data-count="5">5</span><em>–</em><span data-count="12">12</span><small>${T('days','días')}</small></div></div>
   <div class="px-route" aria-hidden="true"><svg viewBox="0 0 1000 140" preserveAspectRatio="none"><path class="base" d="${ROUTE}"/><path class="fill" d="${ROUTE}"/>${NODES.map(([x,y])=>`<circle class="n" cx="${x}" cy="${y}" r="7"/>`).join('')}<circle class="parcel" r="9" cx="0" cy="90"/></svg></div>
   <ol class="px-steps"><li><b>${T('DAY 0','DÍA 0')}</b><h3>${T('Order confirmed','Pedido confirmado')}</h3><p>${T('Secure Shopify checkout and a confirmation email.','Pago seguro en Shopify y confirmación por correo.')}</p></li><li><b>${T('PREPARING','PREPARACIÓN')}</b><h3>${T('Packed with care','Preparado con cuidado')}</h3><p>${T('We get your LEZO ready to ship.','Dejamos tu LEZO listo para salir.')}</p></li><li><b>${T('ON ITS WAY','EN CAMINO')}</b><h3>${T('In transit','En tránsito')}</h3><p>${T('Shipping update by email, with tracking if available.','Aviso de envío por correo, con seguimiento si está disponible.')}</p></li><li><b>${T('DAY 5–12','DÍA 5–12')}</b><h3>${T('At your door','En tu puerta')}</h3><p>${T('Estimated window. 30 days to request a return.','Plazo estimado. 30 días para solicitar devolución.')}</p></li></ol>
   <p class="small px-ship__note">${T('Estimate only, not a guaranteed arrival date. Shipping charges and taxes are shown at checkout for your destination.','Plazo orientativo, no una fecha de llegada garantizada. Los gastos de envío e impuestos se muestran al pagar según tu destino.')}</p>`;
@@ -174,10 +181,10 @@ function stageMarkup(){
     <div class="px-stage__bg"></div><div class="px-stage__grid"></div>
     <div class="px-fallback"><img src="${FALLBACK_IMG}" alt="${T('White LEZO LED mask','Máscara LED LEZO blanca')}" width="1536" height="1024" loading="lazy"></div>
     <canvas class="px-canvas" role="img" aria-label="${T('Interactive 3D model of the LEZO mask. Drag to rotate.','Modelo 3D interactivo de la máscara LEZO. Arrastra para girarla.')}"></canvas>
-    <div class="px-copy"><span class="eyebrow">${T('Interactive 3D · LEZO','3D interactivo · LEZO')}</span>
+    <div class="px-copy"><span class="eyebrow">${T('Meet it in 3D','Conócela en 3D')}</span>
       <h2 class="px-keep">${T('Turn it.<br><em>Light it.</em>','Gírala.<br><em>Enciéndela.</em>')}</h2>
-      <p>${T('Pick a color to change the light. Drag the mask to turn it and see it from every side.','Elige un color para cambiar la luz. Arrastra la máscara para girarla y verla desde cada lado.')}</p>
-      <div class="px-mode" aria-live="polite"><div class="px-mode-idx"></div><div class="px-mode-name"></div><div class="px-mode-nm"></div><div class="px-mode-desc"></div><div class="px-mode-fine">${T('Supplier-described function, not a verified clinical outcome. Colors are a visual simulation.','Función descrita por el proveedor, no un resultado clínico verificado. Los colores son una simulación visual.')}</div></div>
+      <p>${T('Seven lights, one mask. Pick a color and the whole mask glows with it, then drag to see every angle, inside and out.','Siete luces, una máscara. Elige un color y toda la máscara brilla con él; arrástrala para verla desde todos los ángulos, por dentro y por fuera.')}</p>
+      <div class="px-mode" aria-live="polite"><div class="px-mode-idx"></div><div class="px-mode-name"></div><div class="px-mode-nm"></div><span class="px-mode-label">${T('Exact wording from the supplied product sheet:','Traducción del texto de la ficha del producto:')}</span><div class="px-mode-desc"></div><div class="px-mode-fine">${T('These are product-sheet claims, not clinically verified benefits of this mask. Colors are a visual simulation.','Son afirmaciones de la ficha, no beneficios clínicamente verificados de esta máscara. Los colores son una simulación visual.')}</div></div>
     </div>
     <div class="px-hud"><div class="px-swatches" role="group" aria-label="${T('Choose a light mode','Elige un modo de luz')}">${sw}</div>
       <div class="px-meta"><button type="button" class="px-inside" data-px-inside>${T('See inside · LEDs','Ver por dentro · LEDs')}</button><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span><span class="px-ship-chip">${ICON_PARCEL}${T('Delivery in 5–12 days','Entrega en 5–12 días')}</span></div></div>
@@ -211,7 +218,7 @@ class Stage{
     const box=this.el.querySelector('.px-mode');
     box.querySelector('.px-mode-idx').textContent=`0${i+1} / 07`;
     box.querySelector('.px-mode-name').innerHTML=es()?`Luz <i>${m.es.toLowerCase()}</i>`:`<i>${m.en}</i> light`;
-    box.querySelector('.px-mode-nm').textContent=m.nm;
+    box.querySelector('.px-mode-nm').textContent=`${m.nm} · ${T('Supplier specification','Especificación del proveedor')}`;
     box.querySelector('.px-mode-desc').textContent=T(m.d[0],m.d[1]);
     if(!first){box.classList.remove('px-swap');void box.offsetWidth;box.classList.add('px-swap')}
     // keep the light-studio section further down in sync
@@ -401,9 +408,9 @@ function detailSection(){
   const stageEl=document.querySelector('.px-stage');
   if(!stageEl||document.getElementById('por-dentro')||document.querySelector('.care-page'))return;
   const s=document.createElement('section');s.className='px-detail wrap section';s.id='por-dentro';
-  s.innerHTML=`<div class="px-detail__head"><div><span class="eyebrow">${T('Inside the mask','Por dentro')}</span><h2>${T('See what is<br><em>inside.</em>','Mira lo que hay<br><em>por dentro.</em>')}</h2></div><p>${T('LEDs spread across the inner face, an adjustable strap with a buckle, and a rim that glows with the selected light.','LEDs repartidos por toda la cara interior, una correa ajustable con hebilla y un borde que brilla con la luz elegida.')}</p></div>
+  s.innerHTML=`<div class="px-detail__head"><div><span class="eyebrow">${T('Inside the mask','Por dentro')}</span><h2>${T('The light is<br><em>on the inside.</em>','La luz está<br><em>por dentro.</em>')}</h2></div><p>${T('LEDs spread across the whole inner face, so the light wraps around you. An adjustable strap with a buckle keeps your hands free to do whatever you like.','LEDs repartidos por toda la cara interior, para que la luz te envuelva. Una correa ajustable con hebilla te deja las manos libres para hacer lo que quieras.')}</p></div>
   <div class="px-detail__grid">
-    <figure class="px-fig px-fig--big"><img src="${DETAIL.inside}" alt="${T('Inside of the LEZO mask with the LED array lit','Interior de la máscara LEZO con la matriz de LEDs encendida')}" width="766" height="620" loading="lazy"><figcaption><b>01</b>${T('The LED array','La matriz de LEDs')}</figcaption></figure>
+    <figure class="px-fig px-fig--big"><img src="${DETAIL.inside}" alt="${T('Inside of the LEZO mask with the LED array lit','Interior de la máscara LEZO con la matriz de LEDs encendida')}" width="766" height="620" loading="lazy"><figcaption><b>01</b>${T('Light all around your face','Luz por todo tu rostro')}</figcaption></figure>
     <figure class="px-fig"><img src="${DETAIL.macro}" alt="${T('Close-up of the individual LEDs','Detalle de los LEDs individuales')}" width="570" height="399" loading="lazy"><figcaption><b>02</b>${T('Every LED, up close','Cada LED, de cerca')}</figcaption></figure>
     <figure class="px-fig"><img src="${DETAIL.strap}" alt="${T('Adjustable strap with buckle','Correa ajustable con hebilla')}" width="495" height="399" loading="lazy"><figcaption><b>03</b>${T('Adjustable strap, hands free','Correa ajustable, manos libres')}</figcaption></figure>
   </div>
@@ -449,7 +456,7 @@ function enhance(){
   if(!app||!document.getElementById('main'))return;
   chrome();
   if(!document.querySelector('.px-stage')&&stage){stage.dispose();stage=null}
-  marquee();stageInit();detailSection();shipSection();stickyShip();decorate();heroTilt();magnetic();
+  tabFunctions();marquee();stageInit();detailSection();shipSection();stickyShip();decorate();heroTilt();magnetic();
   onScroll();
 }
 function boot(){
