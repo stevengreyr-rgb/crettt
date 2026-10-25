@@ -1,0 +1,391 @@
+/* LEZO premium layer. Runs after lezo-studio.js, which renders the page into #app
+   (and re-renders it on language change), so everything here is idempotent and is
+   re-applied whenever #app's children are replaced. */
+(()=>{
+'use strict';
+const MODEL_URL='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-mask-3d.glb?v=1792898992';
+const FALLBACK_IMG='https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-pdp-front-2026.webp?v=1792897049';
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+const root=document.documentElement;
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const es=()=>root.lang==='es';
+const T=(en,s)=>es()?s:en;
+const COLORS=[
+  {c:'#e0463f',en:'Red',es:'Roja',nm:'630 nm',d:['Deep repair, increase skin elasticity','Reparación profunda, aumenta la elasticidad de la piel']},
+  {c:'#3acb68',en:'Green',es:'Verde',nm:'520 nm',d:['Lighten spots, calms the skin','Aclara las manchas, calma la piel']},
+  {c:'#3975f2',en:'Blue',es:'Azul',nm:'470 nm',d:['Inhibit bacteria, remove acne','Inhibe las bacterias, elimina el acné']},
+  {c:'#a25ada',en:'Purple',es:'Morada',nm:'630 + 470 nm',d:['Repair scar','Repara cicatrices']},
+  {c:'#f0c13e',en:'Yellow',es:'Amarilla',nm:'630 + 520 nm',d:['Improve wrinkles, increase immunity','Mejora las arrugas, aumenta la inmunidad']},
+  {c:'#26c5ce',en:'Cyan',es:'Cian',nm:'470 + 520 nm',d:['Promote metabolism, control oil','Promueve el metabolismo, controla el brillo']},
+  {c:'#f3efe6',en:'White',es:'Blanca',nm:'470 + 520 + 630 nm',d:['Improves fine lines, lighten spots','Mejora las líneas finas, aclara las manchas']}
+];
+const ICON_PARCEL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7Z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>';
+
+/* ---------------- shared scroll loop ---------------- */
+let ticking=false,lastY=scrollY,stage=null;
+const parallax=[];
+function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(frame)}}
+function frame(){
+  ticking=false;
+  const y=scrollY,vh=innerHeight,doc=document.documentElement;
+  const bar=document.querySelector('.px-progress');
+  if(bar)bar.style.transform=`scaleX(${clamp(y/Math.max(1,doc.scrollHeight-vh))})`;
+  const h=document.querySelector('header');
+  if(h&&!reduced){h.classList.toggle('px-hide',y>lastY+4&&y>260&&!document.querySelector('.mobile-nav.open'));if(y<lastY-4||y<260)h.classList.remove('px-hide')}
+  lastY=y;
+  if(!reduced)for(const el of parallax){
+    if(!el.isConnected)continue;
+    const box=el.parentElement.getBoundingClientRect();
+    if(box.bottom<-100||box.top>vh+100)continue;
+    const off=(box.top+box.height/2-vh/2)/vh;
+    el.style.setProperty('--py',clamp(off*-34,-34,34).toFixed(1)+'px');
+  }
+  if(stage)stage.scroll();
+  shipScroll();
+}
+
+/* ---------------- reveal tagging ---------------- */
+let io=null;
+function reveal(el){el.classList.add('in')}
+function splitLines(h){
+  if(h.dataset.pxSplit||h.querySelector('.px-ln'))return;
+  h.dataset.pxSplit='1';
+  const parts=h.innerHTML.split(/<br\s*\/?>/i);
+  h.classList.add('px-lines');
+  h.dataset.rv='lines';
+  h.innerHTML=parts.map((p,i)=>`<span class="px-ln" style="--i:${i}"><span>${p}</span></span>`).join('');
+}
+function decorate(){
+  const main=document.getElementById('main');
+  if(!main)return;
+  root.classList.add('px-motion');
+  const lines=main.querySelectorAll('h1,h2:not(.px-keep)');
+  lines.forEach(h=>{if(!h.closest('.px-stage'))splitLines(h)});
+  const groups={
+    fade:'.eyebrow,.hero-copy>p,.hero-price,.hero-copy>.btn,.hero-color-link,.hero-note,.section-head p,.study-intro,.light-invitation,.mode-info>*,.results-copy>*:not(h2),.faq-grid>div:first-child>*:not(h2),.buy-copy>*,.numbered,.step-line,.result-points div,.science-top p,.science-bottom article,.depth-captions article,.depth-heading>*:not(h2),.pdp-ritual-copy>*:not(h2),.pdp-copy>*:not(h1),.ritual-layout>div:last-child>.text-link,.service-band>div,.faq-list details,.trustbar>div,.mode-tabs .swatch,.px-ship__lede,.px-dates,.px-ship__note,.px-steps li,.px-big',
+    img:'.image-frame,.hero-art,.results-photo,.depth-image,.pdp-ritual-photo,.gallery-main'
+  };
+  const seen=new Map();
+  main.querySelectorAll(groups.fade).forEach(el=>{
+    if(el.dataset.rv||el.closest('.px-stage')||el.closest('[data-rv="img"]')&&!el.matches('.eyebrow'))return;
+    const p=el.parentElement,n=seen.get(p)||0;seen.set(p,n+1);
+    el.dataset.rv='1';el.style.setProperty('--d',Math.min(n*70,490)+'ms');
+  });
+  main.querySelectorAll(groups.img).forEach(el=>{
+    if(el.dataset.rv)return;
+    el.dataset.rv='img';
+    const im=el.querySelector('img');
+    if(im&&!parallax.includes(im))parallax.push(im);
+  });
+  const sb=main.querySelector('.science-bg');
+  if(sb&&!parallax.includes(sb)){sb.dataset.pxPar='1';parallax.push(sb)}
+  if(!io)io=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){reveal(e.target);io.unobserve(e.target)}},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+  main.querySelectorAll('[data-rv]').forEach(el=>{if(!el.classList.contains('in'))io.observe(el)});
+  // failsafe: never leave content hidden
+  setTimeout(()=>main.querySelectorAll('[data-rv]:not(.in)').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<innerHeight*1.2)reveal(el)}),2600);
+}
+
+/* ---------------- hero tilt ---------------- */
+function heroTilt(){
+  const art=document.querySelector('.hero-art');
+  if(!art||art.dataset.pxTilt||!fine||reduced)return;
+  art.dataset.pxTilt='1';
+  const g=document.createElement('i');g.className='px-glare';art.appendChild(g);
+  art.addEventListener('pointermove',e=>{
+    const r=art.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+    art.style.transform=`rotateY(${(x-.5)*5}deg) rotateX(${(.5-y)*4}deg)`;
+    g.style.setProperty('--gx',x*100+'%');g.style.setProperty('--gy',y*100+'%');
+  });
+  art.addEventListener('pointerleave',()=>{art.style.transform=''});
+  art.style.transition='transform .5s cubic-bezier(.16,1,.3,1)';
+}
+/* magnetic buttons */
+function magnetic(){
+  if(!fine||reduced)return;
+  document.querySelectorAll('.btn:not([data-px-mag])').forEach(b=>{
+    b.dataset.pxMag='1';
+    b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.12}px,${(e.clientY-r.top-r.height/2)*.22}px)`});
+    b.addEventListener('pointerleave',()=>{b.style.transition='transform .5s cubic-bezier(.16,1,.3,1)';b.style.transform=''});
+    b.addEventListener('pointerenter',()=>{b.style.transition='transform .15s'});
+  });
+}
+
+/* ---------------- marquee ---------------- */
+function marquee(){
+  const anchor=document.querySelector('main .trustbar')?.closest('.wrap');
+  if(!anchor||document.querySelector('.px-marquee'))return;
+  const items=[[T('Seven light modes','Siete modos de luz'),0],[T('Delivery in <em>5–12 days</em>','Entrega en <em>5–12 días</em>'),4],[T('One mask','Una sola máscara'),2],[T('30-day returns','Devoluciones en 30 días'),1],[T('Secure checkout','Pago seguro'),3],[T('Light, made personal','Luz a tu manera'),5]];
+  const row=items.map(([s,i])=>`<span style="--c:${COLORS[i].c}">${s}</span>`).join('');
+  const m=document.createElement('div');m.className='px-marquee';m.setAttribute('role','presentation');
+  m.innerHTML=`<div aria-hidden="true">${row}${row}${row}${row}</div>`;
+  const hidden=document.createElement('span');hidden.className='sr-only';hidden.style.cssText='position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)';
+  hidden.textContent=T('Seven light modes. Delivery in 5 to 12 days. 30-day returns. Secure checkout.','Siete modos de luz. Entrega de 5 a 12 días. Devoluciones en 30 días. Pago seguro.');
+  m.appendChild(hidden);
+  anchor.after(m);
+}
+
+/* ---------------- shipping 5–12 ---------------- */
+const NODES=[[125,40],[375,90],[625,40],[875,90]];
+const ROUTE='M0 90 C60 90 70 40 125 40 S250 90 375 90 S500 40 625 40 S750 90 875 90 S960 60 1000 60';
+function fmt(d){return d.toLocaleDateString(es()?'es':'en-US',{day:'numeric',month:'short'}).replace('.','')}
+function shipSection(){
+  const faq=document.getElementById('questions')||document.querySelector('.faq-grid')?.closest('section');
+  if(document.getElementById('envio')||!faq||document.querySelector('.care-page'))return;
+  const d0=new Date(),a=new Date(d0),b=new Date(d0);a.setDate(a.getDate()+5);b.setDate(b.getDate()+12);
+  const s=document.createElement('section');s.className='px-ship wrap section';s.id='envio';s.setAttribute('aria-labelledby','px-ship-title');
+  s.innerHTML=`<div class="px-ship__top"><div><span class="eyebrow">${T('Delivery','Envío')}</span><h2 id="px-ship-title">${T('Your LEZO,<br><em>at your door.</em>','Tu LEZO,<br><em>en tu puerta.</em>')}</h2><p class="px-ship__lede">${T('Estimated delivery is <b>5 to 12 days</b> after you order. You will get updates by email, and tracking details if available.','La entrega estimada es de <b>5 a 12 días</b> después de tu pedido. Recibirás novedades por correo y, si hay seguimiento disponible, sus datos.')}</p><div class="px-dates">${ICON_PARCEL.replace('<svg','<svg width="22" height="22"')}<div><span>${T('Order today · estimated arrival','Pide hoy · llegada estimada')}</span><br><strong>${fmt(a)} – ${fmt(b)}</strong></div></div></div><div class="px-big" aria-hidden="true"><span data-count="5">5</span><em>–</em><span data-count="12">12</span><small>${T('days','días')}</small></div></div>
+  <div class="px-route" aria-hidden="true"><svg viewBox="0 0 1000 140" preserveAspectRatio="none"><path class="base" d="${ROUTE}"/><path class="fill" d="${ROUTE}"/>${NODES.map(([x,y])=>`<circle class="n" cx="${x}" cy="${y}" r="7"/>`).join('')}<circle class="parcel" r="9" cx="0" cy="90"/></svg></div>
+  <ol class="px-steps"><li><b>${T('DAY 0','DÍA 0')}</b><h3>${T('Order confirmed','Pedido confirmado')}</h3><p>${T('Secure Shopify checkout and a confirmation email.','Pago seguro en Shopify y confirmación por correo.')}</p></li><li><b>${T('PREPARING','PREPARACIÓN')}</b><h3>${T('Packed with care','Preparado con cuidado')}</h3><p>${T('We get your LEZO ready to ship.','Dejamos tu LEZO listo para salir.')}</p></li><li><b>${T('ON ITS WAY','EN CAMINO')}</b><h3>${T('In transit','En tránsito')}</h3><p>${T('Shipping update by email, with tracking if available.','Aviso de envío por correo, con seguimiento si está disponible.')}</p></li><li><b>${T('DAY 5–12','DÍA 5–12')}</b><h3>${T('At your door','En tu puerta')}</h3><p>${T('Estimated window. 30 days to request a return.','Plazo estimado. 30 días para solicitar devolución.')}</p></li></ol>
+  <p class="small px-ship__note">${T('Estimate only, not a guaranteed arrival date. Shipping charges and taxes are shown at checkout for your destination.','Plazo orientativo, no una fecha de llegada garantizada. Los gastos de envío e impuestos se muestran al pagar según tu destino.')}</p>`;
+  faq.before(s);
+}
+let shipDone=new Set();
+function shipScroll(){
+  const s=document.getElementById('envio');if(!s)return;
+  const r=s.getBoundingClientRect(),vh=innerHeight;
+  const q=clamp((vh*.8-r.top)/(r.height*.75));
+  const path=s.querySelector('.fill'),parcel=s.querySelector('.parcel');
+  if(path){
+    const L=path.getTotalLength();
+    path.style.strokeDasharray=L;path.style.strokeDashoffset=L*(1-q);
+    const p=path.getPointAtLength(L*q);parcel.setAttribute('cx',p.x);parcel.setAttribute('cy',p.y);
+    s.querySelectorAll('circle.n').forEach((c,i)=>c.classList.toggle('on',q>=(i/3)*.97+.02));
+  }
+  s.querySelectorAll('.px-steps li').forEach((li,i)=>li.classList.toggle('on',q>=(i/3)*.97+.03));
+  s.querySelector('.px-steps')?.style.setProperty('--q',q.toFixed(3));
+  if(q>.05&&!shipDone.has(s)){shipDone.add(s);s.querySelectorAll('[data-count]').forEach(countUp)}
+}
+function countUp(el){
+  const to=+el.dataset.count;if(reduced){el.textContent=to;return}
+  const t0=performance.now(),D=1400;
+  const step=t=>{const k=clamp((t-t0)/D),e=1-Math.pow(1-k,4);el.textContent=Math.round(e*to);if(k<1)requestAnimationFrame(step)};
+  requestAnimationFrame(step);
+}
+function stickyShip(){
+  const sm=document.querySelector('.sticky-buy small');
+  if(sm&&!sm.querySelector('.px-sticky-ship'))sm.insertAdjacentHTML('beforeend',`<span class="px-sticky-ship">· ${T('Delivery 5–12 days','Entrega 5–12 días')}</span>`);
+}
+
+/* ---------------- 3D stage ---------------- */
+function stageMarkup(){
+  const sw=COLORS.map((m,i)=>`<button type="button" style="--sw:${m.c}" data-px-mode="${i}" aria-pressed="${i===0}" aria-label="${T(m.en,m.es)}"><i></i></button>`).join('');
+  return `<div class="px-stage__track"><div class="px-stage__sticky">
+    <div class="px-stage__bg"></div><div class="px-stage__grid"></div>
+    <div class="px-fallback"><img src="${FALLBACK_IMG}" alt="${T('White LEZO LED mask','Máscara LED LEZO blanca')}" width="1536" height="1024" loading="lazy"></div>
+    <canvas class="px-canvas" role="img" aria-label="${T('Interactive 3D model of the LEZO mask. Drag to rotate.','Modelo 3D interactivo de la máscara LEZO. Arrastra para girarla.')}"></canvas>
+    <div class="px-copy"><span class="eyebrow">${T('Interactive 3D · LEZO','3D interactivo · LEZO')}</span>
+      <h2 class="px-keep">${T('Turn it.<br><em>Light it.</em>','Gírala.<br><em>Enciéndela.</em>')}</h2>
+      <p>${T('Scroll to cycle through all seven light modes. Drag the mask to see it from every side.','Desliza para recorrer los siete modos de luz. Arrastra la máscara para verla desde cada lado.')}</p>
+      <div class="px-mode" aria-live="polite"><div class="px-mode-idx"></div><div class="px-mode-name"></div><div class="px-mode-nm"></div><div class="px-mode-desc"></div><div class="px-mode-fine">${T('Supplier-described function, not a verified clinical outcome. Colors are a visual simulation.','Función descrita por el proveedor, no un resultado clínico verificado. Los colores son una simulación visual.')}</div></div>
+    </div>
+    <div class="px-rail" aria-hidden="true"><i></i></div>
+    <div class="px-scrollcue" aria-hidden="true">${T('Scroll','Desliza')}</div>
+    <div class="px-hud"><div class="px-swatches" role="group" aria-label="${T('Choose a light mode','Elige un modo de luz')}">${sw}</div>
+      <div class="px-meta"><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span><span class="px-ship-chip">${ICON_PARCEL}${T('Delivery in 5–12 days','Entrega en 5–12 días')}</span></div></div>
+  </div></div>`;
+}
+class Stage{
+  constructor(el){
+    this.el=el;this.track=el.querySelector('.px-stage__track');this.idx=-1;this.drag=0;this.dragging=false;this.visible=false;this.p=0;this.disposed=false;
+    this.cache={};
+    el.querySelectorAll('[data-px-mode]').forEach(b=>b.addEventListener('click',()=>this.pick(+b.dataset.pxMode)));
+    this.setMode(0,true);
+    this.io=new IntersectionObserver(e=>{this.visible=e[0].isIntersecting;if(this.visible&&!this.started)this.start()},{rootMargin:'200px'});
+    this.io.observe(el);
+    this.scroll();
+  }
+  pick(i){
+    if(reduced){this.setMode(i);return}
+    const r=this.track.getBoundingClientRect(),span=this.track.offsetHeight-innerHeight;
+    const top=scrollY+r.top+span*((i+.5)/COLORS.length);
+    scrollTo({top,behavior:'smooth'});
+  }
+  scroll(){
+    if(this.disposed||!this.el.isConnected)return;
+    const r=this.track.getBoundingClientRect(),span=this.track.offsetHeight-innerHeight;
+    this.p=reduced?0:clamp(-r.top/Math.max(1,span));
+    this.el.style.setProperty('--p',this.p.toFixed(3));
+    this.el.querySelector('.px-rail')?.style.setProperty('--p',this.p.toFixed(3));
+    if(!reduced&&this.p>.01)this.el.classList.add('moved');
+    if(!reduced)this.setMode(Math.min(COLORS.length-1,Math.floor(this.p*COLORS.length)));
+  }
+  setMode(i,force){
+    if(i===this.idx&&!force)return;
+    const first=this.idx===-1;this.idx=i;const m=COLORS[i];
+    this.target=m.c;
+    this.el.style.setProperty('--px-c',m.c==='#f3efe6'?'#e9dfd0':m.c);
+    this.el.querySelectorAll('[data-px-mode]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.pxMode===i));
+    const box=this.el.querySelector('.px-mode');
+    box.querySelector('.px-mode-idx').textContent=`0${i+1} / 07`;
+    box.querySelector('.px-mode-name').innerHTML=es()?`Luz <i>${m.es.toLowerCase()}</i>`:`<i>${m.en}</i> light`;
+    box.querySelector('.px-mode-nm').textContent=m.nm;
+    box.querySelector('.px-mode-desc').textContent=T(m.d[0],m.d[1]);
+    if(!first){box.classList.remove('px-swap');void box.offsetWidth;box.classList.add('px-swap')}
+    // keep the light-studio section further down in sync
+    const b=document.querySelector(`[data-mode="${i}"]`);
+    if(b&&b.getAttribute('aria-pressed')!=='true'&&!first)b.click();
+  }
+  async start(){
+    this.started=true;
+    try{
+      const canvas=this.el.querySelector('.px-canvas');
+      const probe=document.createElement('canvas');
+      if(!(probe.getContext('webgl2')||probe.getContext('webgl')))throw new Error('no webgl');
+      const THREE=await import('three');
+      const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js');
+      const {RoomEnvironment}=await import('three/addons/environments/RoomEnvironment.js');
+      if(this.disposed||!this.el.isConnected)return;
+      this.THREE=THREE;
+      const renderer=this.renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+      renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+      renderer.outputColorSpace=THREE.SRGBColorSpace;
+      renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+      const scene=this.scene=new THREE.Scene();
+      const pmrem=new THREE.PMREMGenerator(renderer);
+      scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
+      const cam=this.cam=new THREE.PerspectiveCamera(32,1,.1,50);cam.position.set(0,0,6.4);
+      const key=new THREE.DirectionalLight(0xffffff,1.1);key.position.set(2.5,3,4);scene.add(key);
+      const col=this.col=new THREE.Color(this.target);
+      const front=this.front=new THREE.PointLight(col,9,9,2);front.position.set(0,.2,2.6);scene.add(front);
+      const rim=this.rim=new THREE.PointLight(col,14,10,2);rim.position.set(-2.6,1.4,-2.2);scene.add(rim);
+      const rim2=this.rim2=new THREE.PointLight(col,8,10,2);rim2.position.set(2.8,-1,-1.8);scene.add(rim2);
+      // soft halo behind the mask
+      const gc=document.createElement('canvas');gc.width=gc.height=256;
+      const g=gc.getContext('2d'),gr=g.createRadialGradient(128,128,0,128,128,128);
+      gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.35,'rgba(255,255,255,.28)');gr.addColorStop(1,'rgba(255,255,255,0)');
+      g.fillStyle=gr;g.fillRect(0,0,256,256);
+      const halo=this.halo=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),color:col,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.75}));
+      halo.scale.set(7.5,7.5,1);halo.position.set(0,0,-1.6);scene.add(halo);
+      // drifting photons
+      const N=170,pos=new Float32Array(N*3),seed=[];
+      for(let i=0;i<N;i++){const a=Math.random()*Math.PI*2,r=1.7+Math.random()*2.2,y=(Math.random()-.5)*3.6;pos[i*3]=Math.cos(a)*r;pos[i*3+1]=y;pos[i*3+2]=Math.sin(a)*r-.4;seed.push(Math.random()*6)}
+      const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+      const pm=new THREE.PointsMaterial({size:.05,color:col,transparent:true,opacity:.85,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true});
+      const pts=this.pts=new THREE.Points(pg,pm);this.seed=seed;scene.add(pts);
+      const pivot=this.pivot=new THREE.Group();scene.add(pivot);
+      const model=await new Promise((res,rej)=>new GLTFLoader().load(MODEL_URL,g=>res(g.scene),undefined,rej));
+      if(this.disposed)return;
+      const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),ctr=box.getCenter(new THREE.Vector3());
+      model.position.sub(ctr);
+      const s=3.1/Math.max(size.x,size.y,size.z);
+      const holder=new THREE.Group();holder.add(model);holder.scale.setScalar(s);pivot.add(holder);
+      model.traverse(o=>{if(o.isMesh&&o.material){o.material.envMapIntensity=1.1;if(o.material.metalness>.8){o.material.metalness=.55}}});
+      this.bindPointer(canvas);
+      this.resize();addEventListener('resize',this.onResize=()=>this.resize());
+      this.el.classList.add('is-live');
+      this.clock=new THREE.Clock();this.rot=0;this.loop();
+    }catch(err){
+      console.warn('[LEZO] 3D unavailable, using image fallback',err);
+      this.el.classList.add('no-gl');
+      this.bindTilt();
+    }
+  }
+  bindPointer(canvas){
+    let x0=0,d0=0,id=null;
+    canvas.addEventListener('pointerdown',e=>{id=e.pointerId;canvas.setPointerCapture(id);this.dragging=true;x0=e.clientX;d0=this.drag});
+    canvas.addEventListener('pointermove',e=>{
+      if(this.dragging&&e.pointerId===id)this.drag=clamp(d0+(e.clientX-x0)*.009,-2.4,2.4);
+      else if(fine){const r=canvas.getBoundingClientRect();this.mx=(e.clientX-r.left)/r.width-.5;this.my=(e.clientY-r.top)/r.height-.5}
+    });
+    const up=()=>{this.dragging=false;id=null};
+    canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
+    canvas.addEventListener('pointerleave',()=>{this.mx=this.my=0});
+    this.mx=this.my=0;
+  }
+  bindTilt(){
+    const fb=this.el.querySelector('.px-fallback');
+    if(!fine)return;
+    this.el.addEventListener('pointermove',e=>{const r=this.el.getBoundingClientRect();fb.style.setProperty('--ry',((e.clientX-r.left)/r.width-.5)*18+'deg');fb.style.setProperty('--rx',(.5-(e.clientY-r.top)/r.height)*10+'deg')});
+  }
+  resize(){
+    const c=this.renderer.domElement,w=c.clientWidth,h=c.clientHeight;
+    if(!w||!h)return;
+    this.renderer.setSize(w,h,false);this.cam.aspect=w/h;
+    // on narrow screens pull the camera back and lift the mask above the controls
+    const narrow=w<760;
+    this.cam.position.z=narrow?8.6:6.4;
+    this.offsetX=narrow?0:.95;this.offsetY=narrow?-.55:0;
+    this.cam.updateProjectionMatrix();
+  }
+  loop(){
+    if(this.disposed||!this.el.isConnected){this.dispose();return}
+    requestAnimationFrame(()=>this.loop());
+    if(!this.visible||document.hidden)return;
+    const t=this.clock.getElapsedTime(),dt=Math.min(this.clock.getDelta(),.05);
+    if(!this.dragging)this.drag*=.965;
+    const targetRot=(reduced?0:this.p*Math.PI*2-.3)+this.drag+Math.sin(t*.6)*.07+(this.mx||0)*.35;
+    this.rot+=(targetRot-this.rot)*.075;
+    const P=this.pivot;
+    P.rotation.y=this.rot;P.rotation.x+=((-(this.my||0)*.25+Math.sin(t*.5)*.03)-P.rotation.x)*.06;
+    P.position.set(this.offsetX,this.offsetY+Math.sin(t*.9)*.06,0);
+    this.halo.position.x=this.offsetX;this.halo.position.y=this.offsetY;
+    const tgt=new this.THREE.Color(this.target);this.col.lerp(tgt,.07);
+    for(const l of [this.front,this.rim,this.rim2])l.color.copy(this.col);
+    this.front.position.x=this.offsetX;
+    this.halo.material.color.copy(this.col);this.pts.material.color.copy(this.col);
+    this.halo.material.opacity=.6+Math.sin(t*1.4)*.12;
+    this.pts.rotation.y=t*.06+this.rot*.3;this.pts.position.x=this.offsetX;
+    const pa=this.pts.geometry.attributes.position;
+    for(let i=0;i<pa.count;i++)pa.array[i*3+1]+=Math.sin(t*.6+this.seed[i])*.0016;
+    pa.needsUpdate=true;
+    this.renderer.render(this.scene,this.cam);
+  }
+  dispose(){
+    if(this.disposed&&!this.renderer)return;
+    this.disposed=true;this.io?.disconnect();removeEventListener('resize',this.onResize);
+    if(this.renderer){this.renderer.dispose();this.renderer.forceContextLoss?.();this.renderer=null}
+  }
+}
+function stageInit(){
+  const anchor=document.querySelector('main .px-marquee')||document.querySelector('main .trustbar')?.closest('.wrap');
+  if(document.querySelector('.px-stage')||!anchor||document.querySelector('.care-page'))return;
+  const sec=document.createElement('section');sec.className='px-stage';sec.id='mask3d';sec.setAttribute('aria-label',T('Interactive 3D mask','Máscara 3D interactiva'));
+  sec.innerHTML=stageMarkup();
+  anchor.after(sec);
+  if(reduced)root.classList.add('px-reduced');
+  stage=new Stage(sec);
+}
+
+/* ---------------- page transitions ---------------- */
+function chrome(){
+  if(!document.querySelector('.px-progress')){
+    document.body.insertAdjacentHTML('beforeend','<div class="px-progress" aria-hidden="true"></div><div class="px-leave" aria-hidden="true"></div>');
+  }
+  const first=(()=>{try{if(sessionStorage.getItem('px-intro'))return false;sessionStorage.setItem('px-intro','1')}catch{}return true})();
+  if(first&&!reduced&&!document.querySelector('.px-curtain')){
+    document.body.insertAdjacentHTML('afterbegin',`<div class="px-curtain" aria-hidden="true"><div><b>LEZO</b><small>BY SEVENCRUSH</small></div><i></i></div>`);
+    const c=document.querySelector('.px-curtain');
+    setTimeout(()=>{c.classList.add('out');setTimeout(()=>c.remove(),1000)},1050);
+  }
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest?.('a[href]');
+  if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||a.target==='_blank'||a.hasAttribute('download'))return;
+  const u=new URL(a.href,location.href);
+  if(u.origin!==location.origin||(u.pathname===location.pathname&&u.search===location.search)||reduced)return;
+  e.preventDefault();
+  document.querySelector('.px-leave')?.classList.add('on');
+  setTimeout(()=>location.assign(u.href),260);
+});
+addEventListener('pageshow',e=>{if(e.persisted)document.querySelector('.px-leave')?.classList.remove('on')});
+
+/* ---------------- boot ---------------- */
+function enhance(){
+  const app=document.getElementById('app');
+  if(!app||!document.getElementById('main'))return;
+  chrome();
+  if(!document.querySelector('.px-stage')&&stage){stage.dispose();stage=null}
+  marquee();stageInit();shipSection();stickyShip();decorate();heroTilt();magnetic();
+  onScroll();
+}
+function boot(){
+  const app=document.getElementById('app');
+  if(!app){return}
+  enhance();
+  let q=0;
+  new MutationObserver(()=>{cancelAnimationFrame(q);q=requestAnimationFrame(enhance)}).observe(app,{childList:true});
+  addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+})();
