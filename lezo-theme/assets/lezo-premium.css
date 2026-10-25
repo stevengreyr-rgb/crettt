@@ -730,3 +730,5 @@ header .nav{justify-content:flex-start}
 header .nav .brand{margin-right:auto}
 .px-back--page{margin:0 22px 0 0!important}
 @media(max-width:760px){.px-back--page span{display:none}.px-back--page{margin-right:14px!important}}
+
+.px-use-wide{margin:0 0 clamp(40px,6vw,88px);background:#f3f3f3;min-height:0}
