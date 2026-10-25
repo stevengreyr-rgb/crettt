@@ -638,3 +638,36 @@ html.px-lock{overflow:hidden}
 .px-zoom__stage.z2{cursor:zoom-out}
 .px-zoom__stage.z2 img{transform:scale(2.2)}
 .px-zoom__hint{position:absolute;left:0;right:0;bottom:18px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#888;margin:0;pointer-events:none}
+
+/* ---------- the journey: seven chapters, one grid ---------- */
+.px-ch__h{display:grid;grid-template-columns:auto minmax(0,1.1fr) minmax(0,.9fr);gap:0 clamp(24px,4vw,56px);align-items:end;margin-bottom:clamp(36px,5vw,56px)}
+.px-ch__n{font-family:var(--ed);font-style:italic;font-size:clamp(56px,7vw,104px);line-height:.78;color:#141414;letter-spacing:-.03em}
+.px-ch__h h2 em{color:#141414}
+.px-ch__h p{font-size:13.5px;color:#555;max-width:420px;justify-self:end}
+.px-ch .px-split{margin-top:0}
+.px-ch .px-split__t .px-spec__list{margin-bottom:28px}
+.px-ch .px-split__t .btn{margin-top:6px}
+.px-tri{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.px-tri .px-fig{background:#f3f3f3;min-height:0}
+.px-tri .px-fig:after{background:linear-gradient(180deg,transparent 55%,#14141466)}
+.px-ch .px-chips{margin-top:34px}
+.px-steps2{list-style:none;margin:0 0 26px;padding:0;border-top:1px solid #141414}
+.px-steps2 li{display:grid;grid-template-columns:54px 1fr;gap:6px;padding:18px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.55;color:#222}
+.px-steps2 b{font-family:var(--ed);font-style:italic;font-weight:400;font-size:26px;line-height:1;color:#141414}
+.px-detail__grid .px-fig{aspect-ratio:auto!important}
+.px-detail__grid .px-fig img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.px-ch .px-detail__note{margin-top:16px}
+.px-ch .px-box-fig{margin:0}
+.px-howto__list{list-style:none;margin:0 0 36px;padding:0;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid #141414}
+.px-howto__list li{padding:20px 14px 0 0;display:grid;gap:8px}
+.px-howto__list b{font-family:var(--ed);font-style:italic;font-weight:400;font-size:32px;line-height:1;color:#141414}
+.px-howto__list span{font-size:14px;font-weight:700;letter-spacing:-.02em}
+@media(max-width:900px){
+  .px-ch__h{grid-template-columns:1fr;gap:14px}
+  .px-ch__n{font-size:64px}
+  .px-ch__h p{justify-self:start}
+  .px-tri{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .px-tri .px-fig figcaption{left:10px;bottom:10px;right:10px;font-size:12px;gap:6px;flex-wrap:wrap}
+  .px-howto__list{grid-template-columns:1fr 1fr}
+  .px-howto__list li{padding-bottom:16px}
+}

@@ -136,7 +136,7 @@ function shipSection(){
   if(document.getElementById('envio')||!faq||document.querySelector('.care-page'))return;
   const d0=new Date(),a=new Date(d0),b=new Date(d0);a.setDate(a.getDate()+5);b.setDate(b.getDate()+12);
   const s=document.createElement('section');s.className='px-ship wrap section';s.id='envio';s.setAttribute('aria-labelledby','px-ship-title');
-  s.innerHTML=`<div class="px-ship__top"><div><span class="eyebrow">${T('Delivery','Envío')}</span><h2 id="px-ship-title">${T('Order today.<br><em>Open it soon.</em>','Pídela hoy.<br><em>Ábrela pronto.</em>')}</h2><p class="px-ship__lede">${T('Your LEZO should arrive in <b>5 to 12 days</b>. We email you at every step and send tracking details when available, so you always know where it is.','Tu LEZO debería llegar en <b>5 a 12 días</b>. Te escribimos en cada paso y te enviamos el seguimiento cuando esté disponible, para que siempre sepas dónde está.')}</p><div class="px-dates">${ICON_PARCEL.replace('<svg','<svg width="22" height="22"')}<div><span>${T('Order today · estimated arrival','Pide hoy · llegada estimada')}</span><br><strong>${fmt(a)} – ${fmt(b)}</strong></div></div></div><div class="px-big" aria-hidden="true"><span data-count="5">5</span><em>–</em><span data-count="12">12</span><small>${T('days','días')}</small></div></div>
+  s.innerHTML=`<div class="px-ship__top"><div><span class="eyebrow">06 / ${T('Delivery','Envío')}</span><h2 id="px-ship-title">${T('Order today.<br><em>Open it soon.</em>','Pídela hoy.<br><em>Ábrela pronto.</em>')}</h2><p class="px-ship__lede">${T('Your LEZO should arrive in <b>5 to 12 days</b>. We email you at every step and send tracking details when available, so you always know where it is.','Tu LEZO debería llegar en <b>5 a 12 días</b>. Te escribimos en cada paso y te enviamos el seguimiento cuando esté disponible, para que siempre sepas dónde está.')}</p><div class="px-dates">${ICON_PARCEL.replace('<svg','<svg width="22" height="22"')}<div><span>${T('Order today · estimated arrival','Pide hoy · llegada estimada')}</span><br><strong>${fmt(a)} – ${fmt(b)}</strong></div></div></div><div class="px-big" aria-hidden="true"><span data-count="5">5</span><em>–</em><span data-count="12">12</span><small>${T('days','días')}</small></div></div>
   <div class="px-route" aria-hidden="true"><svg viewBox="0 0 1000 140" preserveAspectRatio="none"><path class="base" d="${ROUTE}"/><path class="fill" d="${ROUTE}"/>${NODES.map(([x,y])=>`<circle class="n" cx="${x}" cy="${y}" r="7"/>`).join('')}<circle class="parcel" r="9" cx="0" cy="90"/></svg></div>
   <ol class="px-steps"><li><b>${T('DAY 0','DÍA 0')}</b><h3>${T('Order confirmed','Pedido confirmado')}</h3><p>${T('Secure Shopify checkout and a confirmation email.','Pago seguro en Shopify y confirmación por correo.')}</p></li><li><b>${T('PREPARING','PREPARACIÓN')}</b><h3>${T('Packed with care','Preparado con cuidado')}</h3><p>${T('We get your LEZO ready to ship.','Dejamos tu LEZO listo para salir.')}</p></li><li><b>${T('ON ITS WAY','EN CAMINO')}</b><h3>${T('In transit','En tránsito')}</h3><p>${T('Shipping update by email, with tracking if available.','Aviso de envío por correo, con seguimiento si está disponible.')}</p></li><li><b>${T('DAY 5–12','DÍA 5–12')}</b><h3>${T('At your door','En tu puerta')}</h3><p>${T('Estimated window. 30 days to request a return.','Plazo estimado. 30 días para solicitar devolución.')}</p></li></ol>
   <p class="small px-ship__note">${T('Estimate only, not a guaranteed arrival date. Shipping charges and taxes are shown at checkout for your destination.','Plazo orientativo, no una fecha de llegada garantizada. Los gastos de envío e impuestos se muestran al pagar según tu destino.')}</p>`;
@@ -391,7 +391,7 @@ function buildTutorial(slot){
 
 
 /* ---------------- new imagery: home sections + product-page sections ---------------- */
-const IMG={sci:'__IMG_SCI__',res:'__IMG_RES__',box:'__IMG_BOX__',modes:'__IMG_P1__',lining:'__IMG_P2__',strap:'__IMG_P3__',shell:'__IMG_P4__',profile:'__IMG_P5__',back:'__IMG_P6__',rim:'__IMG_P7__'};
+const IMG={sci:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-sci.webp?v=1792906151',res:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-res.webp?v=1792906151',box:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-box.webp?v=1792906151',modes:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-modes.webp?v=1792906151',lining:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-lining.webp?v=1792906151',strap:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-strap.webp?v=1792906151',shell:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-shell.webp?v=1792906151',profile:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-profile.webp?v=1792906151',back:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-back.webp?v=1792906151',rim:'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-n-rim.webp?v=1792906151'};
 function fig(src,alt,w,h,cls='',cap=''){return `<figure class="px-fig px-zoomable ${cls}" style="aspect-ratio:${w}/${h}"><img src="${src}" alt="${alt}" width="${w}" height="${h}" loading="lazy" data-full="${src}">${cap?`<figcaption>${cap}</figcaption>`:''}</figure>`}
 function homeImages(){
   const sci=document.querySelector('.science .wrap');
@@ -453,6 +453,57 @@ function zoomInit(){
 }
 zoomInit();
 
+
+/* ---------------- home: the visual journey (what you are buying, chapter by chapter) ---------------- */
+const IMGH={green:'__IMG_HG__',blue:'__IMG_HB__',purple:'__IMG_HP__',fit:'__IMG_HF__'};
+function chHead(n,label,title,lede){return `<header class="px-ch__h"><span class="px-ch__n" aria-hidden="true">${n}</span><div><span class="eyebrow">${n} / ${label}</span><h2>${title}</h2></div>${lede?`<p>${lede}</p>`:''}</header>`}
+function journey(){
+  const slot=document.querySelector('.px-journey-slot');
+  if(!slot||slot.dataset.pxDone||document.querySelector('.care-page'))return;slot.dataset.pxDone='1';
+  const chips=[[0,'630'],[1,'520'],[2,'470'],[3,'630 + 470'],[4,'630 + 520'],[5,'470 + 520'],[6,'470 + 520 + 630']].map(([i,nm])=>`<li style="--c:${COLORS[i].c}"><i></i><b>${T(COLORS[i].en,COLORS[i].es)}</b><span>${nm} nm</span></li>`).join('');
+  const facts=[[T('Format','Formato'),T('Full-face LED mask','Máscara LED facial completa')],[T('Light modes','Modos de luz'),T('7 built in','7 integrados')],[T('Fit','Ajuste'),T('Adjustable strap with buckle','Correa ajustable con hebilla')],[T('Finish','Acabado'),T('Sculpted glossy white','Blanco esculpido y brillante')]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
+  const D=DETAIL;
+  slot.innerHTML=`
+  <section class="px-ch wrap section" id="la-mascara">
+    ${chHead('01',T('The mask','La máscara'),T('Everything you are getting,<br><em>in one mask.</em>','Todo lo que recibes,<br><em>en una sola máscara.</em>'),T('LEZO is a full-face LED mask with an adjustable strap. Follow the next few sections to see how it looks, how it lights up and what arrives at your door.','LEZO es una máscara LED facial con correa ajustable. Recorre las siguientes secciones para ver cómo es, cómo se enciende y qué llega a tu puerta.'))}
+    <div class="px-split">${fig(IMG.res,T('The LEZO mask, three-quarter view','La máscara LEZO, vista tres cuartos'),1600,2000)}<div class="px-split__t"><div class="px-spec__list">${facts}</div><a class="btn" href="/products/lezo-7-color-led-face-mask">${T('Buy LEZO','Comprar LEZO')}<svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12h17m-6-6 6 6-6 6"/></svg></a></div></div>
+  </section>
+  <section class="px-ch wrap section" id="la-luz">
+    ${chHead('02',T('The light','La luz'),T('Seven modes,<br><em>seven colors.</em>','Siete modos,<br><em>siete colores.</em>'),T('Red, green and blue LED channels combine into seven modes. Try each one in the viewer at the top of the page.','Los canales LED rojo, verde y azul se combinan en siete modos. Pruébalos en el visor de la parte superior.'))}
+    <div class="px-tri">${[['green',1],['blue',2],['purple',3]].map(([k,i])=>fig(IMGH[k],T(COLORS[i].en+' light on the LEZO mask',`Luz ${COLORS[i].es.toLowerCase()} en la máscara LEZO`),1536,2048,'',`<b>0${i+1}</b>${T(COLORS[i].en,COLORS[i].es)} · ${COLORS[i].nm}`)).join('')}</div>
+    <ul class="px-chips" aria-label="${T('Light modes and supplier-listed wavelengths','Modos de luz y longitudes de onda según el proveedor')}">${chips}</ul>
+    <p class="small px-how__note">${T('Wavelengths are supplier-listed and not independently measured.','Las longitudes de onda son las indicadas por el proveedor y no se han medido de forma independiente.')}</p>
+  </section>
+  <section class="px-ch wrap section" id="el-interior">
+    ${chHead('03',T('The inside','El interior'),T('The light is<br><em>on the inside.</em>','La luz está<br><em>por dentro.</em>'),T('LEDs spread across the whole inner face, so the light wraps around you. Tap any image to zoom in.','LEDs repartidos por toda la cara interior, para que la luz te envuelva. Toca cualquier imagen para ampliarla.'))}
+    <div class="px-detail__grid">
+      ${fig(D.inside,T('Inside of the LEZO mask with the LED array lit','Interior de la máscara LEZO con la matriz de LEDs encendida'),2656,2160,'px-fig--big',`<b>01</b>${T('Light all around your face','Luz por todo tu rostro')}`)}
+      ${fig(IMG.sci,T('Macro of the LED lenses inside the mask','Macro de los LEDs dentro de la máscara'),2400,1357,'',`<b>02</b>${T('Every LED, up close','Cada LED, de cerca')}`)}
+      ${fig(D.strap,T('Adjustable strap with buckle','Correa ajustable con hebilla'),2683,2160,'',`<b>03</b>${T('Adjustable strap','Correa ajustable')}`)}
+    </div>
+    <p class="small px-detail__note">${T('Illustrative reference images. Colors and LED layout are approximate.','Imágenes ilustrativas de referencia. Los colores y la distribución de los LEDs son aproximados.')}</p>
+  </section>
+  <section class="px-ch wrap section" id="el-ajuste">
+    ${chHead('04',T('The fit','El ajuste'),T('Adjust it once.<br><em>Hands free.</em>','Ajústala una vez.<br><em>Manos libres.</em>'),T('The mask sits on the face and an adjustable strap with a buckle holds it in place, so you can sit back or recline without holding it.','La máscara se apoya en el rostro y una correa ajustable con hebilla la mantiene en su lugar, para que te sientes o recuestes sin sostenerla.'))}
+    <div class="px-split px-split--r"><div class="px-split__t"><ol class="px-steps2"><li><b>01</b>${T('Hold the mask by its edges and bring it to your face.','Sostén la máscara por los bordes y llévala a tu rostro.')}</li><li><b>02</b>${T('Line up the openings with your eyes, nose and mouth.','Alinea las aberturas con ojos, nariz y boca.')}</li><li><b>03</b>${T('Pull the strap around the back and fasten the buckle.','Pasa la correa por la nuca y abrocha la hebilla.')}</li></ol><button type="button" class="text-link" data-px-tutorial>${T('See the full guide · 5 steps','Ver la guía completa · 5 pasos')}</button></div>${fig(IMGH.fit,T('The LEZO mask worn on a mannequin','La máscara LEZO puesta en un maniquí'),1536,1920,'',`<b>→</b>${T('Shown on a mannequin','Sobre un maniquí')}`)}</div>
+  </section>
+  <section class="px-ch wrap section" id="que-llega">
+    ${chHead('05',T('What arrives','Lo que llega'),T('The mask, ready<br><em>to switch on.</em>','La máscara, lista<br><em>para encender.</em>'),T('Your order is the LEZO full-face LED mask with its adjustable strap, together with the manufacturer’s instructions for power, care and session settings.','Tu pedido es la máscara LED facial LEZO con su correa ajustable, junto con las instrucciones del fabricante sobre alimentación, cuidado y ajustes de sesión.'))}
+    ${fig(IMG.box,T('Illustration of the LEZO mask presented in a white box','Ilustración de la máscara LEZO presentada en una caja blanca'),2400,1029,'px-box-fig')}
+    <p class="small px-detail__note">${T('Illustrative image. Product visualizations may vary from the delivered item.','Imagen ilustrativa. Las visualizaciones del producto pueden variar respecto al artículo entregado.')}</p>
+  </section>`;
+}
+function howtoBand(){
+  const faq=document.getElementById('questions')||document.querySelector('.faq-grid')?.closest('section');
+  if(document.getElementById('como-usar')||!faq||document.querySelector('.care-page')||location.pathname.includes('/products/'))return;
+  const steps=tutSteps().map((x,i)=>`<li><b>0${i+1}</b><span>${x.k}</span></li>`).join('');
+  const s=document.createElement('section');s.className='px-ch px-howto wrap section';s.id='como-usar';
+  s.innerHTML=`${chHead('07',T('How to use','Cómo usarla'),T('Five steps,<br><em>start to finish.</em>','Cinco pasos,<br><em>de principio a fin.</em>'),T('A short illustrated guide, from cleansing your face to storing the mask.','Una guía ilustrada y corta, desde limpiar el rostro hasta guardar la máscara.'))}
+    <ol class="px-howto__list">${steps}</ol>
+    <button type="button" class="btn" data-px-tutorial>${T('Open the guide','Abrir la guía')}<svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12h17m-6-6 6 6-6 6"/></svg></button>`;
+  faq.before(s);
+}
+
 /* ---------------- tutorial lives inside a button (full-screen sheet) ---------------- */
 let tutDlg=null,tutLast=null;
 function openTutorial(from){
@@ -504,7 +555,7 @@ function enhance(){
   if(!app||!document.getElementById('main'))return;
   chrome();
   if(!document.querySelector('.px-stage')&&stage){stage.dispose();stage=null}
-  tabFunctions();marquee();stageInit();if(!location.pathname.includes('/products/'))detailSection();shipSection();pdpSections();homeImages();decorate();heroTilt();magnetic();
+  tabFunctions();marquee();stageInit();journey();shipSection();howtoBand();pdpSections();decorate();heroTilt();magnetic();
   onScroll();
 }
 function boot(){
