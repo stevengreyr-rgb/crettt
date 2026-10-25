@@ -182,7 +182,7 @@ function stageMarkup(){
     <div class="px-rail" aria-hidden="true"><i></i></div>
     <div class="px-scrollcue" aria-hidden="true">${T('Scroll','Desliza')}</div>
     <div class="px-hud"><div class="px-swatches" role="group" aria-label="${T('Choose a light mode','Elige un modo de luz')}">${sw}</div>
-      <div class="px-meta"><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span><span class="px-ship-chip">${ICON_PARCEL}${T('Delivery in 5–12 days','Entrega en 5–12 días')}</span></div></div>
+      <div class="px-meta"><button type="button" class="px-inside" data-px-inside>${T('See inside · LEDs','Ver por dentro · LEDs')}</button><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span><span class="px-ship-chip">${ICON_PARCEL}${T('Delivery in 5–12 days','Entrega en 5–12 días')}</span></div></div>
   </div></div>`;
 }
 class Stage{
@@ -190,8 +190,9 @@ class Stage{
     this.el=el;this.track=el.querySelector('.px-stage__track');this.idx=-1;this.drag=0;this.dragging=false;this.visible=false;this.p=0;this.disposed=false;
     this.cache={};
     el.querySelectorAll('[data-px-mode]').forEach(b=>b.addEventListener('click',()=>this.pick(+b.dataset.pxMode)));
+    el.querySelector('[data-px-inside]')?.addEventListener('click',()=>this.pickP(.64));
     this.setMode(0,true);
-    this.io=new IntersectionObserver(e=>{this.visible=e[0].isIntersecting;if(this.visible&&!this.started)this.start()},{rootMargin:'200px'});
+    this.io=new IntersectionObserver(e=>{this.visible=e[0].isIntersecting;root.classList.toggle('px-in-stage',this.visible);if(this.visible&&!this.started)this.start()},{rootMargin:'200px'});
     this.io.observe(el);
     this.scroll();
   }
@@ -200,6 +201,11 @@ class Stage{
     const r=this.track.getBoundingClientRect(),span=this.track.offsetHeight-innerHeight;
     const top=scrollY+r.top+span*((i+.5)/COLORS.length);
     scrollTo({top,behavior:'smooth'});
+  }
+  pickP(f){
+    if(reduced){this.drag=Math.PI;return}
+    const r=this.track.getBoundingClientRect(),span=this.track.offsetHeight-innerHeight;
+    scrollTo({top:scrollY+r.top+span*f,behavior:'smooth'});
   }
   scroll(){
     if(this.disposed||!this.el.isConnected)return;
@@ -255,13 +261,14 @@ class Stage{
       const g=gc.getContext('2d'),gr=g.createRadialGradient(128,128,0,128,128,128);
       gr.addColorStop(0,'rgba(255,255,255,.95)');gr.addColorStop(.35,'rgba(255,255,255,.28)');gr.addColorStop(1,'rgba(255,255,255,0)');
       g.fillStyle=gr;g.fillRect(0,0,256,256);
-      const halo=this.halo=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(gc),color:col,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.75}));
+      const gtex=new THREE.CanvasTexture(gc);
+      const halo=this.halo=new THREE.Sprite(new THREE.SpriteMaterial({map:gtex,color:col,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true,opacity:.75}));
       halo.scale.set(7.5,7.5,1);halo.position.set(0,0,-1.6);scene.add(halo);
       // drifting photons
       const N=170,pos=new Float32Array(N*3),seed=[];
       for(let i=0;i<N;i++){const a=Math.random()*Math.PI*2,r=1.7+Math.random()*2.2,y=(Math.random()-.5)*3.6;pos[i*3]=Math.cos(a)*r;pos[i*3+1]=y;pos[i*3+2]=Math.sin(a)*r-.4;seed.push(Math.random()*6)}
       const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
-      const pm=new THREE.PointsMaterial({size:.05,color:col,transparent:true,opacity:.85,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true});
+      const pm=new THREE.PointsMaterial({map:gtex,alphaTest:.01,size:.11,color:col,transparent:true,opacity:.85,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true});
       const pts=this.pts=new THREE.Points(pg,pm);this.seed=seed;scene.add(pts);
       const pivot=this.pivot=new THREE.Group();scene.add(pivot);
       const model=await new Promise((res,rej)=>new GLTFLoader().load(MODEL_URL,g=>res(g.scene),undefined,rej));
@@ -269,17 +276,55 @@ class Stage{
       const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),ctr=box.getCenter(new THREE.Vector3());
       model.position.sub(ctr);
       const s=3.1/Math.max(size.x,size.y,size.z);
-      const holder=new THREE.Group();holder.add(model);holder.scale.setScalar(s);pivot.add(holder);
-      model.traverse(o=>{if(o.isMesh&&o.material){o.material.envMapIntensity=1.1;if(o.material.metalness>.8){o.material.metalness=.55}}});
+      const holder=new THREE.Group();holder.add(model);holder.rotation.y=-Math.PI/2;holder.scale.setScalar(s);pivot.add(holder);   // GLB faces +X; turn it to face the camera
+      this.cplane=new THREE.Plane(new THREE.Vector3(0,0,1),3);
+      renderer.localClippingEnabled=true;
+      model.traverse(o=>{if(o.isMesh&&o.material){o.material.envMapIntensity=1.1;if(o.material.metalness>.8){o.material.metalness=.55}o.material.clippingPlanes=[this.cplane];(this.shellMats||(this.shellMats=[])).push(o.material)}});
+      pivot.updateMatrixWorld(true);
+      this.buildLeds(THREE,model,pivot,gtex);
       this.bindPointer(canvas);
       this.resize();addEventListener('resize',this.onResize=()=>this.resize());
       this.el.classList.add('is-live');
-      this.clock=new THREE.Clock();this.rot=0;this.loop();
+      this.clock=new THREE.Clock();this.rot=0;this.zc=-3;this.loop();
     }catch(err){
       console.warn('[LEZO] 3D unavailable, using image fallback',err);
       this.el.classList.add('no-gl');
       this.bindTilt();
     }
+  }
+  buildLeds(THREE,model,pivot,gtex){
+    // The reconstruction is a closed solid, so a ray fired from its core hits the front skin from the
+    // inside: that is the concave lining we light up with the LED array.
+    const meshes=[];model.traverse(o=>{if(o.isMesh)meshes.push(o)});
+    const sides=meshes.map(m=>m.material.side);meshes.forEach(m=>m.material.side=THREE.DoubleSide);
+    const rc=new THREE.Raycaster(),fwd=new THREE.Vector3(0,0,1),pts=[];
+    const step=.118;let row=0;
+    for(let y=-1.5;y<=1.5;y+=step*.866,row++){
+      for(let x=-1.3+(row%2?step/2:0);x<=1.3;x+=step){
+        const d=fwd;
+        rc.set(new THREE.Vector3(x,y,.3),d);const h=rc.intersectObjects(meshes,false)[0];
+        if(!h||!h.face)continue;
+        const n=h.face.normal.clone().transformDirection(h.object.matrixWorld);
+        if(n.dot(d)>0)n.negate();
+        if(n.dot(d)>-.3)continue;
+        pts.push(h.point.clone().addScaledVector(n,.018));
+      }
+    }
+    meshes.forEach((m,i)=>m.material.side=sides[i]);
+
+    if(pts.length<20)return;
+    this.leds=new THREE.Group();
+    const geo=new THREE.SphereGeometry(.023,12,10);
+    const mat=this.ledMat=new THREE.MeshBasicMaterial({color:this.col,toneMapped:false});
+    const inst=new THREE.InstancedMesh(geo,mat,pts.length),m4=new THREE.Matrix4();
+    pts.forEach((v,i)=>{m4.setPosition(v);inst.setMatrixAt(i,m4)});
+    this.leds.add(inst);
+    const pg=new THREE.BufferGeometry().setFromPoints(pts);
+    this.ledGlow=new THREE.Points(pg,new THREE.PointsMaterial({map:gtex,alphaTest:.01,size:.2,color:this.col,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true}));
+    this.leds.add(this.ledGlow);
+    const inner=this.inner=new THREE.PointLight(this.col,6,5,2);inner.position.set(0,0,.15);this.leds.add(inner);
+    pivot.add(this.leds);
+    this.ledCount=pts.length;
   }
   bindPointer(canvas){
     let x0=0,d0=0,id=null;
@@ -298,14 +343,22 @@ class Stage{
     if(!fine)return;
     this.el.addEventListener('pointermove',e=>{const r=this.el.getBoundingClientRect();fb.style.setProperty('--ry',((e.clientX-r.left)/r.width-.5)*18+'deg');fb.style.setProperty('--rx',(.5-(e.clientY-r.top)/r.height)*10+'deg')});
   }
+  rotAt(p){
+    const K=[[0,-.3],[.26,.5],[.5,Math.PI],[.8,Math.PI+.25],[1,Math.PI*2-.3]];
+    for(let i=1;i<K.length;i++)if(p<=K[i][0]){
+      const [a,ra]=K[i-1],[b,rb]=K[i],k=clamp((p-a)/(b-a)),e=k*k*(3-2*k);
+      return ra+(rb-ra)*e;
+    }
+    return K[K.length-1][1];
+  }
   resize(){
     const c=this.renderer.domElement,w=c.clientWidth,h=c.clientHeight;
     if(!w||!h)return;
     this.renderer.setSize(w,h,false);this.cam.aspect=w/h;
     // on narrow screens pull the camera back and lift the mask above the controls
     const narrow=w<760;
-    this.cam.position.z=narrow?8.6:6.4;
-    this.offsetX=narrow?0:.95;this.offsetY=narrow?-.55:0;
+    this.cam.position.z=narrow?12.5:7.4;
+    this.offsetX=narrow?0:1.35;this.offsetY=narrow?.36:0;
     this.cam.updateProjectionMatrix();
   }
   loop(){
@@ -314,7 +367,7 @@ class Stage{
     if(!this.visible||document.hidden)return;
     const t=this.clock.getElapsedTime(),dt=Math.min(this.clock.getDelta(),.05);
     if(!this.dragging)this.drag*=.965;
-    const targetRot=(reduced?0:this.p*Math.PI*2-.3)+this.drag+Math.sin(t*.6)*.07+(this.mx||0)*.35;
+    const targetRot=(reduced?0:this.rotAt(this.p))+this.drag+Math.sin(t*.6)*.07+(this.mx||0)*.35;
     this.rot+=(targetRot-this.rot)*.075;
     const P=this.pivot;
     P.rotation.y=this.rot;P.rotation.x+=((-(this.my||0)*.25+Math.sin(t*.5)*.03)-P.rotation.x)*.06;
@@ -323,6 +376,17 @@ class Stage{
     const tgt=new this.THREE.Color(this.target);this.col.lerp(tgt,.07);
     for(const l of [this.front,this.rim,this.rim2])l.color.copy(this.col);
     this.front.position.x=this.offsetX;
+    const inside=clamp(-Math.cos(P.rotation.y)*1.4-.1);
+    this.zc+=(( -3+inside*inside*(3-2*inside)*3.34)-this.zc)*.1;
+    P.updateMatrixWorld(true);
+    this.cplane.set(new this.THREE.Vector3(0,0,1),-this.zc).applyMatrix4(P.matrixWorld);
+    if(this.shellMats){for(const m of this.shellMats){m.emissive.copy(this.col);m.emissiveIntensity=inside*.5}}
+    if(this.leds){
+      this.ledMat.color.copy(this.col).multiplyScalar(1.15+inside*.7);
+      this.ledGlow.material.color.copy(this.col);this.ledGlow.material.opacity=.15+inside*.35;
+      this.inner.color.copy(this.col);this.inner.intensity=3+inside*9;
+    }
+    if(this.el.dataset.inside!==String(inside>.55)){this.el.dataset.inside=String(inside>.55)}
     this.halo.material.color.copy(this.col);this.pts.material.color.copy(this.col);
     this.halo.material.opacity=.6+Math.sin(t*1.4)*.12;
     this.pts.rotation.y=t*.06+this.rot*.3;this.pts.position.x=this.offsetX;
@@ -333,7 +397,7 @@ class Stage{
   }
   dispose(){
     if(this.disposed&&!this.renderer)return;
-    this.disposed=true;this.io?.disconnect();removeEventListener('resize',this.onResize);
+    this.disposed=true;this.io?.disconnect();root.classList.remove('px-in-stage');removeEventListener('resize',this.onResize);
     if(this.renderer){this.renderer.dispose();this.renderer.forceContextLoss?.();this.renderer=null}
   }
 }
