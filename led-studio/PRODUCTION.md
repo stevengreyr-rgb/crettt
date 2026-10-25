@@ -54,6 +54,6 @@ Visuals: a zoom punch, colour bloom and expanding light ring on every light chan
 
 Sound (A): a quiet ambient pad (Am9 – Fmaj9 – Cmaj9 – G6, long reverb) with no beat and no whooshes, around −20 LUFS. Every light change is a crisp button click. A soft beep plays at power-on, and the pad swells gently for the offer.
 
-Sound (B): no pad. A sparse ambient felt-piano figure over the same chords, with a long reverb, a rolled chord on the offer and the same clicks on top, at around −25 LUFS.
+Sound (B): no pad. A sparse ambient felt-piano figure over the same chords, with a long reverb, a rolled chord on the offer and the same clicks on top, at around −31 LUFS (half the volume of the first piano mix).
 
 Source clips in `clips-src/` (Higgsfield): `turn-red*` (360° turn, red glow), `turn-inside*` (360° turn showing the inside LEDs), `woman-blue` / `woman-green` (Kling, 3 s, real motion; not used yet).

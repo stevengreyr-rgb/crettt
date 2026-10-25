@@ -404,7 +404,7 @@ def piano_soundtrack(path, chimes, power_on, n, t, rng):
     irs = [_filt(rng.normal(0, 1, ir_n), lo=200, hi=5000) * np.exp(-iu / 1.1) for _ in range(2)]
     irs = [ir / np.sqrt((ir ** 2).sum()) * 0.6 for ir in irs]
     bedL = p + RV._conv(p, irs[0]); bedR = p * 0.97 + RV._conv(p, irs[1])
-    g = 10 ** (-28 / 20) / (np.sqrt(np.mean(bedL ** 2)) + 1e-9)             # bed sits low
+    g = 10 ** (-34 / 20) / (np.sqrt(np.mean(bedL ** 2)) + 1e-9)             # bed sits low
     dry = np.zeros(n)
     for t0 in [c for c, _ in chimes] + END_CYCLE + [CTA_AT - 0.25]:
         _add(dry, click(rng), t0 - 0.02, 1.0)
@@ -412,7 +412,7 @@ def piano_soundtrack(path, chimes, power_on, n, t, rng):
     m = int(.24 * SR); u = np.arange(m) / SR
     _add(dry, 0.25 * np.sin(np.pi * u / .24) ** 2 * (np.sin(2 * np.pi * 1568 * u) + .15 * np.sin(2 * np.pi * 3136 * u)), power_on, 1.0)
     fxL = dry + RV._conv(dry, irs[0]) * 0.12; fxR = dry + RV._conv(dry, irs[1]) * 0.12
-    st = np.stack([bedL * g + fxL * 10 ** (-13 / 20), bedR * g + fxR * 10 ** (-13 / 20)], 1)
+    st = np.stack([bedL * g + fxL * 10 ** (-19 / 20), bedR * g + fxR * 10 ** (-19 / 20)], 1)
     st *= (np.clip(t / 0.8, 0, 1) * np.clip((TOTAL - t) / 1.0, 0, 1))[:, None]
     with wave.open(str(path), 'wb') as f:
         f.setnchannels(2); f.setsampwidth(2); f.setframerate(SR)
