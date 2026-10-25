@@ -686,3 +686,47 @@ html.px-lock{overflow:hidden}
   .px-tri .px-fig{flex:0 0 76vw;scroll-snap-align:center}
   .px-tri .px-fig figcaption{font-size:15px}
 }
+
+/* ---------- burger + travel menu + back buttons ---------- */
+header .nav-links,header .menu-button,header .mobile-nav,header .mobile-nav.open{display:none!important}
+.nav-tools{gap:14px}
+.px-burger{width:44px;height:44px;display:inline-flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:6px;padding:0 8px;border-radius:50%;transition:background .3s}
+.px-burger i{display:block;height:1.5px;background:#141414;width:22px;transition:width .35s var(--px-ease),transform .35s var(--px-ease)}
+.px-burger i:nth-child(2){width:15px}
+.px-burger:hover i:nth-child(2){width:22px}
+.px-burger:focus-visible{outline:2px solid #141414;outline-offset:2px}
+.px-back{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#141414;padding:10px 0;transition:gap .3s var(--px-ease)}
+.px-back:hover{gap:14px}
+.px-back--page{margin-left:18px;margin-right:auto}
+.px-menu{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#fff;color:#141414;overflow:auto}
+.px-menu::backdrop{background:#fff}
+.px-menu[open]{animation:px-sheet .6s var(--px-ease) both}
+.px-menu__bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:14px max(22px,calc((100vw - 1312px)/2));background:#ffffffee;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.px-menu__bar>span{font-weight:800;font-size:20px;letter-spacing:-.06em}
+.px-menu__x{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;transition:background .3s,color .3s}
+.px-menu__x:hover{background:#141414;color:#fff}
+.px-menu__body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:clamp(32px,6vw,96px);max-width:1440px;margin:0 auto;padding:clamp(28px,5vw,64px) max(22px,calc((100vw - 1312px)/2)) 64px;align-items:start}
+.px-menu__list{list-style:none;margin:22px 0 0;padding:0;border-top:1px solid #141414}
+.px-menu__list a{display:grid;grid-template-columns:56px 1fr 24px;align-items:center;gap:6px;padding:clamp(12px,1.6vw,18px) 0;border-bottom:1px solid var(--line);transition:padding .45s var(--px-ease)}
+.px-menu__list a:hover,.px-menu__list a:focus-visible{padding-left:14px;outline:0}
+.px-menu__list b{font-family:var(--ed);font-style:italic;font-weight:400;font-size:24px;color:#b5b5b5;transition:color .3s}
+.px-menu__list a:hover b{color:#141414}
+.px-menu__list span{font-weight:700;font-size:clamp(22px,3vw,40px);letter-spacing:-.04em;line-height:1.1}
+.px-menu__list svg{opacity:0;transform:translate(-8px,8px);transition:opacity .3s,transform .4s var(--px-ease)}
+.px-menu__list a:hover svg{opacity:1;transform:none}
+.px-menu__extra{display:flex;gap:26px;flex-wrap:wrap;margin:26px 0 22px;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.px-menu__extra a,.px-menu__extra button{padding:6px 0;border-bottom:1px solid #141414;cursor:pointer;color:#141414}
+.px-menu__pv{position:sticky;top:92px;aspect-ratio:4/5;background:#f3f3f3;overflow:hidden}
+.px-menu__pv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);transition:opacity .6s,transform 1.2s var(--px-ease)}
+.px-menu__pv img.on{opacity:1;transform:none}
+@media(max-width:900px){.px-menu__body{grid-template-columns:1fr}.px-menu__pv{display:none}.px-menu__list a{grid-template-columns:44px 1fr 20px}}
+.px-tutd__bar{gap:16px}
+.px-tutd__bar>span{margin-right:auto}
+.px-zoom__b{position:absolute;left:22px;top:26px;z-index:3}
+/* no moving lines: shipping route and tutorial timers are gone */
+.px-route,.px-tut__timer{display:none!important}
+.px-steps:after{display:none!important}
+header .nav{justify-content:flex-start}
+header .nav .brand{margin-right:auto}
+.px-back--page{margin:0 22px 0 0!important}
+@media(max-width:760px){.px-back--page span{display:none}.px-back--page{margin-right:14px!important}}

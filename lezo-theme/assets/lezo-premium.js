@@ -132,15 +132,14 @@ const NODES=[[125,40],[375,90],[625,40],[875,90]];
 const ROUTE='M0 90 C60 90 70 40 125 40 S250 90 375 90 S500 40 625 40 S750 90 875 90 S960 60 1000 60';
 function fmt(d){return d.toLocaleDateString(es()?'es':'en-US',{day:'numeric',month:'short'}).replace('.','')}
 function shipSection(){
-  const faq=document.getElementById('questions')||document.querySelector('.faq-grid')?.closest('section');
-  if(document.getElementById('envio')||!faq||document.querySelector('.care-page'))return;
+  const anchorEl=document.querySelector('.px-journey-slot')||document.querySelector('.px-pdp-slot');
+  if(document.getElementById('envio')||!anchorEl||document.querySelector('.care-page'))return;
   const d0=new Date(),a=new Date(d0),b=new Date(d0);a.setDate(a.getDate()+5);b.setDate(b.getDate()+12);
   const s=document.createElement('section');s.className='px-ship wrap section';s.id='envio';s.setAttribute('aria-labelledby','px-ship-title');
   s.innerHTML=`<div class="px-ship__top"><div><span class="eyebrow">06 / ${T('Delivery','Envío')}</span><h2 id="px-ship-title">${T('Order today.<br><em>Open it soon.</em>','Pídela hoy.<br><em>Ábrela pronto.</em>')}</h2><p class="px-ship__lede">${T('Your LEZO should arrive in <b>5 to 12 days</b>. We email you at every step and send tracking details when available, so you always know where it is.','Tu LEZO debería llegar en <b>5 a 12 días</b>. Te escribimos en cada paso y te enviamos el seguimiento cuando esté disponible, para que siempre sepas dónde está.')}</p><div class="px-dates">${ICON_PARCEL.replace('<svg','<svg width="22" height="22"')}<div><span>${T('Order today · estimated arrival','Pide hoy · llegada estimada')}</span><br><strong>${fmt(a)} – ${fmt(b)}</strong></div></div></div><div class="px-big" aria-hidden="true"><span data-count="5">5</span><em>–</em><span data-count="12">12</span><small>${T('days','días')}</small></div></div>
-  <div class="px-route" aria-hidden="true"><svg viewBox="0 0 1000 140" preserveAspectRatio="none"><path class="base" d="${ROUTE}"/><path class="fill" d="${ROUTE}"/>${NODES.map(([x,y])=>`<circle class="n" cx="${x}" cy="${y}" r="7"/>`).join('')}<circle class="parcel" r="9" cx="0" cy="90"/></svg></div>
-  <ol class="px-steps"><li><b>${T('DAY 0','DÍA 0')}</b><h3>${T('Order confirmed','Pedido confirmado')}</h3><p>${T('Secure Shopify checkout and a confirmation email.','Pago seguro en Shopify y confirmación por correo.')}</p></li><li><b>${T('PREPARING','PREPARACIÓN')}</b><h3>${T('Packed with care','Preparado con cuidado')}</h3><p>${T('We get your LEZO ready to ship.','Dejamos tu LEZO listo para salir.')}</p></li><li><b>${T('ON ITS WAY','EN CAMINO')}</b><h3>${T('In transit','En tránsito')}</h3><p>${T('Shipping update by email, with tracking if available.','Aviso de envío por correo, con seguimiento si está disponible.')}</p></li><li><b>${T('DAY 5–12','DÍA 5–12')}</b><h3>${T('At your door','En tu puerta')}</h3><p>${T('Estimated window. 30 days to request a return.','Plazo estimado. 30 días para solicitar devolución.')}</p></li></ol>
-  <p class="small px-ship__note">${T('Estimate only, not a guaranteed arrival date. Shipping charges and taxes are shown at checkout for your destination.','Plazo orientativo, no una fecha de llegada garantizada. Los gastos de envío e impuestos se muestran al pagar según tu destino.')}</p>`;
-  faq.before(s);
+  <ol class="px-steps"><li><b>${T('DAY 0','DÍA 0')}</b><h3>${T('Order confirmed','Pedido confirmado')}</h3><p>${T('Secure Shopify checkout and a confirmation email.','Pago seguro en Shopify y confirmación por correo.')}</p></li><li><b>${T('PREPARING','PREPARACIÓN')}</b><h3>${T('Order prepared','Pedido preparado')}</h3><p>${T('Your LEZO is prepared and handed to the carrier.','Tu LEZO se prepara y se entrega al transportista.')}</p></li><li><b>${T('ON ITS WAY','EN CAMINO')}</b><h3>${T('In transit','En tránsito')}</h3><p>${T('Shipping update by email, with tracking if available.','Aviso de envío por correo, con seguimiento si está disponible.')}</p></li><li><b>${T('DAY 5–12','DÍA 5–12')}</b><h3>${T('At your door','En tu puerta')}</h3><p>${T('Estimated window. 30 days to request a return.','Plazo estimado. 30 días para solicitar devolución.')}</p></li></ol>
+  <p class="small px-ship__note">${T('The delivery window is an estimate. Shipping charges and taxes are shown at checkout for your destination.','El plazo de entrega es una estimación. Los gastos de envío e impuestos se muestran al pagar según tu destino.')}</p>`;
+  anchorEl.after(s);
 }
 let shipDone=new Set();
 function shipScroll(){
@@ -180,13 +179,18 @@ function stageMarkup(){
   const price=typeof priceMarkup==='function'?priceMarkup():'';
   return `<div class="px-stage__sticky">
     <div class="px-stage__bg"></div><canvas class="px-dust" aria-hidden="true"></canvas>
-    <div class="px-copy"><span class="eyebrow">${T('The 7-color LED mask','La máscara LED de 7 colores')}</span>
+    ${pdp?`    <div class="px-copy"><span class="eyebrow">${T('360° view','Vista 360°')}</span>
+      <h2 class="px-h1">${T('Turn it.<br><em>Light it.</em>','Gírala.<br><em>Enciéndela.</em>')}</h2>
+      <p>${T('Drag the mask to spin it. Pick a color to change the light, or look inside to see the LEDs.','Arrastra la máscara para girarla. Elige un color para cambiar la luz o mira dentro para ver los LEDs.')}</p>
+    </div>
+`:`    <div class="px-copy"><span class="eyebrow">${T('The 7-color LED mask','La máscara LED de 7 colores')}</span>
       <h1 class="px-h1">${T('The mask that<br>glows <em>seven ways.</em>','La máscara que<br>brilla de <em>siete formas.</em>')}</h1>
       <p>${T('A full-face LED mask with seven light modes and an adjustable strap. Put it on, choose a color and keep your hands free.','Una máscara LED de rostro completo con siete modos de luz y correa ajustable. Póntela, elige un color y deja las manos libres.')}</p>
       <div class="hero-price">${price}</div>
       <div class="px-cta"><a class="btn" href="${pdp?'#product-buy':'/products/lezo-7-color-led-face-mask'}">${T('Buy LEZO','Comprar LEZO')}<svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12h17m-6-6 6 6-6 6"/></svg></a><button type="button" class="text-link" data-px-tutorial>${T('How to use · 5 steps','Cómo usarla · 5 pasos')}</button></div>
-      <div class="hero-note">${ICON_PARCEL}${T('Arrives in 5–12 days · 30-day returns · Secure checkout','Llega en 5–12 días · 30 días para devolver · Pago seguro')}</div>
+      <div class="hero-note">${ICON_PARCEL}${T('Arrives in 5–12 days','Llega en 5–12 días')}</div>
     </div>
+    `}
     <div class="px-right">
       <div class="px-view" data-view="out">
         <video class="px-turn" muted playsinline loop preload="none" poster="${TURN_POSTER}" aria-label="${T('360° view of the LEZO mask. Drag to rotate.','Vista 360° de la máscara LEZO. Arrastra para girarla.')}"></video>
@@ -195,7 +199,7 @@ function stageMarkup(){
       </div>
       <div class="px-ctl">
         <div class="px-swatches" role="group" aria-label="${T('Choose a light mode','Elige un modo de luz')}">${sw}</div>
-        <div class="px-mode" aria-live="polite"><div class="px-mode-idx"></div><div class="px-mode-name"></div><div class="px-mode-nm"></div><span class="px-mode-label">${T('Exact wording from the supplied product sheet:','Traducción del texto de la ficha del producto:')}</span><div class="px-mode-desc"></div></div>
+        <div class="px-mode" aria-live="polite"><div class="px-mode-idx"></div><div class="px-mode-name"></div><div class="px-mode-nm"></div><div class="px-mode-desc"></div></div>
         <div class="px-meta"><button type="button" class="px-inside" data-px-inside aria-pressed="false">${T('See inside · LEDs','Ver por dentro · LEDs')}</button><button type="button" class="px-pause" data-px-pause aria-pressed="false">${T('Pause','Pausa')}</button><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span></div>
       </div>
     </div>
@@ -262,7 +266,7 @@ class Stage{
     const box=this.el.querySelector('.px-mode');
     box.querySelector('.px-mode-idx').textContent=`0${i+1} / 07`;
     box.querySelector('.px-mode-name').innerHTML=es()?`Luz <i>${m.es.toLowerCase()}</i>`:`<i>${m.en}</i> light`;
-    box.querySelector('.px-mode-nm').textContent=`${m.nm} · ${T('Supplier specification','Especificación del proveedor')}`;
+    box.querySelector('.px-mode-nm').textContent=m.nm;
     box.querySelector('.px-mode-desc').textContent=T(m.d[0],m.d[1]);
     if(!first){box.classList.remove('px-swap');void box.offsetWidth;box.classList.add('px-swap')}
   }
@@ -288,7 +292,7 @@ function stageInit(){
   const pdp=location.pathname.includes('/products/');
   const sec=document.createElement('section');sec.className='px-stage';sec.id='mask3d';sec.setAttribute('aria-label',T('360° view of the mask','Vista 360° de la máscara'));
   sec.innerHTML=stageMarkup();
-  if(pdp){const anchor=document.querySelector('main .px-marquee')||document.querySelector('main .trustbar')?.closest('.wrap');if(!anchor)return;anchor.after(sec)}
+  if(pdp){const anchor=document.querySelector('main .product-page');if(!anchor)return;(anchor.nextElementSibling&&anchor.nextElementSibling.tagName==='DIV'&&!anchor.nextElementSibling.className?anchor.nextElementSibling:anchor).after(sec)}
   else main.prepend(sec);
   stage=new Stage(sec);
 }
@@ -315,12 +319,12 @@ function tutSteps(){return [
   {k:T('Finish and care','Termina y cuida'),h:T('Switch off, wipe down, store','Apaga, limpia y guarda'),
    p:T('Switch the mask off and undo the strap. Wipe the inside with a soft dry cloth, or as the manual directs, and store it somewhere clean and dry. Apply your usual skincare afterwards if you like.','Apaga la máscara y suelta la correa. Limpia el interior con un paño suave y seco, o como indique el manual, y guárdala en un lugar limpio y seco. Aplica después tu cuidado de piel habitual si lo deseas.'),
    c:[T('Mask switched off','Máscara apagada'),T('Inside wiped and stored','Interior limpio y guardado')],
-   tip:T('Stop using it and ask a dermatologist if you notice irritation.','Deja de usarla y consulta a un dermatólogo si notas irritación.')}
+   tip:T('Stop use and consult a professional if you notice irritation.','Deja de usarla y consulta a un profesional si notas irritación.')}
 ]}
 function buildTutorial(slot){
   const dlg=slot.closest('dialog');
   const S=tutSteps(),N=S.length,total=S.reduce((a,x)=>a+x.c.length,0);
-  let cur=0,auto=true,prog=0,done=new Set(),color=0;
+  let cur=0,auto=true,done=new Set(),color=0;
   const sw=COLORS.map((m,i)=>`<button type="button" class="px-tut__sw" data-sw="${i}" style="--sw:${m.c}" aria-pressed="${i===0}" aria-label="${T(m.en,m.es)}"><i></i></button>`).join('');
   slot.innerHTML=`<div class="px-tut__head"><div><span class="eyebrow">${T('How to use','Cómo usarla')}</span><h2 id="px-tutd-t">${T('Five steps,<br><em>start to finish.</em>','Cinco pasos,<br><em>de principio a fin.</em>')}</h2></div><p>${T('Follow them in order the first time. Details that depend on your exact model, such as session length, are in the manufacturer’s manual.','Síguelos en orden la primera vez. Lo que depende de tu modelo exacto, como la duración de la sesión, está en el manual del fabricante.')}</p></div>
   <div class="px-tut__grid">
@@ -338,18 +342,18 @@ function buildTutorial(slot){
         ${x.pick?`<div class="px-tut__pick"><div class="px-tut__sws" role="group" aria-label="${T('Preview a light mode','Previsualiza un modo de luz')}">${sw}</div><span class="px-tut__pname">${T(COLORS[0].en,COLORS[0].es)} · ${COLORS[0].nm}</span></div>`:''}
         <ul class="px-tut__checks">${x.c.map((c,j)=>`<li><label><input type="checkbox" data-ck="${i}-${j}"><span class="px-tut__box" aria-hidden="true"></span><span>${c}</span></label></li>`).join('')}</ul>
         <p class="px-tut__tip"><b>${T('Tip','Consejo')}</b>${x.tip}</p>
-      </div></div><i class="px-tut__timer" aria-hidden="true"></i></li>`).join('')}</ol>
+      </div></div></li>`).join('')}</ol>
   </div>
   <div class="px-tut__foot"><div class="px-tut__meter" role="status"><span class="px-tut__count">0 / ${total}</span><i><b></b></i><span class="px-tut__msg">${T('Tick each check as you go.','Marca cada punto a medida que avanzas.')}</span></div>
-    <p class="small">${T('Illustrative studio images. Eye protection, session length and care follow the manufacturer’s instructions.','Imágenes de estudio ilustrativas. La protección ocular, la duración de la sesión y el cuidado siguen las instrucciones del fabricante.')}</p></div>`;
+    <p class="small">${T('Eye protection, session length and care follow the manufacturer’s instructions.','La protección ocular, la duración de la sesión y el cuidado siguen las instrucciones del fabricante.')}</p></div>`;
   const q=a=>slot.querySelector(a),qa=a=>[...slot.querySelectorAll(a)];
   const items=qa('.px-tut__item'),phs=qa('.px-tut__ph'),segs=qa('.px-tut__bar i b');
   function show(i,user){
-    cur=(i+N)%N;prog=0;
+    cur=(i+N)%N;
     items.forEach((el,k)=>{const on=k===cur;el.classList.toggle('on',on);el.querySelector('.px-tut__btn').setAttribute('aria-expanded',on)});
     phs.forEach((el,k)=>el.classList.toggle('on',k===cur));
     q('.px-tut__n').innerHTML=`0${cur+1}<small>/0${N}</small>`;q('.px-tut__k').textContent=S[cur].k;
-    segs.forEach((b,k)=>{b.style.transform=`scaleX(${k<cur?1:0})`});
+    segs.forEach((b,k)=>{b.style.transform=`scaleX(${k<=cur?1:0})`});
     if(user)auto=false;
   }
   function setColor(i){color=i;const m=COLORS[i];slot.style.setProperty('--tc',m.c);slot.style.setProperty('--tf',FILTER(i));
@@ -374,17 +378,11 @@ function buildTutorial(slot){
   st.addEventListener('pointerdown',e=>{x0=e.clientX});
   st.addEventListener('pointerup',e=>{if(x0===null)return;const d=e.clientX-x0;x0=null;if(Math.abs(d)>50&&!e.target.closest('button'))show(cur+(d<0?1:-1),true)});
   let vis=true,hover=false;
-  slot.addEventListener('pointerenter',()=>hover=true);slot.addEventListener('pointerleave',()=>hover=false);
-  slot.addEventListener('focusin',()=>{hover=true});slot.addEventListener('focusout',()=>{hover=false});
   const tick=setInterval(()=>{
     if(!slot.isConnected){clearInterval(tick);return}
-    if(!auto||!dlg.open||hover||reduced||document.hidden)return;
-    prog+=100/6500*100;                       // ~6.5 s per step
-    const k=Math.min(prog,100)/100;
-    segs[cur].style.transform=`scaleX(${k})`;
-    items[cur].querySelector('.px-tut__timer').style.transform=`scaleX(${k})`;
-    if(prog>=100){items[cur].querySelector('.px-tut__timer').style.transform='scaleX(0)';show(cur+1,false)}
-  },100);
+    if(!auto||!dlg.open||hover||document.hidden)return;
+    show(cur+1,false);                         // a new image every 2 seconds
+  },2000);
   slot.style.setProperty('--tc',COLORS[0].c);
   show(0,false);meter();
 }
@@ -411,12 +409,11 @@ function pdpSections(){
   const slot=document.querySelector('.px-pdp-slot');
   if(!slot||slot.dataset.pxDone)return;slot.dataset.pxDone='1';
   const chips=[[0,'630'],[1,'520'],[2,'470'],[3,'630 + 470'],[4,'630 + 520'],[5,'470 + 520'],[6,'470 + 520 + 630']].map(([i,nm])=>`<li style="--c:${COLORS[i].c}"><i></i><b>${T(COLORS[i].en,COLORS[i].es)}</b><span>${nm} nm</span></li>`).join('');
-  const spec=[[T('Format','Formato'),T('Full-face LED mask','Máscara LED facial completa')],[T('Light modes','Modos de luz'),T('7 built in','7 integrados')],[T('Channels','Canales'),T('630 nm red · 520 nm green · 470 nm blue (supplier-listed)','630 nm rojo · 520 nm verde · 470 nm azul (según el proveedor)')],[T('Fit','Ajuste'),T('Adjustable strap with buckle','Correa ajustable con hebilla')],[T('Finish','Acabado'),T('Sculpted glossy white','Blanco esculpido y brillante')],[T('Returns','Devoluciones'),T('30 days from delivery','30 días desde la entrega')],[T('Delivery','Entrega'),T('Estimated 5–12 days','Estimada de 5 a 12 días')]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
+  const spec=[[T('Format','Formato'),T('Full-face LED mask','Máscara LED facial completa')],[T('Light modes','Modos de luz'),T('7 built in','7 integrados')],[T('Channels','Canales'),T('630 nm red · 520 nm green · 470 nm blue ','630 nm rojo · 520 nm verde · 470 nm azul ')],[T('Fit','Ajuste'),T('Adjustable strap with buckle','Correa ajustable con hebilla')],[T('Finish','Acabado'),T('Sculpted glossy white','Blanco esculpido y brillante')],[T('Returns','Devoluciones'),T('30 days from delivery','30 días desde la entrega')],[T('Delivery','Entrega'),T('Estimated 5–12 days','Estimada de 5 a 12 días')]].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
   slot.innerHTML=`<section class="px-how wrap section" id="como-funciona">
     <div class="px-pdp-head"><div><span class="eyebrow">${T('How it works','Funcionamiento')}</span><h2>${T('Seven lights,<br><em>one device.</em>','Siete luces,<br><em>un solo equipo.</em>')}</h2></div><p>${T('Red, green and blue LED channels combine into seven modes. Pick one and the whole inner face of the mask lights up in that color.','Los canales LED rojo, verde y azul se combinan en siete modos. Elige uno y toda la cara interior de la máscara se ilumina de ese color.')}</p></div>
     ${fig(IMG.modes,T('Seven LEZO masks, each lit in a different color','Siete máscaras LEZO, cada una encendida en un color distinto'),1792,1008,'px-wide')}
-    <ul class="px-chips" aria-label="${T('Light modes and supplier-listed wavelengths','Modos de luz y longitudes de onda según el proveedor')}">${chips}</ul>
-    <p class="small px-how__note">${T('Wavelengths are supplier-listed and not independently measured.','Las longitudes de onda son las indicadas por el proveedor y no se han medido de forma independiente.')}</p>
+    <ul class="px-chips" aria-label="${T('Light modes and wavelengths','Modos de luz y longitudes de onda')}">${chips}</ul>
     <div class="px-split">${fig(IMG.lining,T('Close-up of the LED lining inside the mask','Detalle del forro de LEDs dentro de la máscara'),1536,1152)}<div class="px-split__t"><span class="eyebrow">01 / ${T('The light','La luz')}</span><h3>${T('LEDs across the whole inner face','LEDs por toda la cara interior')}</h3><p>${T('Staggered rows of LED lenses line the inside of the shell, with cut-outs for the eyes, nose and mouth, so the light reaches the whole face.','Filas escalonadas de LEDs recubren el interior de la carcasa, con aberturas para ojos, nariz y boca, para que la luz llegue a todo el rostro.')}</p></div></div>
     <div class="px-split px-split--r"><div class="px-split__t"><span class="eyebrow">02 / ${T('The fit','El ajuste')}</span><h3>${T('An adjustable strap, hands free','Una correa ajustable, manos libres')}</h3><p>${T('A woven strap with a buckle wraps around the back of the head. Adjust it once, then sit back and leave your hands free.','Una correa tejida con hebilla rodea la nuca. Ajústala una vez y quedan las manos libres.')}</p></div>${fig(IMG.back,T('The strap fastened at the back, shown on a mannequin','La correa abrochada por detrás, sobre un maniquí'),1432,1792)}</div>
   </section>
@@ -438,10 +435,10 @@ function zoomInit(){
     const im=f.querySelector('img');if(!im)return;
     if(!zoomDlg){
       zoomDlg=document.createElement('dialog');zoomDlg.className='px-zoom';zoomDlg.setAttribute('aria-label',T('Zoomed image','Imagen ampliada'));
-      zoomDlg.innerHTML=`<button type="button" class="px-zoom__x" aria-label="${T('Close','Cerrar')}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button><div class="px-zoom__stage"><img alt=""></div><p class="px-zoom__hint">${T('Click to zoom · move to pan','Clic para ampliar · mueve para recorrer')}</p>`;
+      zoomDlg.innerHTML=`<button type="button" class="px-back px-zoom__b" data-px-close>${back()}</button><button type="button" class="px-zoom__x" aria-label="${T('Close','Cerrar')}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button><div class="px-zoom__stage"><img alt=""></div><p class="px-zoom__hint">${T('Click to zoom · move to pan','Clic para ampliar · mueve para recorrer')}</p>`;
       document.body.appendChild(zoomDlg);
       const st=zoomDlg.querySelector('.px-zoom__stage'),zi=st.querySelector('img');
-      zoomDlg.querySelector('.px-zoom__x').addEventListener('click',()=>zoomDlg.close());
+      zoomDlg.querySelectorAll('.px-zoom__x,[data-px-close]').forEach(b=>b.addEventListener('click',()=>zoomDlg.close()));
       zoomDlg.addEventListener('click',e=>{if(e.target===zoomDlg)zoomDlg.close()});
       st.addEventListener('click',()=>st.classList.toggle('z2'));
       st.addEventListener('pointermove',e=>{if(!st.classList.contains('z2'))return;const r=st.getBoundingClientRect();zi.style.transformOrigin=`${(e.clientX-r.left)/r.width*100}% ${(e.clientY-r.top)/r.height*100}%`});
@@ -470,9 +467,8 @@ function journey(){
   </section>
   <section class="px-ch wrap section" id="la-luz">
     ${chHead('02',T('The light','La luz'),T('Seven modes,<br><em>seven colors.</em>','Siete modos,<br><em>siete colores.</em>'),T('Red, green and blue LED channels combine into seven modes. Try each one in the viewer at the top of the page.','Los canales LED rojo, verde y azul se combinan en siete modos. Pruébalos en el visor de la parte superior.'))}
-    <div class="px-tri">${[['green',1],['blue',2],['purple',3]].map(([k,i])=>fig(IMGH[k],T(COLORS[i].en+' light on the LEZO mask',`Luz ${COLORS[i].es.toLowerCase()} en la máscara LEZO`),1536,2048,'',`<b>0${i+1}</b>${T(COLORS[i].en,COLORS[i].es)} · ${COLORS[i].nm}`)).join('')}</div>
-    <ul class="px-chips" aria-label="${T('Light modes and supplier-listed wavelengths','Modos de luz y longitudes de onda según el proveedor')}">${chips}</ul>
-    <p class="small px-how__note">${T('Wavelengths are supplier-listed and not independently measured.','Las longitudes de onda son las indicadas por el proveedor y no se han medido de forma independiente.')}</p>
+    <div class="px-tri">${[['green',1],['blue',2],['purple',3]].map(([k,i])=>fig(IMGH[k],T(COLORS[i].en+' light on the LEZO mask',`Luz ${COLORS[i].es.toLowerCase()} en la máscara LEZO`),1536,2048,'',`<b style="color:${COLORS[i].c}">●</b>${T(COLORS[i].en,COLORS[i].es)}`)).join('')}</div>
+    <ul class="px-chips" aria-label="${T('Light modes and wavelengths','Modos de luz y longitudes de onda')}">${chips}</ul>
   </section>
   <section class="px-ch wrap section" id="el-interior">
     ${chHead('03',T('The inside','El interior'),T('The light is<br><em>on the inside.</em>','La luz está<br><em>por dentro.</em>'),T('LEDs spread across the whole inner face, so the light wraps around you. Tap any image to zoom in.','LEDs repartidos por toda la cara interior, para que la luz te envuelva. Toca cualquier imagen para ampliarla.'))}
@@ -481,7 +477,6 @@ function journey(){
       ${fig(IMG.sci,T('Macro of the LED lenses inside the mask','Macro de los LEDs dentro de la máscara'),2400,1357,'',`<b>02</b>${T('Every LED, up close','Cada LED, de cerca')}`)}
       ${fig(D.strap,T('Adjustable strap with buckle','Correa ajustable con hebilla'),2683,2160,'',`<b>03</b>${T('Adjustable strap','Correa ajustable')}`)}
     </div>
-    <p class="small px-detail__note">${T('Illustrative reference images. Colors and LED layout are approximate.','Imágenes ilustrativas de referencia. Los colores y la distribución de los LEDs son aproximados.')}</p>
   </section>
   <section class="px-ch wrap section" id="el-ajuste">
     ${chHead('04',T('The fit','El ajuste'),T('Adjust it once.<br><em>Hands free.</em>','Ajústala una vez.<br><em>Manos libres.</em>'),T('The mask sits on the face and an adjustable strap with a buckle holds it in place, so you can sit back or recline without holding it.','La máscara se apoya en el rostro y una correa ajustable con hebilla la mantiene en su lugar, para que te sientes o recuestes sin sostenerla.'))}
@@ -490,18 +485,18 @@ function journey(){
   <section class="px-ch wrap section" id="que-llega">
     ${chHead('05',T('What arrives','Lo que llega'),T('The mask, ready<br><em>to switch on.</em>','La máscara, lista<br><em>para encender.</em>'),T('Your order is the LEZO full-face LED mask with its adjustable strap, together with the manufacturer’s instructions for power, care and session settings.','Tu pedido es la máscara LED facial LEZO con su correa ajustable, junto con las instrucciones del fabricante sobre alimentación, cuidado y ajustes de sesión.'))}
     ${fig(IMG.box,T('Illustration of the LEZO mask presented in a white box','Ilustración de la máscara LEZO presentada en una caja blanca'),2400,1029,'px-box-fig')}
-    <p class="small px-detail__note">${T('Illustrative image. Product visualizations may vary from the delivered item.','Imagen ilustrativa. Las visualizaciones del producto pueden variar respecto al artículo entregado.')}</p>
+    <p class="small px-detail__note">${T('Packaging shown for illustration.','Presentación mostrada a modo ilustrativo.')}</p>
   </section>`;
 }
 function howtoBand(){
-  const faq=document.getElementById('questions')||document.querySelector('.faq-grid')?.closest('section');
-  if(document.getElementById('como-usar')||!faq||document.querySelector('.care-page')||location.pathname.includes('/products/'))return;
+  const ship=document.getElementById('envio');
+  if(document.getElementById('como-usar')||!ship||document.querySelector('.care-page')||location.pathname.includes('/products/'))return;
   const steps=tutSteps().map((x,i)=>`<li><b>0${i+1}</b><span>${x.k}</span></li>`).join('');
   const s=document.createElement('section');s.className='px-ch px-howto wrap section';s.id='como-usar';
   s.innerHTML=`${chHead('07',T('How to use','Cómo usarla'),T('Five steps,<br><em>start to finish.</em>','Cinco pasos,<br><em>de principio a fin.</em>'),T('A short illustrated guide, from cleansing your face to storing the mask.','Una guía ilustrada y corta, desde limpiar el rostro hasta guardar la máscara.'))}
     <ol class="px-howto__list">${steps}</ol>
     <button type="button" class="btn" data-px-tutorial>${T('Open the guide','Abrir la guía')}<svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12h17m-6-6 6 6-6 6"/></svg></button>`;
-  faq.before(s);
+  ship.after(s);
 }
 
 /* ---------------- tutorial lives inside a button (full-screen sheet) ---------------- */
@@ -509,10 +504,10 @@ let tutDlg=null,tutLast=null;
 function openTutorial(from){
   if(!tutDlg||!tutDlg.isConnected){
     tutDlg=document.createElement('dialog');tutDlg.className='px-tutd';tutDlg.setAttribute('aria-labelledby','px-tutd-t');
-    tutDlg.innerHTML=`<div class="px-tutd__bar"><span>${T('LEZO · How to use','LEZO · Cómo usarla')}</span><button type="button" class="px-tutd__x" aria-label="${T('Close','Cerrar')}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="px-tutd__body px-tut"></div>`;
+    tutDlg.innerHTML=`<div class="px-tutd__bar"><button type="button" class="px-back" data-px-close>${back()}</button><span>${T('LEZO · How to use','LEZO · Cómo usarla')}</span><button type="button" class="px-tutd__x" aria-label="${T('Close','Cerrar')}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div><div class="px-tutd__body px-tut"></div>`;
     document.body.appendChild(tutDlg);
     buildTutorial(tutDlg.querySelector('.px-tutd__body'));
-    tutDlg.querySelector('.px-tutd__x').addEventListener('click',()=>tutDlg.close());
+    tutDlg.querySelectorAll('.px-tutd__x,[data-px-close]').forEach(b=>b.addEventListener('click',()=>tutDlg.close()));
     tutDlg.addEventListener('click',e=>{if(e.target===tutDlg)tutDlg.close()});
     tutDlg.addEventListener('close',()=>{root.classList.remove('px-lock');tutLast?.focus?.()});
   }
@@ -525,6 +520,67 @@ document.addEventListener('click',e=>{
   if(!t)return;
   e.preventDefault();e.stopPropagation();openTutorial(t);
 },true);
+
+
+/* ---------------- hamburger + travel menu, back buttons ---------------- */
+const back=()=>`<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H5m6-6-6 6 6 6"/></svg><span>${T('Back','Atrás')}</span>`;
+let menuDlg=null,menuLang=null,menuLast=null;
+function menuItems(){
+  const pdp=location.pathname.includes('/products/');
+  const base=pdp?'/':'';
+  if(pdp)return[
+    ['mask3d',T('360° view','Vista 360°'),IMG.profile],['como-funciona',T('How it works','Funcionamiento'),IMG.modes],['calidad',T('Build quality','Calidad'),IMG.shell],['envio',T('Delivery','Entrega'),IMG.box]];
+  return[
+    ['la-mascara',T('The mask','La máscara'),IMG.res],['la-luz',T('The light','La luz'),IMGH.blue],['el-interior',T('The inside','El interior'),DETAIL.inside],['el-ajuste',T('The fit','El ajuste'),IMGH.fit],['que-llega',T('What arrives','Lo que llega'),IMG.box],['envio',T('Delivery','Entrega'),IMG.box],['como-usar',T('How to use','Cómo usarla'),TUT_IMG[3]]];
+}
+function buildMenu(){
+  if(menuDlg)menuDlg.remove();
+  const pdp=location.pathname.includes('/products/');
+  const items=menuItems();
+  menuDlg=document.createElement('dialog');menuDlg.className='px-menu';menuDlg.setAttribute('aria-label',T('Menu','Menú'));
+  menuDlg.innerHTML=`<div class="px-menu__bar"><button type="button" class="px-back" data-px-close>${back()}</button><span>LEZO</span><button type="button" class="px-menu__x" data-px-close aria-label="${T('Close menu','Cerrar menú')}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button></div>
+  <div class="px-menu__body"><nav aria-label="${T('Travel the store','Recorre la tienda')}"><span class="eyebrow">${T('Travel the store','Recorre la tienda')}</span><ol class="px-menu__list">${items.map(([id,label,img],i)=>`<li><a href="${pdp?'#'+id:'#'+id}" data-go="${id}" data-img="${img}"><b>0${i+1}</b><span>${label}</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19 19 5M8 5h11v11"/></svg></a></li>`).join('')}</ol>
+    <div class="px-menu__extra">${pdp?`<a href="/" data-px-home>${T('Back to home','Volver al inicio')}</a>`:`<a href="/products/lezo-7-color-led-face-mask">${T('Product page','Página del producto')}</a>`}<button type="button" data-px-menu-cart>${T('Bag','Carrito')}</button><button type="button" data-px-menu-lang>${es()?'English':'Español'}</button></div>
+    <a class="btn px-menu__buy" href="${pdp?'#product-buy':'/products/lezo-7-color-led-face-mask'}" data-px-menu-buy>${T('Buy LEZO','Comprar LEZO')}<svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 12h17m-6-6 6 6-6 6"/></svg></a></nav>
+    <div class="px-menu__pv" aria-hidden="true">${items.map(([id,,img],i)=>`<img data-pv="${id}" src="${img}" alt="" ${i?'loading="lazy"':''}>`).join('')}</div></div>`;
+  document.body.appendChild(menuDlg);
+  const pv=id=>menuDlg.querySelectorAll('.px-menu__pv img').forEach(im=>im.classList.toggle('on',im.dataset.pv===id));
+  pv(items[0][0]);
+  menuDlg.querySelectorAll('[data-go]').forEach(a=>{
+    a.addEventListener('pointerenter',()=>pv(a.dataset.go));a.addEventListener('focus',()=>pv(a.dataset.go));
+    a.addEventListener('click',e=>{
+      e.preventDefault();const id=a.dataset.go;menuDlg.close();
+      if(id==='como-usar'&&!document.getElementById(id)){openTutorial(a);return}
+      const el=document.getElementById(id);
+      if(id==='como-usar'&&el){el.scrollIntoView({behavior:'smooth'});return}
+      if(el){setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),60)}
+      else location.assign('/#'+id);
+    });
+  });
+  menuDlg.querySelectorAll('[data-px-close]').forEach(b=>b.addEventListener('click',()=>menuDlg.close()));
+  menuDlg.querySelector('[data-px-menu-cart]').addEventListener('click',()=>{menuDlg.close();typeof openCart==='function'&&openCart()});
+  menuDlg.querySelector('[data-px-menu-lang]').addEventListener('click',()=>{menuDlg.close();document.getElementById('language')?.click()});
+  menuDlg.querySelector('[data-px-menu-buy]').addEventListener('click',()=>menuDlg.close());
+  menuDlg.addEventListener('close',()=>{root.classList.remove('px-lock');document.querySelector('.px-burger')?.setAttribute('aria-expanded','false');menuLast?.focus?.()});
+  menuLang=root.lang;
+}
+function openMenu(btn){
+  if(!menuDlg||!menuDlg.isConnected||menuLang!==root.lang)buildMenu();
+  menuLast=btn;root.classList.add('px-lock');btn?.setAttribute('aria-expanded','true');menuDlg.showModal();
+}
+function headerExtras(){
+  const tools=document.querySelector('header .nav-tools');
+  if(tools&&!tools.querySelector('.px-burger')){
+    const b=document.createElement('button');b.type='button';b.className='px-burger';b.setAttribute('aria-label',T('Open menu','Abrir menú'));b.setAttribute('aria-expanded','false');b.setAttribute('aria-haspopup','dialog');
+    b.innerHTML='<i></i><i></i><i></i>';b.addEventListener('click',()=>openMenu(b));tools.appendChild(b);
+  }
+  const nav=document.querySelector('header .nav');
+  if(nav&&!nav.querySelector('.px-back--page')&&location.pathname!=='/'&&!/^\/(\?|#|$)/.test(location.pathname+location.search)){
+    const a=document.createElement('a');a.href='/';a.className='px-back px-back--page';a.innerHTML=back();
+    a.addEventListener('click',e=>{e.preventDefault();try{if(history.length>1&&document.referrer&&new URL(document.referrer).origin===location.origin){history.back();return}}catch{}location.assign('/')});
+    nav.prepend(a);
+  }
+}
 
 /* ---------------- page transitions ---------------- */
 function chrome(){
@@ -555,7 +611,7 @@ function enhance(){
   if(!app||!document.getElementById('main'))return;
   chrome();
   if(!document.querySelector('.px-stage')&&stage){stage.dispose();stage=null}
-  tabFunctions();marquee();stageInit();journey();shipSection();howtoBand();pdpSections();decorate();heroTilt();magnetic();
+  tabFunctions();stageInit();journey();shipSection();howtoBand();pdpSections();headerExtras();decorate();heroTilt();magnetic();
   onScroll();
 }
 function boot(){
