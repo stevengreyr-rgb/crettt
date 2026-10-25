@@ -63,8 +63,8 @@ function decorate(){
   const lines=main.querySelectorAll('h1,h2:not(.px-keep)');
   lines.forEach(h=>{if(!h.closest('.px-stage'))splitLines(h)});
   const groups={
-    fade:'.eyebrow,.hero-copy>p,.hero-price,.hero-copy>.btn,.hero-color-link,.hero-note,.section-head p,.study-intro,.light-invitation,.mode-info>*,.results-copy>*:not(h2),.faq-grid>div:first-child>*:not(h2),.buy-copy>*,.numbered,.step-line,.result-points div,.science-top p,.science-bottom article,.depth-captions article,.depth-heading>*:not(h2),.pdp-ritual-copy>*:not(h2),.pdp-copy>*:not(h1),.ritual-layout>div:last-child>.text-link,.service-band>div,.faq-list details,.trustbar>div,.mode-tabs .swatch,.px-ship__lede,.px-dates,.px-ship__note,.px-steps li,.px-big',
-    img:'.image-frame,.hero-art,.results-photo,.depth-image,.pdp-ritual-photo,.gallery-main'
+    fade:'.eyebrow,.hero-copy>p,.hero-price,.hero-copy>.btn,.hero-color-link,.hero-note,.section-head p,.study-intro,.light-invitation,.mode-info>*,.results-copy>*:not(h2),.faq-grid>div:first-child>*:not(h2),.buy-copy>*,.numbered,.step-line,.result-points div,.science-top p,.science-bottom article,.depth-captions article,.depth-heading>*:not(h2),.pdp-ritual-copy>*:not(h2),.pdp-copy>*:not(h1),.ritual-layout>div:last-child>.text-link,.service-band>div,.faq-list details,.trustbar>div,.mode-tabs .swatch,.px-detail__head>*,.px-detail__note,.px-ship__lede,.px-dates,.px-ship__note,.px-steps li,.px-big',
+    img:'.px-fig,.image-frame,.hero-art,.results-photo,.depth-image,.pdp-ritual-photo,.gallery-main'
   };
   const seen=new Map();
   main.querySelectorAll(groups.fade).forEach(el=>{
@@ -298,29 +298,35 @@ class Stage{
     const meshes=[];model.traverse(o=>{if(o.isMesh)meshes.push(o)});
     const sides=meshes.map(m=>m.material.side);meshes.forEach(m=>m.material.side=THREE.DoubleSide);
     const rc=new THREE.Raycaster(),fwd=new THREE.Vector3(0,0,1),pts=[];
-    const step=.118;let row=0;
-    for(let y=-1.5;y<=1.5;y+=step*.866,row++){
-      for(let x=-1.3+(row%2?step/2:0);x<=1.3;x+=step){
-        const d=fwd;
-        rc.set(new THREE.Vector3(x,y,.3),d);const h=rc.intersectObjects(meshes,false)[0];
-        if(!h||!h.face)continue;
-        const n=h.face.normal.clone().transformDirection(h.object.matrixWorld);
-        if(n.dot(d)>0)n.negate();
-        if(n.dot(d)>-.3)continue;
-        pts.push(h.point.clone().addScaledVector(n,.018));
-      }
+    const step=.125,cols=Math.round(2.6/step)+1,rows=Math.round(3/(step*.866))+1;
+    const grid=[];
+    for(let r=0;r<rows;r++){grid.push([]);for(let c=0;c<cols;c++){
+      const x=-1.3+c*step+(r%2?step/2:0),y=-1.5+r*step*.866;
+      rc.set(new THREE.Vector3(x,y,.3),fwd);const h=rc.intersectObjects(meshes,false)[0];
+      let ok=null;
+      if(h&&h.face){const n=h.face.normal.clone().transformDirection(h.object.matrixWorld);if(n.dot(fwd)>0)n.negate();if(n.dot(fwd)<-.18)ok={p:h.point.clone().addScaledVector(n,.016)}}
+      grid[r].push(ok);
+    }}
+    // leave a clear ring around the eye / nose / mouth openings, like the real lining
+    const solid=(r,c)=>grid[r]?.[c]!==undefined&&grid[r][c]!==null;
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const g=grid[r][c];if(!g)continue;
+      if(solid(r,c-1)&&solid(r,c+1)&&solid(r-1,c)&&solid(r+1,c)&&solid(r-2,c)&&solid(r+2,c))pts.push(g.p);
     }
     meshes.forEach((m,i)=>m.material.side=sides[i]);
 
     if(pts.length<20)return;
     this.leds=new THREE.Group();
-    const geo=new THREE.SphereGeometry(.023,12,10);
-    const mat=this.ledMat=new THREE.MeshBasicMaterial({color:this.col,toneMapped:false});
-    const inst=new THREE.InstancedMesh(geo,mat,pts.length),m4=new THREE.Matrix4();
-    pts.forEach((v,i)=>{m4.setPosition(v);inst.setMatrixAt(i,m4)});
-    this.leds.add(inst);
+    // each LED = translucent domed lens + brighter core, with slight brightness variation per unit
+    const lensM=this.ledMat=new THREE.MeshBasicMaterial({color:this.col,toneMapped:false,transparent:true,opacity:.6});
+    const coreM=this.coreMat=new THREE.MeshBasicMaterial({color:this.col,toneMapped:false});
+    const lens=new THREE.InstancedMesh(new THREE.SphereGeometry(.033,14,10),lensM,pts.length);
+    const core=new THREE.InstancedMesh(new THREE.SphereGeometry(.014,10,8),coreM,pts.length);
+    const m4=new THREE.Matrix4(),tint=new THREE.Color();
+    pts.forEach((v,i)=>{m4.setPosition(v);lens.setMatrixAt(i,m4);core.setMatrixAt(i,m4);const k=.72+Math.random()*.4;tint.setScalar(k);lens.setColorAt(i,tint);core.setColorAt(i,tint)});
+    this.leds.add(lens,core);
     const pg=new THREE.BufferGeometry().setFromPoints(pts);
-    this.ledGlow=new THREE.Points(pg,new THREE.PointsMaterial({map:gtex,alphaTest:.01,size:.2,color:this.col,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true}));
+    this.ledGlow=new THREE.Points(pg,new THREE.PointsMaterial({map:gtex,alphaTest:.01,size:.26,color:this.col,transparent:true,opacity:.4,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true}));
     this.leds.add(this.ledGlow);
     const inner=this.inner=new THREE.PointLight(this.col,6,5,2);inner.position.set(0,0,.15);this.leds.add(inner);
     pivot.add(this.leds);
@@ -382,7 +388,7 @@ class Stage{
     this.cplane.set(new this.THREE.Vector3(0,0,1),-this.zc).applyMatrix4(P.matrixWorld);
     if(this.shellMats){for(const m of this.shellMats){m.emissive.copy(this.col);m.emissiveIntensity=inside*.5}}
     if(this.leds){
-      this.ledMat.color.copy(this.col).multiplyScalar(1.15+inside*.7);
+      this.ledMat.color.copy(this.col).multiplyScalar(1+inside*.5);this.coreMat.color.copy(this.col).lerp(new this.THREE.Color(0xffffff),.85).multiplyScalar(2+inside*1.2);
       this.ledGlow.material.color.copy(this.col);this.ledGlow.material.opacity=.15+inside*.35;
       this.inner.color.copy(this.col);this.inner.intensity=3+inside*9;
     }
@@ -400,6 +406,20 @@ class Stage{
     this.disposed=true;this.io?.disconnect();root.classList.remove('px-in-stage');removeEventListener('resize',this.onResize);
     if(this.renderer){this.renderer.dispose();this.renderer.forceContextLoss?.();this.renderer=null}
   }
+}
+const DETAIL={inside:'__IMG_INSIDE__',macro:'__IMG_MACRO__',strap:'__IMG_STRAP__'};
+function detailSection(){
+  const stageEl=document.querySelector('.px-stage');
+  if(!stageEl||document.getElementById('por-dentro')||document.querySelector('.care-page'))return;
+  const s=document.createElement('section');s.className='px-detail wrap section';s.id='por-dentro';
+  s.innerHTML=`<div class="px-detail__head"><div><span class="eyebrow">${T('Inside the mask','Por dentro')}</span><h2>${T('See what is<br><em>inside.</em>','Mira lo que hay<br><em>por dentro.</em>')}</h2></div><p>${T('LEDs spread across the inner face, an adjustable strap with a buckle, and a rim that glows with the selected light.','LEDs repartidos por toda la cara interior, una correa ajustable con hebilla y un borde que brilla con la luz elegida.')}</p></div>
+  <div class="px-detail__grid">
+    <figure class="px-fig px-fig--big"><img src="${DETAIL.inside}" alt="${T('Inside of the LEZO mask with the LED array lit','Interior de la máscara LEZO con la matriz de LEDs encendida')}" width="766" height="620" loading="lazy"><figcaption><b>01</b>${T('The LED array','La matriz de LEDs')}</figcaption></figure>
+    <figure class="px-fig"><img src="${DETAIL.macro}" alt="${T('Close-up of the individual LEDs','Detalle de los LEDs individuales')}" width="570" height="399" loading="lazy"><figcaption><b>02</b>${T('Every LED, up close','Cada LED, de cerca')}</figcaption></figure>
+    <figure class="px-fig"><img src="${DETAIL.strap}" alt="${T('Adjustable strap with buckle','Correa ajustable con hebilla')}" width="495" height="399" loading="lazy"><figcaption><b>03</b>${T('Adjustable strap, hands free','Correa ajustable, manos libres')}</figcaption></figure>
+  </div>
+  <p class="small px-detail__note">${T('Illustrative reference images. Colors and LED layout are approximate.','Imágenes ilustrativas de referencia. Los colores y la distribución de los LEDs son aproximados.')}</p>`;
+  stageEl.after(s);
 }
 function stageInit(){
   const anchor=document.querySelector('main .px-marquee')||document.querySelector('main .trustbar')?.closest('.wrap');
@@ -440,7 +460,7 @@ function enhance(){
   if(!app||!document.getElementById('main'))return;
   chrome();
   if(!document.querySelector('.px-stage')&&stage){stage.dispose();stage=null}
-  marquee();stageInit();shipSection();stickyShip();decorate();heroTilt();magnetic();
+  marquee();stageInit();detailSection();shipSection();stickyShip();decorate();heroTilt();magnetic();
   onScroll();
 }
 function boot(){
