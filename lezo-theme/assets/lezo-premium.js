@@ -176,11 +176,9 @@ function stageMarkup(){
     <canvas class="px-canvas" role="img" aria-label="${T('Interactive 3D model of the LEZO mask. Drag to rotate.','Modelo 3D interactivo de la máscara LEZO. Arrastra para girarla.')}"></canvas>
     <div class="px-copy"><span class="eyebrow">${T('Interactive 3D · LEZO','3D interactivo · LEZO')}</span>
       <h2 class="px-keep">${T('Turn it.<br><em>Light it.</em>','Gírala.<br><em>Enciéndela.</em>')}</h2>
-      <p>${T('Scroll to cycle through all seven light modes. Drag the mask to see it from every side.','Desliza para recorrer los siete modos de luz. Arrastra la máscara para verla desde cada lado.')}</p>
+      <p>${T('Pick a color to change the light. Drag the mask to turn it and see it from every side.','Elige un color para cambiar la luz. Arrastra la máscara para girarla y verla desde cada lado.')}</p>
       <div class="px-mode" aria-live="polite"><div class="px-mode-idx"></div><div class="px-mode-name"></div><div class="px-mode-nm"></div><div class="px-mode-desc"></div><div class="px-mode-fine">${T('Supplier-described function, not a verified clinical outcome. Colors are a visual simulation.','Función descrita por el proveedor, no un resultado clínico verificado. Los colores son una simulación visual.')}</div></div>
     </div>
-    <div class="px-rail" aria-hidden="true"><i></i></div>
-    <div class="px-scrollcue" aria-hidden="true">${T('Scroll','Desliza')}</div>
     <div class="px-hud"><div class="px-swatches" role="group" aria-label="${T('Choose a light mode','Elige un modo de luz')}">${sw}</div>
       <div class="px-meta"><button type="button" class="px-inside" data-px-inside>${T('See inside · LEDs','Ver por dentro · LEDs')}</button><span class="px-hint"><b>↔</b>${T('Drag to rotate','Arrastra para girar')}</span><span class="px-ship-chip">${ICON_PARCEL}${T('Delivery in 5–12 days','Entrega en 5–12 días')}</span></div></div>
   </div></div>`;
@@ -188,35 +186,23 @@ function stageMarkup(){
 class Stage{
   constructor(el){
     this.el=el;this.track=el.querySelector('.px-stage__track');this.idx=-1;this.drag=0;this.dragging=false;this.visible=false;this.p=0;this.disposed=false;
-    this.cache={};
+    this.cache={};this.auto=-.3;this.holdUntil=0;this.userPicked=false;this.last=performance.now();
     el.querySelectorAll('[data-px-mode]').forEach(b=>b.addEventListener('click',()=>this.pick(+b.dataset.pxMode)));
     el.querySelector('[data-px-inside]')?.addEventListener('click',()=>this.pickP(.64));
     this.setMode(0,true);
+    this.cycle=setInterval(()=>{if(!this.userPicked&&this.visible&&!document.hidden&&!reduced)this.setMode((this.idx+1)%COLORS.length)},5200);
     this.io=new IntersectionObserver(e=>{this.visible=e[0].isIntersecting;root.classList.toggle('px-in-stage',this.visible);if(this.visible&&!this.started)this.start()},{rootMargin:'200px'});
     this.io.observe(el);
     this.scroll();
   }
-  pick(i){
-    if(reduced){this.setMode(i);return}
-    const r=this.track.getBoundingClientRect(),span=this.track.offsetHeight-innerHeight;
-    const top=scrollY+r.top+span*((i+.5)/COLORS.length);
-    scrollTo({top,behavior:'smooth'});
+  pick(i){this.userPicked=true;this.setMode(i,false,true)}
+  pickP(){
+    // turn the mask to show its inside and hold it there for a few seconds
+    this.holdUntil=performance.now()+7000;
+    this.insideTarget=Math.PI+Math.round((this.auto-Math.PI)/(Math.PI*2))*Math.PI*2;
   }
-  pickP(f){
-    if(reduced){this.drag=Math.PI;return}
-    const r=this.track.getBoundingClientRect(),span=this.track.offsetHeight-innerHeight;
-    scrollTo({top:scrollY+r.top+span*f,behavior:'smooth'});
-  }
-  scroll(){
-    if(this.disposed||!this.el.isConnected)return;
-    const r=this.track.getBoundingClientRect(),span=this.track.offsetHeight-innerHeight;
-    this.p=reduced?0:clamp(-r.top/Math.max(1,span));
-    this.el.style.setProperty('--p',this.p.toFixed(3));
-    this.el.querySelector('.px-rail')?.style.setProperty('--p',this.p.toFixed(3));
-    if(!reduced&&this.p>.01)this.el.classList.add('moved');
-    if(!reduced)this.setMode(Math.min(COLORS.length-1,Math.floor(this.p*COLORS.length)));
-  }
-  setMode(i,force){
+  scroll(){}
+  setMode(i,force,user){
     if(i===this.idx&&!force)return;
     const first=this.idx===-1;this.idx=i;const m=COLORS[i];
     this.target=m.c;
@@ -230,7 +216,7 @@ class Stage{
     if(!first){box.classList.remove('px-swap');void box.offsetWidth;box.classList.add('px-swap')}
     // keep the light-studio section further down in sync
     const b=document.querySelector(`[data-mode="${i}"]`);
-    if(b&&b.getAttribute('aria-pressed')!=='true'&&!first)b.click();
+    if(user&&b&&b.getAttribute('aria-pressed')!=='true')b.click();
   }
   async start(){
     this.started=true;
@@ -285,7 +271,7 @@ class Stage{
       this.bindPointer(canvas);
       this.resize();addEventListener('resize',this.onResize=()=>this.resize());
       this.el.classList.add('is-live');
-      this.clock=new THREE.Clock();this.rot=0;this.zc=-3;this.loop();
+      this.clock=new THREE.Clock();this.rot=this.auto;this.zc=-3;this.loop();
     }catch(err){
       console.warn('[LEZO] 3D unavailable, using image fallback',err);
       this.el.classList.add('no-gl');
@@ -334,12 +320,12 @@ class Stage{
   }
   bindPointer(canvas){
     let x0=0,d0=0,id=null;
-    canvas.addEventListener('pointerdown',e=>{id=e.pointerId;canvas.setPointerCapture(id);this.dragging=true;x0=e.clientX;d0=this.drag});
+    canvas.addEventListener('pointerdown',e=>{id=e.pointerId;canvas.setPointerCapture(id);this.dragging=true;x0=e.clientX;this.resumeAt=0});
     canvas.addEventListener('pointermove',e=>{
-      if(this.dragging&&e.pointerId===id)this.drag=clamp(d0+(e.clientX-x0)*.009,-2.4,2.4);
+      if(this.dragging&&e.pointerId===id){this.auto+=(e.clientX-x0)*.009;x0=e.clientX;this.holdUntil=0}
       else if(fine){const r=canvas.getBoundingClientRect();this.mx=(e.clientX-r.left)/r.width-.5;this.my=(e.clientY-r.top)/r.height-.5}
     });
-    const up=()=>{this.dragging=false;id=null};
+    const up=()=>{this.dragging=false;id=null;this.resumeAt=performance.now()+1800};
     canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
     canvas.addEventListener('pointerleave',()=>{this.mx=this.my=0});
     this.mx=this.my=0;
@@ -363,18 +349,21 @@ class Stage{
     this.renderer.setSize(w,h,false);this.cam.aspect=w/h;
     // on narrow screens pull the camera back and lift the mask above the controls
     const narrow=w<760;
-    this.cam.position.z=narrow?12.5:7.4;
-    this.offsetX=narrow?0:1.35;this.offsetY=narrow?.36:0;
+    this.cam.position.z=narrow?14:7.4;
+    this.offsetX=narrow?0:1.35;this.offsetY=narrow?.12:0;
     this.cam.updateProjectionMatrix();
   }
   loop(){
     if(this.disposed||!this.el.isConnected){this.dispose();return}
     requestAnimationFrame(()=>this.loop());
     if(!this.visible||document.hidden)return;
-    const t=this.clock.getElapsedTime(),dt=Math.min(this.clock.getDelta(),.05);
-    if(!this.dragging)this.drag*=.965;
-    const targetRot=(reduced?0:this.rotAt(this.p))+this.drag+Math.sin(t*.6)*.07+(this.mx||0)*.35;
-    this.rot+=(targetRot-this.rot)*.075;
+    const t=this.clock.getElapsedTime(),now=performance.now(),dt=Math.min((now-this.last)/1000,.05);this.last=now;
+    if(!this.dragging&&!reduced){
+      if(now<this.holdUntil)this.auto+=(this.insideTarget-this.auto)*(1-Math.exp(-dt*3.2));
+      else if(now>(this.resumeAt||0))this.auto+=dt*.24;
+    }
+    const targetRot=this.auto+(this.mx||0)*.3;
+    this.rot+=(targetRot-this.rot)*(1-Math.exp(-dt*5));
     const P=this.pivot;
     P.rotation.y=this.rot;P.rotation.x+=((-(this.my||0)*.25+Math.sin(t*.5)*.03)-P.rotation.x)*.06;
     P.position.set(this.offsetX,this.offsetY+Math.sin(t*.9)*.06,0);
@@ -403,7 +392,7 @@ class Stage{
   }
   dispose(){
     if(this.disposed&&!this.renderer)return;
-    this.disposed=true;this.io?.disconnect();root.classList.remove('px-in-stage');removeEventListener('resize',this.onResize);
+    this.disposed=true;clearInterval(this.cycle);this.io?.disconnect();root.classList.remove('px-in-stage');removeEventListener('resize',this.onResize);
     if(this.renderer){this.renderer.dispose();this.renderer.forceContextLoss?.();this.renderer=null}
   }
 }

@@ -190,3 +190,14 @@
 .px-fig figcaption b{font-family:Arial,sans-serif;font-weight:400;font-size:10px;letter-spacing:.18em;color:#f0b9a4}
 .px-detail__note{margin-top:16px;font-size:10px}
 @media(max-width:760px){.px-detail__head{grid-template-columns:1fr;gap:20px;margin-bottom:28px}.px-detail__head p{justify-self:start}.px-detail__grid{grid-template-columns:1fr;grid-template-rows:none}.px-fig--big{grid-row:auto;min-height:0;aspect-ratio:1.1}.px-fig{min-height:0;aspect-ratio:1.3}}
+
+/* ---------- no pinned scroll: the 3D stage is one regular screen ---------- */
+.px-stage__track{height:auto}
+.px-stage__sticky{position:relative;top:auto;height:clamp(660px,92vh,860px)}
+.px-rail,.px-scrollcue{display:none!important}
+@media(max-width:760px){
+  .px-stage__track{height:auto}
+  .px-stage__sticky{height:min(100svh,830px);min-height:800px}
+  .px-mode{top:auto;bottom:196px}
+}
+@media(max-width:760px){.px-copy{bottom:0}}
