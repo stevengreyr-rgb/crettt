@@ -235,7 +235,8 @@
       }).join('');
       const vs = current.items.map(variantOf);
       const orig = vs.reduce((s, v) => s + v.price, 0);
-      const off = vs.reduce((s, v) => s + Math.round(v.price * data.pct / 100), 0);
+      // Matches checkout: the percentage is taken per line and rounded down to the cent.
+      const off = vs.reduce((s, v) => s + Math.floor(v.price * data.pct / 100), 0);
       const ok = vs.every((v) => v.available);
       $('[data-sk-bcount]', el).textContent = `${current.items.length} products · 20% off`;
       $('[data-sk-bname]', el).textContent = current.name;
