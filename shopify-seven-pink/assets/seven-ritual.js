@@ -15,7 +15,7 @@
     const files = 'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/';
     const swaps = {
       'lezo-u-a': 'lz-mask-studio.png', 'lezo-u-b': 'lz-mask-sofa.png', 'lezo-u-c': 'lz-ritual-ampoules.png', 'lezo-u-d': 'lz-ritual-table.webp',
-      'lezo-pdp-worn-2026': 'lz-mask-sofa.png', 'lezo-ritual-2026': 'lz-ritual-ampoules.png', 'lezo-portrait-2026': 'lz-mask-studio.png', 'lezo-editorial-movement': 'lz-cover-hero.webp',
+      'lezo-pdp-worn-2026': 'lz-mask-sofa.png', 'lezo-ritual-2026': 'lz-ritual-ampoules.png', 'lezo-portrait-2026': 'lz-mask-studio.png', 'lezo-editorial-movement': 'lz2-cover-hero.webp',
     };
     const swap = () => {
       app.querySelectorAll('img, source').forEach((el) => {
