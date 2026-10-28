@@ -28,7 +28,16 @@
 <title>{{ hb_title }}</title>
 {%- liquid
   if request.page_type == 'product'
-    assign hb_desc = product.description | strip_html | strip_newlines | truncate: 155
+    # Products whose description opens with a supplier spec dump or an internal label get a
+    # written summary; every other product keeps its own description.
+    case product.handle
+      when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument'
+        assign hb_desc = 'A face and neck massager with seven LED colors, seven modes and three vibration levels on a curved 160° head. USB-C rechargeable. Free US shipping.'
+      when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
+        assign hb_desc = 'Booster Pro: a handheld LED facial wand in pink or black, with selectable light colors and a digital display. USB rechargeable. Free US shipping.'
+      else
+        assign hb_desc = product.description | strip_html | strip_newlines | truncate: 155
+    endcase
   elsif request.page_type == 'index'
     assign hb_desc = 'The LEZO 7-color LED mask, the Booster Pro wand and Biodance collagen pads and ampoules. Any two together are 20% off. Free US shipping.'
   else

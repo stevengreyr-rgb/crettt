@@ -346,12 +346,13 @@
       }, { passive: true });
     }
 
-    // Sticky add-to-cart once the main button has scrolled above the viewport
+    // Sticky add-to-cart once the main button has scrolled above the viewport. It stays hidden
+    // while the button is still below the fold, so it never covers the title and price on load.
     if (sticky) {
       let raf2 = 0, was = null;
       const check = () => {
         const r = atc.getBoundingClientRect();
-        const on = r.bottom < 0 || r.top > innerHeight; // off-screen above or below, like a bag bar
+        const on = r.bottom < 0;
         if (on === was) return;
         was = on;
         sticky.classList.toggle('is-on', on);

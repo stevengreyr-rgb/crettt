@@ -5,7 +5,11 @@
   back to its own title, media and description. Buy box uses a native /cart/add form
   (works without JS); sk.js adds the drawer, variant sync, delivery dates and sticky bag.
   Copy restates the product descriptions only; the original description is kept verbatim
-  under "As listed by the maker".
+  under "As listed by the maker" (except the neck massager, whose description is a raw supplier
+  import with unverified claims and hot-linked images; its specs are restated below instead).
+  Galleries are curated in the theme only: `gal_pick` lists media positions to show, with
+  `gal_alts` in the same order, and `var_files` swaps a variant's slide for a clean cutout while
+  keeping its data-media-id so variant selection still scrolls to it. Product media is untouched.
   @example
   {% section 'sk-product' %}
 {% endcomment %}
@@ -19,6 +23,10 @@
   assign opt_label = p.options.first | default: 'Option'
   assign gal_files = ''
   assign gal_mode = 'all'
+  assign gal_pick = ''
+  assign gal_alts = ''
+  assign var_files = ''
+  assign file_alts = ''
   case p.handle
     when 'lezo-7-color-led-face-mask'
       assign k = 'lezo'
@@ -26,6 +34,9 @@
       assign name = 'LEZO LED Mask'
       assign desc = 'A full-face LED mask with seven light modes and an adjustable strap. Put it on, pick a color, keep your hands free.'
       assign gal_files = 'lezo-portrait-2026.webp,lz-mask-studio.png'
+      assign gal_pick = '1,2,3,4,5'
+      assign file_alts = 'Woman holding the LEZO mask beside her face'
+      assign gal_alts = 'LEZO LED mask, front view, with the red light on|LEZO LED mask resting on linen, side view|Close-up of the LEZO head strap where it meets the shell|Woman relaxing on a sofa while wearing the LEZO mask|Inside of the LEZO mask, LEDs lit red'
     when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
       assign k = 'booster'
       assign badge = 'New'
@@ -33,7 +44,8 @@
       assign desc = 'A handheld LED wand for slow, deliberate minutes at the vanity. USB rechargeable, with selectable light colors.'
       assign opt_label = 'Finish'
       assign gal_mode = 'variants'
-      assign gal_files = 'sc-booster-black.jpg,sc-booster-pink.jpg,sc-v3-cover.png,sp-ugc-booster.png,sc-booster-cover.jpg'
+      assign gal_files = 'sc-v3-cover.png,sp-ugc-booster.png'
+      assign var_files = 'pink:sc-booster-pink.jpg,black:sc-booster-black.jpg'
     when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca'
       assign k = 'bd'
       assign badge = 'Free ampoule'
@@ -46,8 +58,13 @@
       assign k = 'neck'
       assign name = 'Face & Neck Massager'
       assign desc = 'Seven LED colors, seven modes and three vibration levels on a curved head shaped to wrap the neck.'
+      assign gal_pick = '1,5,6,7'
+      assign gal_alts = 'Face & Neck Massager in white, front view with the mode display and buttons|Three steps: take it out, long-press to power on, then choose a mode and level|Face & Neck Massager in its box with the USB-C cable and manual|Face & Neck Massager out of the box, front view'
   endcase
   assign files = gal_files | split: ','
+  assign picks = gal_pick | split: ','
+  assign pick_alts = gal_alts | split: '|'
+  assign f_alts = file_alts | split: '|'
 -%}
 <div class="hb" data-sk-pdp>
 <script type="application/json" data-sk-variants>
@@ -62,9 +79,37 @@
         {%- if gal_mode == 'variants' -%}
           {%- for v in p.variants -%}
             {%- if v.featured_media -%}
+              {%- liquid
+                assign n = n | plus: 1
+                assign v_img = v.featured_media.preview_image
+                assign v_key = v.title | downcase | append: ':'
+                assign var_list = var_files | split: ','
+                for vf in var_list
+                  if vf contains v_key
+                    assign v_file = vf | remove_first: v_key
+                    if images[v_file]
+                      assign v_img = images[v_file]
+                    endif
+                  endif
+                endfor
+              -%}
+              {%- capture v_alt -%}{{ name }} in {{ v.title | downcase }}{%- endcapture -%}
+              <figure class="sk-gal__slide is-product" data-media-id="{{ v.featured_media.id }}">{% render 'sk-img', img: v_img, sizes: '(min-width: 1000px) 55vw, 100vw', alt: v_alt, eager: forloop.first %}</figure>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if var_files != '' and cur.featured_media -%}
+            {%- assign n = n | plus: 1 -%}
+            {%- capture v_alt -%}{{ name }} light settings: green, blue, yellow and purple at the tip{%- endcapture -%}
+            <figure class="sk-gal__slide is-product">{% render 'sk-img', img: cur.featured_media.preview_image, sizes: '(min-width: 1000px) 27vw, 100vw', alt: v_alt %}</figure>
+          {%- endif -%}
+        {%- elsif picks.size > 0 -%}
+          {%- for pos in picks -%}
+            {%- assign i = pos | plus: 0 | minus: 1 -%}
+            {%- assign m = p.media[i] -%}
+            {%- if m -%}
               {%- assign n = n | plus: 1 -%}
-              {%- capture v_alt -%}{{ name }} · {{ v.title | capitalize }}{%- endcapture -%}
-              <figure class="sk-gal__slide is-product" data-media-id="{{ v.featured_media.id }}">{% render 'sk-img', img: v.featured_media.preview_image, sizes: '(min-width: 1000px) 55vw, 100vw', alt: v_alt, eager: forloop.first %}</figure>
+              {%- assign m_alt = pick_alts[forloop.index0] | default: m.alt | default: name -%}
+              <figure class="sk-gal__slide{% if k == 'neck' %} is-product{% endif %}" data-media-id="{{ m.id }}">{% render 'sk-img', img: m.preview_image, sizes: '(min-width: 1000px) 55vw, 100vw', alt: m_alt, eager: forloop.first %}</figure>
             {%- endif -%}
           {%- endfor -%}
         {%- else -%}
@@ -77,7 +122,8 @@
         {%- for f in files -%}
           {%- if images[f] and n < 7 -%}
             {%- assign n = n | plus: 1 -%}
-            <figure class="sk-gal__slide">{% render 'sk-img', img: images[f], sizes: '(min-width: 1000px) 27vw, 100vw' %}</figure>
+            {%- assign f_alt = f_alts[forloop.index0] | default: images[f].alt -%}
+            <figure class="sk-gal__slide">{% render 'sk-img', img: images[f], sizes: '(min-width: 1000px) 27vw, 100vw', alt: f_alt %}</figure>
           {%- endif -%}
         {%- endfor -%}
       </div>
@@ -194,14 +240,14 @@
                 <p><em>For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Individual results vary.</em></p>
               {%- when 'booster' -%}
                 <p>A small device with a considered shape. It sits comfortably in the hand as you move it across the face, and its minimal silhouette belongs on the vanity, not in a drawer.</p>
-                <ul><li><b>Selectable light colors</b> at the tip.</li><li><b>USB rechargeable</b> with the supplied charging setup.</li><li><b>Two finishes:</b> soft pink or sleek black.</li></ul>
+                <ul><li><b>Selectable light colors</b> at the tip.</li><li><b>Digital display</b> that shows the current setting.</li><li><b>USB rechargeable</b> with the supplied charging setup.</li><li><b>Two finishes:</b> soft pink or black.</li></ul>
                 <p><em>A cosmetic beauty device. Don’t expect medical or clinical treatment results. Results vary.</em></p>
               {%- when 'bd' -%}
                 <p>Two steps, one habit. Smooth on a gel toner pad for a fresh, hydrated feel, then finish with the ampoule: a lightweight last step for supple-looking skin.</p>
                 <ul><li><b>Pink:</b> Collagen Gel Toner Pads + Collagen Ampoule.</li><li><b>Blue:</b> Cera-Nol Gel Toner Pads + Hydro Cera-Nol Ampoule.</li><li><b>The ampoule is free</b> when you add the matching pads: one free ampoule per pads, taken off at checkout.</li></ul>
               {%- when 'neck' -%}
                 <p>The head curves 160° so it follows the line of the neck instead of sliding over it. Choose one of seven LED colors and seven modes, then set the vibration to one of three levels.</p>
-                <ul><li><b>7 colors, 7 modes, 3 levels</b> of constant-temperature vibration.</li><li><b>Dolphin-shaped head</b> designed to fit the neck.</li><li><b>Rechargeable:</b> about 3 hours to charge, 1–2 hours of use.</li><li><b>Compact:</b> 13.9 × 8.8 × 3.8 cm, easy to travel with.</li></ul>
+                <ul><li><b>7 LED colors, 7 modes</b> and 3 vibration levels.</li><li><b>Curved head</b> with a 160° wrap that follows the neck.</li><li><b>Rechargeable:</b> about 3 hours to charge, 1–2 hours of use.</li><li><b>Compact:</b> 13.9 × 8.8 × 3.8 cm (5.5 × 3.5 × 1.5 in), easy to pack.</li></ul>
               {%- else -%}
                 {{ p.description }}
             {%- endcase -%}
@@ -213,9 +259,9 @@
           <div class="hb-acc__b">
             {%- case k -%}
               {%- when 'lezo' -%}<ol><li>Charge the mask fully before the first session.</li><li>Start with clean, dry skin.</li><li>Fit the strap so the shell sits evenly.</li><li>Pick a color and keep to the session time in your manual, with the eye protection it describes.</li><li>Clean it as the manual says and store it dry.</li></ol>
-              {%- when 'booster' -%}<ol><li>Charge with the supplied USB setup.</li><li>Choose a light setting as your manual describes.</li><li>Glide slowly across the face. Around the eyes, follow the manual exactly.</li><li>Keep it away from water unless the instructions allow contact.</li></ol>
+              {%- when 'booster' -%}<ol><li>Charge with the supplied USB setup.</li><li>Press and hold the power button for 2 seconds to switch it on. Short presses change the setting.</li><li>Glide slowly across the face. Around the eyes, follow the manual exactly.</li><li>Keep it away from water unless the instructions allow contact.</li></ol>
               {%- when 'bd' -%}<ol><li>Cleanse. Patch-test before your first use.</li><li>Smooth a gel pad over the skin.</li><li>Apply the matching ampoule as your last moisturizing step.</li><li>Stop if irritation occurs, and follow the label.</li></ol>
-              {%- when 'neck' -%}<ol><li>Charge for about 3 hours with the USB-C cable.</li><li>Power on, choose a mode and one of three levels.</li><li>Hold the handle and glide the curved head along the neck and jawline.</li></ol>
+              {%- when 'neck' -%}<ol><li>Charge for about 3 hours with the USB-C cable.</li><li>Press and hold the power button to switch it on. Short presses on the power button change the vibration level; the M button changes the mode.</li><li>Hold the handle and glide the curved head along the neck and jawline.</li></ol>
             {%- endcase -%}
           </div>
         </details>
@@ -224,9 +270,9 @@
           <div class="hb-acc__b">
             {%- case k -%}
               {%- when 'lezo' -%}<dl><div><dt>Type</dt><dd>Full-face LED mask</dd></div><div><dt>Light modes</dt><dd>7</dd></div><div><dt>LED channels</dt><dd>470, 520, 630 nm</dd></div><div><dt>Shell</dt><dd>White, eye and mouth openings</dd></div><div><dt>Fit</dt><dd>Adjustable head strap</dd></div></dl>
-              {%- when 'booster' -%}<dl><div><dt>Format</dt><dd>Handheld wand</dd></div><div><dt>Light</dt><dd>Multiple selectable colors</dd></div><div><dt>Power</dt><dd>USB rechargeable</dd></div><div><dt>Finishes</dt><dd>Pink, Black</dd></div></dl>
+              {%- when 'booster' -%}<dl><div><dt>Format</dt><dd>Handheld wand</dd></div><div><dt>Light</dt><dd>Multiple selectable colors</dd></div><div><dt>Display</dt><dd>Digital, shows the current setting</dd></div><div><dt>Power</dt><dd>USB rechargeable, press-and-hold on/off</dd></div><div><dt>Finishes</dt><dd>Pink, Black</dd></div></dl>
               {%- when 'bd' -%}<p>The full ingredient list is printed on each jar and bottle, so you can check it before your first use. Skin tolerance varies: patch-test first.</p>
-              {%- when 'neck' -%}<dl><div><dt>Material</dt><dd>ABS, electroplated finish</dd></div><div><dt>Battery</dt><dd>400 mAh polymer lithium</dd></div><div><dt>Charge / use</dt><dd>3 h / 1–2 h</dd></div><div><dt>Input</dt><dd>5 V 1 A, 3 W rated</dd></div><div><dt>Size</dt><dd>13.9 × 8.8 × 3.8 cm</dd></div><div><dt>In the box</dt><dd>Device, USB-C cable, manual</dd></div><div><dt>Listed certifications</dt><dd>RoHS, FCC, CE (per manufacturer)</dd></div></dl>
+              {%- when 'neck' -%}<dl><div><dt>Material</dt><dd>ABS, electroplated finish</dd></div><div><dt>Battery</dt><dd>400 mAh polymer lithium</dd></div><div><dt>Charge / use</dt><dd>3 h / 1–2 h</dd></div><div><dt>Input</dt><dd>5 V 1 A, 3 W rated</dd></div><div><dt>Size</dt><dd>13.9 × 8.8 × 3.8 cm</dd></div><div><dt>In the box</dt><dd>Device, USB-C cable, manual</dd></div></dl>
             {%- endcase -%}
           </div>
         </details>
@@ -235,7 +281,7 @@
           <summary>Shipping &amp; returns</summary>
           <div class="hb-acc__b"><p>Orders ship in 1–3 business days and arrive 7–14 business days later, with tracking emailed the day they leave. US shipping is free. You have 30 days from delivery to return unopened, unused items in their original packaging; if something arrives damaged or wrong, send us one photo within 48 hours.</p></div>
         </details>
-        {%- unless k == 'other' -%}
+        {%- unless k == 'other' or k == 'neck' -%}
         <details>
           <summary>As listed by the maker</summary>
           <div class="hb-acc__b">{{ p.description }}</div>
@@ -267,7 +313,7 @@
 {%- if k == 'lezo' -%}
 <section class="hb-story" id="hb-colors" aria-labelledby="hb-colors-h" style="scroll-margin-top:84px">
   <div class="hb-wrap hb-story__grid hb-ledx" data-sk-led>
-    <figure class="sk-led__visual" style="--sk-glow:#e0463f" data-sk-led-visual>{% render 'sk-img', img: images['lezo-detail-2026.webp'], sizes: '(min-width: 900px) 45vw, 100vw' %}</figure>
+    <figure class="sk-led__visual" style="--sk-glow:#e0463f" data-sk-led-visual>{% render 'sk-img', img: images['lezo-detail-2026.webp'], sizes: '(min-width: 900px) 45vw, 100vw', alt: 'Inside of the LEZO mask with the LEDs lit' %}</figure>
     <div>
       <span class="hb-new" style="margin-top:0">Explore</span>
       <h2 id="hb-colors-h">Seven colors. Three LEDs.</h2>
@@ -294,9 +340,13 @@
 
 {%- if k != 'other' -%}
 {%- liquid
+  assign s_alt = nil
+  assign s_fit = ''
+  assign s_tag = 'In use'
   case k
     when 'lezo'
       assign s_img = images['lezo-ritual-2026.webp']
+      assign s_alt = 'Woman resting in an armchair while wearing the LEZO mask'
       assign s_h = 'Lie back. The strap holds it.'
       assign s_p = 'A session can happen on the sofa, in bed or with a book open. Choose a color, start it, and let your hands do something else.'
     when 'booster'
@@ -309,15 +359,18 @@
       assign s_p = 'After the pad, the ampoule goes on cleansed skin as the last moisturizing step. Lightweight, quick, easy to repeat every evening.'
     when 'neck'
       assign s_img = p.media[2].preview_image
+      assign s_alt = 'The curved 160° head of the Face & Neck Massager'
+      assign s_fit = ' class="is-product"'
+      assign s_tag = 'Design'
       assign s_h = 'Shaped for the neck.'
-      assign s_p = 'A dolphin-shaped head with a 160° curve, so it follows the neck and jawline while the light and vibration do their part.'
+      assign s_p = 'The head curves 160°, so it sits along the neck and jawline instead of skimming across them. Glide upward with the light on and the vibration at the level you chose.'
   endcase
 -%}
 <section class="hb-story" aria-labelledby="hb-story-h">
   <div class="hb-wrap hb-story__grid">
-    <figure>{% render 'sk-img', img: s_img, sizes: '(min-width: 900px) 45vw, 100vw' %}</figure>
+    <figure{{ s_fit }}>{% render 'sk-img', img: s_img, sizes: '(min-width: 900px) 45vw, 100vw', alt: s_alt %}</figure>
     <div>
-      <span class="hb-new" style="margin-top:0">In use</span>
+      <span class="hb-new" style="margin-top:0">{{ s_tag }}</span>
       <h2 id="hb-story-h">{{ s_h }}</h2>
       <p>{{ s_p }}</p>
       <p><a class="hb-link" href="#hb-kits">Build your ritual and save 20%</a></p>

@@ -170,6 +170,8 @@ body.hb-page{margin:0;background:#fff;color:var(--hb-ink);font-family:var(--hb-s
 .hb-story p{color:var(--hb-grey);font-size:17px;margin:0 0 10px}
 .hb-story figure{margin:0;border-radius:18px;overflow:hidden;aspect-ratio:4/5;background:#f6efed}
 .hb-story figure img{width:100%;height:100%;object-fit:cover}
+.hb-story figure.is-product{aspect-ratio:1;background:#fff}
+.hb-story figure.is-product img{object-fit:contain}
 .hb-ledx{display:grid;gap:16px}
 .hb-ledx__modes{display:flex;flex-wrap:wrap;gap:8px}
 .hb-ledx .sk-mode{width:42px;height:42px;border-radius:50%;border:2px solid transparent;background:#fff;display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 0 0 1px var(--hb-line)}
