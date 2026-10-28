@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "ritual-home",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

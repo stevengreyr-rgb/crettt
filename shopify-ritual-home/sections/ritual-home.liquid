@@ -1,0 +1,449 @@
+{% comment %}
+  Section contract.
+  LEZO Skin Ritual homepage: model hero, sonic-vibration technology explainer,
+  Buy 1 Get 1 Free cards (gel pads + ampoules), device cards and "The Whole Ritual"
+  bundles (code RITUAL20, 20% off 3+ ritual items). Cart runs on the Ajax Cart API.
+  @example
+  <!-- templates/index.json renders this section as "main" -->
+{% endcomment %}
+{%- liquid
+  assign bd = all_products['korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca']
+  assign booster = all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
+  assign lezo = all_products['lezo-7-color-led-face-mask']
+  for v in bd.variants
+    case v.id
+      when 50956618858715
+        assign v_pads_pink = v
+      when 50956618629339
+        assign v_pads_blue = v
+      when 50956618891483
+        assign v_amp_pink = v
+      when 50956618825947
+        assign v_amp_blue = v
+    endcase
+  endfor
+  for v in booster.variants
+    case v.id
+      when 50957033013467
+        assign v_bp_pink = v
+      when 50957033046235
+        assign v_bp_black = v
+    endcase
+  endfor
+  assign v_bp = v_bp_pink | default: booster.selected_or_first_available_variant
+  assign v_lezo = lezo.selected_or_first_available_variant
+
+  assign cdn = 'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/'
+  assign img_pads = cdn | append: 'Sbf714d720fe14fce9fb53387ebd8606dE.webp'
+  assign img_amp_pink = cdn | append: 'S30efe951f70b4ac6af0223bc59eafb7fl.webp'
+  assign img_amp_blue = cdn | append: 'Sa0c9daae335449689dd78525d067c5f71.webp'
+  assign img_bp_pink = images['sc-booster-pink.jpg'] | image_url: width: 900
+  assign img_bp_black = images['sc-booster-black.jpg'] | image_url: width: 900
+  assign img_bp_thumb = images['sc-booster-pink.jpg'] | image_url: width: 300
+  assign img_lezo = cdn | append: 'lezo-pdp-front-2026_7618a7d8-ef1a-4ea9-886a-45b9290e056b.webp'
+
+  assign whole_pink = v_pads_pink.price | plus: v_amp_pink.price | plus: v_bp.price | plus: v_lezo.price
+  assign whole_blue = v_pads_blue.price | plus: v_amp_blue.price | plus: v_bp.price | plus: v_lezo.price
+  assign firm_total = v_pads_pink.price | plus: v_amp_pink.price | plus: v_bp.price
+  assign calm_total = v_pads_blue.price | plus: v_amp_blue.price | plus: v_lezo.price
+-%}
+<a class="rh-skip" href="#rh-main">Skip to content</a>
+<div class="rh" id="RitualHome" data-code="RITUAL20">
+  <div class="rh-announce" role="region" aria-label="Current offers">
+    <div class="rh-announce__track">
+      <span>Buy 1, get 1 free — gel pads &amp; ampoules</span><i aria-hidden="true">•</i>
+      <span>The Whole Ritual — 20% off with RITUAL20</span><i aria-hidden="true">•</i>
+      <span>Free US shipping</span>
+      <span class="rh-announce__dup" aria-hidden="true"><i>•</i><span>Buy 1, get 1 free — gel pads &amp; ampoules</span><i>•</i><span>The Whole Ritual — 20% off with RITUAL20</span><i>•</i><span>Free US shipping</span><i>•</i></span>
+    </div>
+  </div>
+
+  <header class="rh-header">
+    <div class="rh-wrap rh-header__row">
+      <a href="{{ routes.root_url }}" class="rh-brand" aria-label="LEZO by Sevencrush home">LEZO<small>by Sevencrush</small></a>
+      <nav class="rh-nav" aria-label="Main navigation">
+        <a href="#technology">Technology</a>
+        <a href="#offers">Buy 1 Get 1</a>
+        <a href="#rituals">Rituals −20%</a>
+        <a href="{{ lezo.url }}">LED Mask</a>
+      </nav>
+      <button type="button" class="rh-bag" data-rh-open aria-label="Open shopping bag">
+        <svg width="17" height="20" viewBox="0 0 17 20" fill="none" aria-hidden="true"><path d="M2 6h13l1 12H1L2 6Zm3 1V5a3.5 3.5 0 0 1 7 0v2" stroke="currentColor" stroke-width="1.3"/></svg>
+        <span class="rh-bag__label">Bag</span><span class="rh-bag__count" data-rh-count>{{ cart.item_count }}</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="rh-main" tabindex="-1">
+    {%- comment -%} 01 — Cover: the daily-ritual campaign shot, copy on the right {%- endcomment -%}
+    <section class="rh-cover" aria-labelledby="rh-cover-title">
+      <div class="rh-cover__media">
+        <img src="{{ images['sc-booster-cover.jpg'] | image_url: width: 2400 }}" srcset="{{ images['sc-booster-cover.jpg'] | image_url: width: 1200 }} 1200w, {{ images['sc-booster-cover.jpg'] | image_url: width: 1800 }} 1800w, {{ images['sc-booster-cover.jpg'] | image_url: width: 2400 }} 2400w" sizes="100vw" width="2400" height="1343" alt="Woman pressing the pink Booster Pro LED wand against her cheek" fetchpriority="high">
+      </div>
+      <div class="rh-cover__copy">
+        <p class="rh-eyebrow">Daily ritual</p>
+        <h1 id="rh-cover-title">Visible Results,<br>Over Time</h1>
+        <p class="rh-cover__lede">Use the facial massager with your favorite skincare products to enhance absorption and maximize results.</p>
+        <dl class="rh-stats">
+          <div><dt>7</dt><dd>LED colors</dd></div>
+          <div><dt>EMS</dt><dd>Microcurrent</dd></div>
+          <div><dt>2&times;1</dt><dd>Pads &amp; ampoules</dd></div>
+          <div><dt>&minus;20%</dt><dd>Whole ritual</dd></div>
+        </dl>
+        <div class="rh-hero__cta">
+          <button type="button" class="rh-btn" data-rh-add='[{"id":{{ v_bp.id }},"quantity":1}]' {% unless v_bp.available %}disabled{% endunless %}>Shop the Booster Pro · {{ v_bp.price | money }} <span aria-hidden="true">→</span></button>
+          <a class="rh-link" href="#rituals">Build your ritual −20%</a>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} 02 — Technology: skin layers + 3 vibration modes, then the 4-step sequence {%- endcomment -%}
+    <section class="rh-tech" id="technology" aria-labelledby="rh-tech-title">
+      <div class="rh-wrap">
+        <div class="rh-head">
+          <span class="rh-num" aria-hidden="true">01</span>
+          <div>
+            <p class="rh-eyebrow">The technology</p>
+            <h2 id="rh-tech-title">Sonic vibration,<br><em>in action.</em></h2>
+          </div>
+          <p class="rh-head__aside">LED light, EMS microcurrent and high-frequency vibration in one handheld wand — the Booster Pro, designed to make every serum step work a little harder.</p>
+        </div>
+
+        <div class="rh-tech__grid">
+          <article class="rh-panel rh-layers">
+            <div class="rh-layers__copy">
+              <p class="rh-kicker">Sonic vibration<br>in action</p>
+              <p>The Booster Pro pairs gentle high-frequency vibration with LED light and EMS microcurrent that travel across the skin's surface, helping to increase circulation, support the look of firmness and enhance product absorption.</p>
+              <ol class="rh-layers__legend" role="list">
+                <li><b>Epidermis</b><span>Enhances product absorption</span></li>
+                <li><b>Dermis</b><span>Supports collagen &amp; elastin look</span></li>
+                <li><b>Hypodermis</b><span>Improves circulation &amp; firmness</span></li>
+              </ol>
+            </div>
+            <div class="rh-layers__media">
+              <img src="{{ images['sc-skin-layers-only.jpg'] | image_url: width: 1400 }}" srcset="{{ images['sc-skin-layers-only.jpg'] | image_url: width: 900 }} 900w, {{ images['sc-skin-layers-only.jpg'] | image_url: width: 1400 }} 1400w" sizes="(max-width: 820px) 100vw, 40vw" width="2336" height="1282" loading="lazy" alt="Skin cross-section: light and vibration waves moving through the epidermis, dermis and hypodermis">
+              <span class="rh-tag rh-tag--1" aria-hidden="true">Epidermis</span>
+              <span class="rh-tag rh-tag--2" aria-hidden="true">Dermis</span>
+              <span class="rh-tag rh-tag--3" aria-hidden="true">Hypodermis</span>
+            </div>
+          </article>
+
+          <article class="rh-panel rh-modes">
+            <p class="rh-kicker">3 technologies<br>in one wand</p>
+            <div class="rh-modes__body">
+              <div class="rh-modes__media rh-bp-shot">
+                <img src="{{ img_bp_pink }}" width="900" height="1200" loading="lazy" alt="Booster Pro LED wand in pink with its chrome head and red LED ring">
+              </div>
+              <ul class="rh-modes__list" role="list">
+                <li><svg viewBox="0 0 36 24" aria-hidden="true"><path d="M2 12h6M28 12h6M10 9h16M10 15h16"/></svg><div><b>LED light</b><span>7 colors, from red to cool white</span></div></li>
+                <li><svg viewBox="0 0 36 24" aria-hidden="true"><path d="M2 12h4l2-5 3 10 3-12 3 14 3-12 3 10 2-5h7"/></svg><div><b>EMS microcurrent</b><span>For firmer-looking facial contours</span></div></li>
+                <li><svg viewBox="0 0 36 24" aria-hidden="true"><path d="M2 12h3l2-8 2.5 16 3-20 3 22 3-22 3 20 2.5-16 2 8h3"/></svg><div><b>High-frequency vibration</b><span>Massages serums in, boosts circulation</span></div></li>
+              </ul>
+            </div>
+          </article>
+        </div>
+
+        <ol class="rh-steps" role="list" aria-label="How the ritual works, step by step">
+          {%- assign step_x = '0,-25.19,-50.41,-75.67' | split: ',' -%}
+          {%- capture s1 -%}Before|Less circulation, dull appearance{%- endcapture -%}
+          {%- capture s2 -%}Vibration activated|Energy waves move across the skin's surface{%- endcapture -%}
+          {%- capture s3 -%}Product absorption|Your serum is massaged in deeper{%- endcapture -%}
+          {%- capture s4 -%}Renewed skin|Firmer, smoother, more radiant look{%- endcapture -%}
+          {%- assign steps = s1 | append: '~' | append: s2 | append: '~' | append: s3 | append: '~' | append: s4 | split: '~' -%}
+          {%- for s in steps -%}
+            {%- assign parts = s | split: '|' -%}
+            <li class="rh-step">
+              <p class="rh-step__title"><span>{{ forloop.index }}.</span> {{ parts[0] }}</p>
+              <p class="rh-step__text">{{ parts[1] }}</p>
+              <div class="rh-step__media" style="--x: {{ step_x[forloop.index0] }}%">
+                <img src="{{ images['sc-ritual-steps.png'] | image_url: width: 2688 }}" width="2688" height="1152" loading="lazy" alt="">
+              </div>
+            </li>
+          {%- endfor -%}
+        </ol>
+        <p class="rh-fine">3D visualizations for illustration. Cosmetic beauty device — described benefits refer to the look and feel of skin; individual results vary.</p>
+      </div>
+    </section>
+
+    {%- comment -%} 03 — Buy 1 Get 1 Free cards {%- endcomment -%}
+    <section class="rh-offers" id="offers" aria-labelledby="rh-offers-title">
+      <div class="rh-wrap">
+        <div class="rh-head">
+          <span class="rh-num" aria-hidden="true">02</span>
+          <div>
+            <p class="rh-eyebrow">This week's offer</p>
+            <h2 id="rh-offers-title">Buy 1,<br><em>get 1 free.</em></h2>
+          </div>
+          <p class="rh-head__aside">On every gel toner pad jar and every ampoule. Add one and we add the second at no cost — applied automatically at checkout. Mix and match as many as you like.</p>
+        </div>
+
+        <div class="rh-cards">
+          {%- liquid
+            assign cards = 'pads_pink,pads_blue,amp_pink,amp_blue' | split: ','
+          -%}
+          {%- for key in cards -%}
+            {%- liquid
+              case key
+                when 'pads_pink'
+                  assign cv = v_pads_pink
+                  assign c_name = 'Collagen Gel Toner Pads'
+                  assign c_desc = '60 pads · firming, hydrating'
+                  assign c_tone = 'pink'
+                  assign c_img = img_pads
+                  assign c_pos = 'left'
+                when 'pads_blue'
+                  assign cv = v_pads_blue
+                  assign c_name = 'Cera-Nol Gel Toner Pads'
+                  assign c_desc = '60 pads · soothing, barrier care'
+                  assign c_tone = 'blue'
+                  assign c_img = img_pads
+                  assign c_pos = 'right'
+                when 'amp_pink'
+                  assign cv = v_amp_pink
+                  assign c_name = 'Pore Tightening Collagen Ampoule'
+                  assign c_desc = '30 ml · tightening, firming'
+                  assign c_tone = 'pink'
+                  assign c_img = img_amp_pink
+                  assign c_pos = 'center'
+                when 'amp_blue'
+                  assign cv = v_amp_blue
+                  assign c_name = 'Hydro Cera-Nol Ampoule'
+                  assign c_desc = '30 ml · calming, hydrating'
+                  assign c_tone = 'blue'
+                  assign c_img = img_amp_blue
+                  assign c_pos = 'center'
+              endcase
+            -%}
+            {%- if cv -%}
+            <article class="rh-card rh-card--{{ c_tone }}">
+              <div class="rh-card__media rh-card__media--{{ c_pos }}">
+                <img src="{{ c_img }}?width=800" srcset="{{ c_img }}?width=500 500w, {{ c_img }}?width=800 800w" sizes="(max-width: 820px) 50vw, 25vw" width="800" height="800" loading="lazy" alt="{{ c_name }}">
+                <span class="rh-badge">Buy 1 · Get 1 free</span>
+                <span class="rh-swatch" aria-hidden="true"></span>
+              </div>
+              <div class="rh-card__body">
+                <h3>{{ c_name }}</h3>
+                <p class="rh-card__desc">{{ c_desc }}</p>
+                <div class="rh-price">
+                  <strong>{{ cv.price | money }}</strong>
+                  <s>{{ cv.price | times: 2 | money }}</s>
+                  <span class="rh-pill">2 for 1</span>
+                </div>
+                <p class="rh-card__unit">That's {{ cv.price | divided_by: 2 | money }} each</p>
+                <button type="button" class="rh-btn rh-btn--block" data-rh-add='[{"id":{{ cv.id }},"quantity":2}]' {% unless cv.available %}disabled{% endunless %}>
+                  {%- if cv.available -%}Add 2 · pay for 1 <span aria-hidden="true">→</span>{%- else -%}Sold out{%- endif -%}
+                </button>
+              </div>
+            </article>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} 04 — The devices, in the same card language as the mask {%- endcomment -%}
+    <section class="rh-devices" aria-labelledby="rh-devices-title">
+      <div class="rh-wrap">
+        <div class="rh-head">
+          <span class="rh-num" aria-hidden="true">03</span>
+          <div>
+            <p class="rh-eyebrow">The devices</p>
+            <h2 id="rh-devices-title">Light &amp; motion,<br><em>at home.</em></h2>
+          </div>
+          <p class="rh-head__aside">Two devices, one routine. Sculpt with the Booster Pro in the morning, unwind under the LEZO mask's seven lights at night.</p>
+        </div>
+        <div class="rh-feature-cards">
+          <article class="rh-card rh-card--wide" data-rh-pick>
+            <div class="rh-card__media rh-bp-shot">
+              <img src="{{ img_bp_pink }}" width="900" height="1200" loading="lazy" alt="Booster Pro LED wand" data-rh-img>
+              <span class="rh-badge">7 LED colors · EMS · vibration</span>
+            </div>
+            <div class="rh-card__body">
+              <p class="rh-eyebrow">Face &amp; eyes</p>
+              <h3>Booster Pro LED Wand</h3>
+              <p class="rh-card__desc">Chrome teardrop head with a 7-color LED ring, EMS microcurrent and high-frequency vibration. USB rechargeable.</p>
+              <fieldset class="rh-tone rh-tone--ink">
+                <legend>Finish</legend>
+                {%- if v_bp_pink -%}<label><input type="radio" name="rh-bp-finish" checked data-items='[{"id":{{ v_bp_pink.id }},"quantity":1}]' data-img="{{ img_bp_pink }}" data-price="{{ v_bp_pink.price | money }}"><span class="rh-dot rh-dot--rose"></span>Pink</label>{%- endif -%}
+                {%- if v_bp_black -%}<label><input type="radio" name="rh-bp-finish" data-items='[{"id":{{ v_bp_black.id }},"quantity":1}]' data-img="{{ img_bp_black }}" data-price="{{ v_bp_black.price | money }}"><span class="rh-dot rh-dot--black"></span>Black</label>{%- endif -%}
+              </fieldset>
+              <div class="rh-price"><strong data-rh-price>{{ v_bp.price | money }}</strong>{% if v_bp.compare_at_price > v_bp.price %}<s>{{ v_bp.compare_at_price | money }}</s>{% endif %}</div>
+              <button type="button" class="rh-btn rh-btn--block" data-rh-add='[{"id":{{ v_bp.id }},"quantity":1}]' {% unless v_bp.available %}disabled{% endunless %}>{% if v_bp.available %}Add to bag <span aria-hidden="true">→</span>{% else %}Sold out{% endif %}</button>
+            </div>
+          </article>
+          <article class="rh-card rh-card--wide">
+            <div class="rh-card__media rh-card__media--photo rh-card__media--lezo">
+              <img src="{{ img_lezo }}?width=900" width="900" height="900" loading="lazy" alt="LEZO 7-color LED face mask">
+              {%- if v_lezo.compare_at_price > v_lezo.price -%}
+                {%- assign lezo_off = v_lezo.compare_at_price | minus: v_lezo.price | times: 100 | divided_by: v_lezo.compare_at_price -%}
+                <span class="rh-badge">{{ lezo_off }}% off · launch price</span>
+              {%- endif -%}
+            </div>
+            <div class="rh-card__body">
+              <p class="rh-eyebrow">Full face</p>
+              <h3>LEZO 7-Color LED Mask</h3>
+              <p class="rh-card__desc">A sculpted full-face shell with seven built-in light modes and an adjustable strap — hands-free.</p>
+              <div class="rh-price"><strong>{{ v_lezo.price | money }}</strong>{% if v_lezo.compare_at_price > v_lezo.price %}<s>{{ v_lezo.compare_at_price | money }}</s><span class="rh-pill">{{ lezo_off }}% off</span>{% endif %}</div>
+              <div class="rh-card__actions">
+                <button type="button" class="rh-btn" data-rh-add='[{"id":{{ v_lezo.id }},"quantity":1}]' {% unless v_lezo.available %}disabled{% endunless %}>{% if v_lezo.available %}Add to bag <span aria-hidden="true">→</span>{% else %}Sold out{% endif %}</button>
+                <a class="rh-link" href="{{ lezo.url }}">Explore the mask</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} 05 — The Whole Ritual bundles (−20% with RITUAL20) {%- endcomment -%}
+    <section class="rh-rituals" id="rituals" aria-labelledby="rh-rituals-title">
+      <div class="rh-wrap">
+        <div class="rh-head rh-head--light">
+          <span class="rh-num" aria-hidden="true">04</span>
+          <div>
+            <p class="rh-eyebrow">Buy the whole ritual</p>
+            <h2 id="rh-rituals-title">Every step.<br><em>20% off everything.</em></h2>
+          </div>
+          <p class="rh-head__aside">Prep, treat, sculpt, glow. Add a complete ritual and code <b>RITUAL20</b> is applied to your bag — 20% off every item in it.</p>
+        </div>
+
+        <div class="rh-ritual-grid">
+          <article class="rh-ritual rh-ritual--hero" data-rh-ritual>
+            <div class="rh-ritual__media">
+              <img src="{{ images['sc-ritual-vanity.png'] | image_url: width: 1100 }}" width="1536" height="2048" loading="lazy" alt="Evening skincare ritual at a vanity with gel pads, ampoule and LED mask">
+              <span class="rh-badge rh-badge--light">Best value · 4 steps</span>
+            </div>
+            <div class="rh-ritual__body">
+              <p class="rh-eyebrow">The complete ritual</p>
+              <h3>The Whole Ritual</h3>
+              <ol class="rh-ritual__steps" role="list">
+                <li><span>01</span>Gel toner pads<small>Prep</small></li>
+                <li><span>02</span>Ampoule<small>Treat</small></li>
+                <li><span>03</span>Booster Pro LED Wand<small>Sculpt</small></li>
+                <li><span>04</span>LEZO LED Mask<small>Glow</small></li>
+              </ol>
+              <fieldset class="rh-tone">
+                <legend>Choose your pads &amp; ampoule</legend>
+                <label><input type="radio" name="rh-whole-tone" value="pink" checked data-items='[{"id":{{ v_pads_pink.id }},"quantity":1},{"id":{{ v_amp_pink.id }},"quantity":1},{"id":{{ v_bp.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]' data-total="{{ whole_pink | money }}" data-price="{{ whole_pink | times: 0.8 | round | money }}" data-save="{{ whole_pink | times: 0.2 | round | money }}"><span class="rh-dot rh-dot--pink"></span>Collagen · firming</label>
+                <label><input type="radio" name="rh-whole-tone" value="blue" data-items='[{"id":{{ v_pads_blue.id }},"quantity":1},{"id":{{ v_amp_blue.id }},"quantity":1},{"id":{{ v_bp.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]' data-total="{{ whole_blue | money }}" data-price="{{ whole_blue | times: 0.8 | round | money }}" data-save="{{ whole_blue | times: 0.2 | round | money }}"><span class="rh-dot rh-dot--blue"></span>Cera-Nol · calming</label>
+              </fieldset>
+              <div class="rh-price rh-price--light">
+                <strong data-rh-price>{{ whole_pink | times: 0.8 | round | money }}</strong>
+                <s data-rh-total>{{ whole_pink | money }}</s>
+                <span class="rh-pill rh-pill--light">−20%</span>
+              </div>
+              <button type="button" class="rh-btn rh-btn--light rh-btn--block" data-rh-add='[{"id":{{ v_pads_pink.id }},"quantity":1},{"id":{{ v_amp_pink.id }},"quantity":1},{"id":{{ v_bp.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]' data-rh-code>Add the ritual · save <span data-rh-save>{{ whole_pink | times: 0.2 | round | money }}</span> <span aria-hidden="true">→</span></button>
+            </div>
+          </article>
+
+          <div class="rh-ritual-stack">
+            <article class="rh-ritual">
+              <div class="rh-ritual__thumbs" aria-hidden="true">
+                <img src="{{ img_pads }}?width=300" width="300" height="300" loading="lazy" alt="" class="rh-thumb--left">
+                <img src="{{ img_amp_pink }}?width=300" width="300" height="300" loading="lazy" alt="">
+                <img src="{{ img_bp_thumb }}" width="300" height="400" loading="lazy" alt="" class="rh-thumb--bp">
+              </div>
+              <div class="rh-ritual__body">
+                <p class="rh-eyebrow">3 steps · collagen</p>
+                <h3>Firm &amp; Glow Ritual</h3>
+                <p class="rh-ritual__list">Collagen pads + Collagen ampoule + Booster Pro LED Wand</p>
+                <div class="rh-price rh-price--light"><strong>{{ firm_total | times: 0.8 | round | money }}</strong><s>{{ firm_total | money }}</s><span class="rh-pill rh-pill--light">−20%</span></div>
+                <button type="button" class="rh-btn rh-btn--light" data-rh-add='[{"id":{{ v_pads_pink.id }},"quantity":1},{"id":{{ v_amp_pink.id }},"quantity":1},{"id":{{ v_bp.id }},"quantity":1}]' data-rh-code>Add the ritual <span aria-hidden="true">→</span></button>
+              </div>
+            </article>
+            <article class="rh-ritual">
+              <div class="rh-ritual__thumbs" aria-hidden="true">
+                <img src="{{ img_pads }}?width=300" width="300" height="300" loading="lazy" alt="" class="rh-thumb--right">
+                <img src="{{ img_amp_blue }}?width=300" width="300" height="300" loading="lazy" alt="">
+                <img src="{{ img_lezo }}?width=300" width="300" height="300" loading="lazy" alt="">
+              </div>
+              <div class="rh-ritual__body">
+                <p class="rh-eyebrow">3 steps · cera-nol</p>
+                <h3>Calm &amp; Light Ritual</h3>
+                <p class="rh-ritual__list">Cera-Nol pads + Hydro Cera-Nol ampoule + LEZO LED Mask</p>
+                <div class="rh-price rh-price--light"><strong>{{ calm_total | times: 0.8 | round | money }}</strong><s>{{ calm_total | money }}</s><span class="rh-pill rh-pill--light">−20%</span></div>
+                <button type="button" class="rh-btn rh-btn--light" data-rh-add='[{"id":{{ v_pads_blue.id }},"quantity":1},{"id":{{ v_amp_blue.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]' data-rh-code>Add the ritual <span aria-hidden="true">→</span></button>
+              </div>
+            </article>
+          </div>
+        </div>
+        <p class="rh-fine rh-fine--light">RITUAL20 takes 20% off the gel pads, ampoules, Booster Pro and LEZO mask when your bag holds 3 or more of them. It doesn't stack with Buy 1 Get 1 — checkout keeps the better deal.</p>
+      </div>
+    </section>
+
+    {%- comment -%} 06 — The routine, editorial {%- endcomment -%}
+    <section class="rh-routine" aria-labelledby="rh-routine-title">
+      <div class="rh-wrap">
+        <div class="rh-head">
+          <span class="rh-num" aria-hidden="true">05</span>
+          <div>
+            <p class="rh-eyebrow">The routine</p>
+            <h2 id="rh-routine-title">Four steps,<br><em>ten quiet minutes.</em></h2>
+          </div>
+          <p class="rh-head__aside">Use each step on its own or stack them. Follow the label and device instructions, and patch-test new products first.</p>
+        </div>
+        <ol class="rh-routine__grid" role="list">
+          <li>
+            <img src="{{ images['sc-ritual-pads-model.png'] | image_url: width: 800 }}" width="1536" height="2048" loading="lazy" alt="Woman pressing a pink gel toner pad onto her cheek">
+            <p class="rh-step__title"><span>01</span> Prep</p><p>Swipe or press a gel toner pad over clean skin.</p>
+          </li>
+          <li>
+            <img class="rh-top" src="{{ images['sc-ritual-ampoule-model.png'] | image_url: width: 800 }}" width="1536" height="2048" loading="lazy" alt="Woman with glowing skin and a pink collagen ampoule">
+            <p class="rh-step__title"><span>02</span> Treat</p><p>Press a few drops of ampoule into face and neck.</p>
+          </li>
+          <li>
+            <img src="{{ images['sc-booster-cover.jpg'] | image_url: width: 900, height: 1200, crop: 'left' }}" width="900" height="1200" loading="lazy" alt="Woman pressing the Booster Pro wand to her cheek">
+            <p class="rh-step__title"><span>03</span> Sculpt</p><p>Glide the Booster Pro upward and outward to massage it in.</p>
+          </li>
+          <li>
+            <img src="{{ images['sc-ritual-mask-lounge.png'] | image_url: width: 800 }}" width="1536" height="2048" loading="lazy" alt="Woman relaxing on a sofa wearing a white LED face mask glowing red">
+            <p class="rh-step__title"><span>04</span> Glow</p><p>Lie back under the LED mask and choose your light.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="rh-faq" aria-labelledby="rh-faq-title">
+      <div class="rh-wrap rh-faq__grid">
+        <div>
+          <p class="rh-eyebrow">Offers &amp; orders</p>
+          <h2 id="rh-faq-title">Good<br><em>to know.</em></h2>
+          <a class="rh-link" href="mailto:sevencrush.store@gmail.com">Talk to Sevencrush</a>
+        </div>
+        <div class="rh-faq__list">
+          <details><summary>How does Buy 1, Get 1 Free work?</summary><p>Add two of the same gel pad jar or ampoule — the card buttons do it for you. The second one is discounted to $0 automatically in your bag and at checkout. It works on every pair, so four in the bag means two free.</p></details>
+          <details><summary>How do I get 20% off the whole ritual?</summary><p>Add any ritual from the "Buy the whole ritual" section and code RITUAL20 is applied to your bag. It takes 20% off the pads, ampoules, Booster Pro and LEZO mask when 3 or more of them are in your bag. You can also type RITUAL20 at checkout.</p></details>
+          <details><summary>Can I combine both offers?</summary><p>No — one product discount applies per item, and checkout keeps the better deal for you.</p></details>
+          <details><summary>When will my order arrive?</summary><p>Free US shipping. Orders usually arrive in 5–12 days, with tracking emailed as soon as it is available.</p></details>
+          <details><summary>What is the return window?</summary><p>Request a return within 30 days of delivery by emailing sevencrush.store@gmail.com with your order number, subject to the store's return policy.</p></details>
+          <details><summary>Are results guaranteed?</summary><p>No. These are cosmetic products and devices; how your skin looks and feels will vary. Patch-test new products and follow the instructions included with each device.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rh-footer">
+    <div class="rh-wrap rh-footer__grid">
+      <div><a href="{{ routes.root_url }}" class="rh-footer__logo">LEZO</a><p>Light &amp; skin rituals by Sevencrush.</p></div>
+      <nav aria-label="Shop"><b>Shop</b><a href="#offers">Buy 1 Get 1</a><a href="#rituals">Rituals −20%</a><a href="{{ lezo.url }}">LED Mask</a></nav>
+      <nav aria-label="Customer care"><b>Customer care</b><a href="/policies/refund-policy">Returns</a><a href="/policies/shipping-policy">Shipping</a><a href="/policies/privacy-policy">Privacy</a><a href="mailto:sevencrush.store@gmail.com">Contact</a></nav>
+    </div>
+    <div class="rh-wrap rh-footer__base"><span>© {{ 'now' | date: '%Y' }} Sevencrush · United States / USD</span><span>Lifestyle and skin imagery is illustrative.</span></div>
+  </footer>
+
+  <div class="rh-drawer" data-rh-drawer hidden>
+    <button type="button" class="rh-drawer__scrim" data-rh-close tabindex="-1" aria-label="Close bag"></button>
+    <aside class="rh-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="rh-bag-title" tabindex="-1">
+      <div class="rh-drawer__head">
+        <h2 id="rh-bag-title">Your bag<span>.</span></h2>
+        <button type="button" class="rh-drawer__close" data-rh-close aria-label="Close bag">×</button>
+      </div>
+      <div class="rh-drawer__body" data-rh-lines></div>
+      <div class="rh-drawer__foot" data-rh-foot></div>
+    </aside>
+  </div>
+  <div class="rh-toast" role="status" aria-live="polite" data-rh-toast></div>
+</div>
+<script>window.RH_CART = {{ cart | json }};</script>
+{% schema %}
+{"name":"LEZO Skin Ritual home","settings":[],"presets":[{"name":"LEZO Skin Ritual home"}]}
+{% endschema %}
