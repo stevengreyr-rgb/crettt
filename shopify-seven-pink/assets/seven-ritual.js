@@ -5,25 +5,17 @@
   if (!shop) return;
   const root = window.Shopify?.routes?.root || '/';
   const code = shop.dataset.code || 'RITUAL20';
-  const toastEl = shop.querySelector('[data-sr-toast]');
-  let toastTimer = 0;
 
-  // Home: sit right under the mask cards and add tabs. LEZO landing page: stay above the app footer.
+  // Home: sit right under the mask cards. LEZO landing page: stay above the app footer.
   const homeShop = document.getElementById('sp-shop');
-  if (homeShop) {
-    homeShop.after(shop);
-    const tabs = document.querySelector('.sp-tabs');
-    if (tabs && !tabs.querySelector('[href="#sr-bogo"]')) {
-      tabs.insertAdjacentHTML('beforeend', '<a href="#sr-bogo">BUY 1 GET 1</a><a href="#sr-rituals">RITUALS −20%</a>');
-    }
-  }
+  if (homeShop) homeShop.after(shop);
   const app = document.getElementById('app');
   if (app) {
     // Swap the landing page's old lifestyle shots for the new campaign photos of the real LEZO mask.
     const files = 'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/';
     const swaps = {
-      'lezo-u-a': 'sp-mask-bed.png', 'lezo-u-b': 'sp-mask-blue.png', 'lezo-u-c': 'sp-mask-green.png', 'lezo-u-d': 'sp-mask-sofa.png',
-      'lezo-pdp-worn-2026': 'sp-mask-sofa.png', 'lezo-ritual-2026': 'sp-mask-bed.png', 'lezo-portrait-2026': 'sp-mask-portrait.png', 'lezo-editorial-movement': 'sp-mask-blue.png',
+      'lezo-u-a': 'lz-mask-studio.png', 'lezo-u-b': 'lz-mask-sofa.png', 'lezo-u-c': 'lz-ritual-ampoules.png', 'lezo-u-d': 'sp-mask-sofa.png',
+      'lezo-pdp-worn-2026': 'lz-mask-sofa.png', 'lezo-ritual-2026': 'lz-ritual-ampoules.png', 'lezo-portrait-2026': 'lz-mask-studio.png', 'lezo-editorial-movement': 'sp-mask-blue.png',
     };
     const swap = () => {
       app.querySelectorAll('img, source').forEach((el) => {
@@ -50,15 +42,8 @@
     if (!res.ok) throw new Error(data.description || data.message || 'Please try again.');
     return data;
   };
-  const toast = (msg) => {
-    toastEl.textContent = msg;
-    toastEl.classList.add('is-on');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toastEl.classList.remove('is-on'), 2600);
-  };
   const openBag = () => {
-    const pink = document.getElementById('sp-cart');
-    if (pink) shop.querySelector('[data-sr-open]').click();
+    if (document.getElementById('sp-cart')) shop.querySelector('[data-sr-open]').click();
     else location.assign(root + 'cart');
   };
 
@@ -66,6 +51,7 @@
     const btn = e.target.closest('[data-sr-add]');
     if (!btn) return;
     e.preventDefault();
+    const label = btn.textContent;
     btn.setAttribute('aria-busy', 'true');
     try {
       await request('cart/add.js', { items: JSON.parse(btn.dataset.srAdd) });
@@ -73,25 +59,12 @@
         try { await request('cart/update.js', { discount: code }); }
         catch { await fetch(`${root}discount/${encodeURIComponent(code)}?redirect=${encodeURIComponent(root + 'cart.js')}`).catch(() => {}); }
       }
-      toast(btn.hasAttribute('data-sr-code') ? 'Ritual added. 20% off applied.' : 'Added to your bag.');
       openBag();
     } catch (err) {
-      toast(err.message);
+      btn.textContent = err.message;
+      setTimeout(() => { btn.textContent = label; }, 2600);
     } finally {
       btn.removeAttribute('aria-busy');
     }
-  });
-
-  shop.addEventListener('change', (e) => {
-    const input = e.target.closest('[data-sr-pick] input[type="radio"]');
-    if (!input) return;
-    const card = input.closest('[data-sr-pick]');
-    const { items, price, total, img } = input.dataset;
-    card.querySelector('[data-sr-add]').dataset.srAdd = items;
-    const set = (sel, value) => { const el = card.querySelector(sel); if (el && value) el.textContent = value; };
-    set('[data-sr-price]', price);
-    set('[data-sr-total]', total);
-    const pic = card.querySelector('[data-sr-img]');
-    if (pic && img) pic.src = img;
   });
 })();
