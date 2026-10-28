@@ -1,14 +1,11 @@
-/* Sevencrush ritual shop: adds to the cart, applies RITUAL20 for bundles and opens the pink bag (#sp-cart). */
+/* Sevencrush shop: adds products and duos to the cart and opens the pink bag (#sp-cart). */
 (() => {
   'use strict';
   const shop = document.getElementById('sr-shop');
   if (!shop) return;
   const root = window.Shopify?.routes?.root || '/';
-  const code = shop.dataset.code || 'RITUAL20';
 
-  // Home: sit right under the mask cards. LEZO landing page: stay above the app footer.
-  const homeShop = document.getElementById('sp-shop');
-  if (homeShop) homeShop.after(shop);
+  // LEZO landing page: stay above the app footer. (On the home page the snippet renders in place.)
   const app = document.getElementById('app');
   if (app) {
     // Swap the landing page's old lifestyle shots for the new campaign photos of the real LEZO mask.
@@ -55,10 +52,6 @@
     btn.setAttribute('aria-busy', 'true');
     try {
       await request('cart/add.js', { items: JSON.parse(btn.dataset.srAdd) });
-      if (btn.hasAttribute('data-sr-code')) {
-        try { await request('cart/update.js', { discount: code }); }
-        catch { await fetch(`${root}discount/${encodeURIComponent(code)}?redirect=${encodeURIComponent(root + 'cart.js')}`).catch(() => {}); }
-      }
       openBag();
     } catch (err) {
       btn.textContent = err.message;

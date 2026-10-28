@@ -1,8 +1,9 @@
 {% doc %}
-  Sevencrush ritual shop: Buy 1 Get 1 cards (Biodance pads + ampoules), the 3D skin explainer
-  and "The Whole Ritual" bundles (code RITUAL20).
+  Sevencrush shop: one product-only card per product (LEZO mask, Booster Pro, Collagen duo, Cera-Nol duo),
+  the "pads + free ampoule" creative and the 3D skin explainer.
+  The duos rely on the automatic discounts "Buy the Gel Toner Pads, get the matching ampoule free".
   Uses only the theme's own markup: .sp-products / .sp-product-card / .sp-tag / .lh-btn and .sp-promo.
-  Rendered on the home page and on the LEZO landing page.
+  Rendered in place of #sp-shop on the home page and above the footer on the LEZO landing page.
 
   @example
   {% render 'seven-ritual-shop' %}
@@ -30,63 +31,25 @@
   endfor
   assign v_bp = v_bp | default: booster.selected_or_first_available_variant
   assign v_lezo = lezo.selected_or_first_available_variant
-
-  assign glow_total = v_pads_pink.price | plus: v_amp_pink.price | plus: v_lezo.price
-  assign calm_total = v_pads_blue.price | plus: v_amp_blue.price | plus: v_lezo.price
-  assign whole_total = v_pads_pink.price | plus: v_amp_pink.price | plus: v_bp.price | plus: v_lezo.price
+  assign pink_total = v_pads_pink.price | plus: v_amp_pink.price
+  assign blue_total = v_pads_blue.price | plus: v_amp_blue.price
 -%}
-<div class="sr" id="sr-shop" data-code="RITUAL20">
-  <section class="sp-products lh-wrap" id="sr-bogo" aria-labelledby="sr-bogo-title">
-    <div class="lh-section-head">
-      <div><span class="lh-eyebrow">BIODANCE · BUY 1 GET 1 FREE</span><h2 id="sr-bogo-title">TWO FOR<br>ONE.</h2></div>
-      <p>Every gel pad jar and every ampoule. Add one, the second is on us, applied automatically at checkout.</p>
-    </div>
-    {%- assign cards = 'pads_pink,amp_pink,pads_blue,amp_blue' | split: ',' -%}
-    {%- for key in cards -%}
-      {%- liquid
-        case key
-          when 'pads_pink'
-            assign cv = v_pads_pink
-            assign c_name = 'COLLAGEN GEL PADS'
-            assign c_desc = 'Biodance · 60 pads · firming, hydrating'
-            assign c_img = 'lz-pads-pink.png'
-          when 'amp_pink'
-            assign cv = v_amp_pink
-            assign c_name = 'COLLAGEN AMPOULE'
-            assign c_desc = 'Biodance · 30 ml · pore tightening, firming'
-            assign c_img = 'lz2-ampoule-pink.png'
-          when 'pads_blue'
-            assign cv = v_pads_blue
-            assign c_name = 'CERA-NOL GEL PADS'
-            assign c_desc = 'Biodance · 60 pads · soothing, barrier care'
-            assign c_img = 'lz2-pads-blue.png'
-          when 'amp_blue'
-            assign cv = v_amp_blue
-            assign c_name = 'HYDRO CERA-NOL AMPOULE'
-            assign c_desc = 'Biodance · 30 ml · calming, hydrating'
-            assign c_img = 'lz2-ampoule-blue.png'
-        endcase
-      -%}
-      {%- if cv -%}
-      <article class="sp-product-card"><a href="{{ bd.url }}?variant={{ cv.id }}"><img src="{{ images[c_img] | image_url: width: 900 }}" srcset="{{ images[c_img] | image_url: width: 500 }} 500w, {{ images[c_img] | image_url: width: 900 }} 900w" sizes="(max-width: 760px) 50vw, 550px" width="900" height="900" loading="lazy" alt="{{ c_name | capitalize | escape }}"><span class="sp-tag">BUY 1 GET 1 FREE</span><h2>{{ c_name }}</h2></a><p>{{ c_desc }}</p><strong>{{ cv.price | money }}</strong> <s>{{ cv.price | times: 2 | money }}</s><button type="button" class="lh-btn" data-sr-add='[{"id":{{ cv.id }},"quantity":2}]' {% unless cv.available %}disabled{% endunless %}>{% if cv.available %}ADD 2 · PAY FOR 1{% else %}SOLD OUT{% endif %}</button></article>
-      {%- endif -%}
-    {%- endfor -%}
-  </section>
-
-  <section class="sp-promo" id="sr-vibration"><img src="{{ images['sp-vibration.jpg'] | image_url: width: 1200 }}" width="657" height="657" loading="lazy" alt="Booster Pro head on 3D skin layers sending sonic vibration waves"><div><span class="lh-eyebrow">ULTRA SONIC VIBRATION</span><h2>DEEP INTO<br>EVERY LAYER.</h2><p>High-frequency vibration and light travel through the epidermis, dermis and hypodermis to boost circulation and support the look of firmness.</p></div></section>
-  <section class="sp-promo" id="sr-absorption"><img src="{{ images['sp-absorption.jpg'] | image_url: width: 1200 }}" width="657" height="657" loading="lazy" alt="Serum droplets absorbing through 3D skin layers"><div><span class="lh-eyebrow">3D SKIN ABSORPTION</span><h2>YOUR SERUM,<br>ALL THE WAY IN.</h2><p>Massage the ampoule in with every pass, so collagen and ceramides reach deeper for a smoother, more radiant look.</p></div></section>
-
-  <section class="sp-products lh-wrap" id="sr-rituals" aria-labelledby="sr-rituals-title">
-    <div class="lh-section-head">
-      <div><span class="lh-eyebrow">BUY THE WHOLE RITUAL · −20%</span><h2 id="sr-rituals-title">EVERY STEP.<br>20% OFF.</h2></div>
-      <p>Add a ritual and code RITUAL20 goes into your bag: 20% off the pads, ampoules, Booster Pro and LEZO mask.</p>
-    </div>
-    <article class="sp-product-card"><a href="{{ lezo.url }}"><img src="{{ images['lz-ritual-ampoules.png'] | image_url: width: 900 }}" width="900" height="1125" loading="lazy" alt="Woman with Biodance collagen and Hydro Cera-Nol ampoules and the LEZO mask"><span class="sp-tag">THE WHOLE RITUAL · −20%</span><h2>THE WHOLE RITUAL</h2></a><p>Collagen pads + collagen ampoule + Booster Pro + LEZO LED mask</p><strong>{{ whole_total | times: 0.8 | round | money }}</strong> <s>{{ whole_total | money }}</s><button type="button" class="lh-btn" data-sr-code data-sr-add='[{"id":{{ v_pads_pink.id }},"quantity":1},{"id":{{ v_amp_pink.id }},"quantity":1},{"id":{{ v_bp.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]'>ADD THE WHOLE RITUAL</button></article>
-    <article class="sp-product-card"><a href="{{ lezo.url }}"><img src="{{ images['lz-mask-studio.png'] | image_url: width: 900, height: 900, crop: 'center' }}" width="900" height="900" loading="lazy" alt="Woman holding the LEZO LED mask"><span class="sp-tag">3 STEPS · −20%</span><h2>FIRM &amp; GLOW RITUAL</h2></a><p>Collagen pads + collagen ampoule + LEZO LED mask</p><strong>{{ glow_total | times: 0.8 | round | money }}</strong> <s>{{ glow_total | money }}</s><button type="button" class="lh-btn" data-sr-code data-sr-add='[{"id":{{ v_pads_pink.id }},"quantity":1},{"id":{{ v_amp_pink.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]'>ADD THE RITUAL</button></article>
-    <article class="sp-product-card"><a href="{{ lezo.url }}"><img src="{{ images['lz-mask-sofa.png'] | image_url: width: 900 }}" width="900" height="1125" loading="lazy" alt="Woman relaxing on a sofa wearing the LEZO LED mask"><span class="sp-tag">3 STEPS · −20%</span><h2>CALM &amp; LIGHT RITUAL</h2></a><p>Cera-Nol pads + Hydro Cera-Nol ampoule + LEZO LED mask</p><strong>{{ calm_total | times: 0.8 | round | money }}</strong> <s>{{ calm_total | money }}</s><button type="button" class="lh-btn" data-sr-code data-sr-add='[{"id":{{ v_pads_blue.id }},"quantity":1},{"id":{{ v_amp_blue.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]'>ADD THE RITUAL</button></article>
+<div class="sr" id="sr-shop">
+  <section class="sp-products lh-wrap" id="sp-shop">
+    <article class="sp-product-card"><a href="{{ lezo.url }}"><img src="{{ images['lezo-pdp-front-2026.webp'] | image_url: width: 900 }}" width="900" height="900" loading="lazy" alt="White LEZO LED face mask"><span class="sp-tag">THE LIGHT COLLECTION</span><h2>LEZO LED MASK</h2></a><p>White · 7 light modes</p><strong>{{ v_lezo.price | money }}</strong>{% if v_lezo.compare_at_price > v_lezo.price %} <s>{{ v_lezo.compare_at_price | money }}</s>{% endif %}<a class="lh-btn" href="{{ lezo.url }}">EXPLORE THE MASK</a></article>
     {%- if v_bp -%}
-    <article class="sp-product-card"><a href="{{ booster.url }}?variant={{ v_bp.id }}"><img src="{{ images['lz-booster-cheek.png'] | image_url: width: 900 }}" width="900" height="672" loading="lazy" alt="Woman pressing the black Booster Pro LED wand against her cheek"><span class="sp-tag">LED · EMS · VIBRATION</span><h2>BOOSTER PRO WAND</h2></a><p>7-color LED, EMS microcurrent and sonic vibration in one wand</p><strong>{{ v_bp.price | money }}</strong><button type="button" class="lh-btn" data-sr-add='[{"id":{{ v_bp.id }},"quantity":1}]' {% unless v_bp.available %}disabled{% endunless %}>{% if v_bp.available %}ADD TO BAG{% else %}SOLD OUT{% endif %}</button></article>
+    <article class="sp-product-card"><a href="{{ booster.url }}?variant={{ v_bp.id }}"><img src="{{ images['pd-booster-pro.png'] | image_url: width: 900 }}" width="900" height="900" loading="lazy" alt="Booster Pro LED wand in black"><span class="sp-tag">LED · EMS · VIBRATION</span><h2>BOOSTER PRO WAND</h2></a><p>7-color LED, EMS and sonic vibration</p><strong>{{ v_bp.price | money }}</strong>{% if v_bp.compare_at_price > v_bp.price %} <s>{{ v_bp.compare_at_price | money }}</s>{% endif %}<button type="button" class="lh-btn" data-sr-add='[{"id":{{ v_bp.id }},"quantity":1}]' {% unless v_bp.available %}disabled{% endunless %}>{% if v_bp.available %}ADD TO BAG{% else %}SOLD OUT{% endif %}</button></article>
+    {%- endif -%}
+    {%- if v_pads_pink and v_amp_pink -%}
+    <article class="sp-product-card"><a href="{{ bd.url }}?variant={{ v_pads_pink.id }}"><img src="{{ images['pd-collagen-duo.png'] | image_url: width: 900 }}" width="900" height="900" loading="lazy" alt="Biodance Collagen Gel Toner Pads and Collagen Ampoule"><span class="sp-tag">AMPOULE FREE</span><h2>COLLAGEN DUO</h2></a><p>Collagen gel pads + free Collagen Ampoule</p><strong>{{ v_pads_pink.price | money }}</strong> <s>{{ pink_total | money }}</s><button type="button" class="lh-btn" data-sr-add='[{"id":{{ v_pads_pink.id }},"quantity":1},{"id":{{ v_amp_pink.id }},"quantity":1}]' {% unless v_pads_pink.available %}disabled{% endunless %}>{% if v_pads_pink.available %}ADD THE DUO{% else %}SOLD OUT{% endif %}</button></article>
+    {%- endif -%}
+    {%- if v_pads_blue and v_amp_blue -%}
+    <article class="sp-product-card"><a href="{{ bd.url }}?variant={{ v_pads_blue.id }}"><img src="{{ images['pd-ceranol-duo.png'] | image_url: width: 900 }}" width="900" height="900" loading="lazy" alt="Biodance Cera-Nol Gel Toner Pads and Hydro Cera-Nol Ampoule"><span class="sp-tag">AMPOULE FREE</span><h2>CERA-NOL DUO</h2></a><p>Cera-Nol gel pads + free Hydro Cera-Nol Ampoule</p><strong>{{ v_pads_blue.price | money }}</strong> <s>{{ blue_total | money }}</s><button type="button" class="lh-btn" data-sr-add='[{"id":{{ v_pads_blue.id }},"quantity":1},{"id":{{ v_amp_blue.id }},"quantity":1}]' {% unless v_pads_blue.available %}disabled{% endunless %}>{% if v_pads_blue.available %}ADD THE DUO{% else %}SOLD OUT{% endif %}</button></article>
     {%- endif -%}
   </section>
+
+  <section class="sp-promo" id="sr-duo"><img src="{{ images['pd-collagen-duo.png'] | image_url: width: 1200 }}" width="900" height="900" loading="lazy" alt="Biodance Collagen Gel Toner Pads with the Collagen Ampoule"><div><span class="lh-eyebrow">COMPLIMENTARY AMPOULE</span><h2>BUY THE PADS.<br>THE AMPOULE IS FREE.</h2><p>Add the {{ v_pads_pink.price | money }} gel pads and the matching {{ v_amp_pink.price | money }} ampoule is on us. In Collagen or Cera-Nol.</p><button type="button" class="lh-btn" data-sr-add='[{"id":{{ v_pads_pink.id }},"quantity":1},{"id":{{ v_amp_pink.id }},"quantity":1}]'>CLAIM THE DUO</button></div></section>
+  <section class="sp-promo" id="sr-vibration"><img src="{{ images['sp-vibration.jpg'] | image_url: width: 1200 }}" width="657" height="657" loading="lazy" alt="Booster Pro head on 3D skin layers sending sonic vibration waves"><div><span class="lh-eyebrow">ULTRA SONIC VIBRATION</span><h2>DEEP INTO<br>EVERY LAYER.</h2><p>High-frequency vibration and light travel through the epidermis, dermis and hypodermis to boost circulation and support the look of firmness.</p></div></section>
+  <section class="sp-promo" id="sr-absorption"><img src="{{ images['sp-absorption.jpg'] | image_url: width: 1200 }}" width="657" height="657" loading="lazy" alt="Serum droplets absorbing through 3D skin layers"><div><span class="lh-eyebrow">3D SKIN ABSORPTION</span><h2>YOUR SERUM,<br>ALL THE WAY IN.</h2><p>Massage the ampoule in with every pass, so collagen and ceramides reach deeper for a smoother, more radiant look.</p></div></section>
   <a href="{{ routes.cart_url }}" data-pink-cart data-sr-open hidden tabindex="-1" aria-hidden="true"></a>
 </div>
