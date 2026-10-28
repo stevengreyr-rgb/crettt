@@ -93,7 +93,7 @@
                   endif
                 endfor
               -%}
-              {%- capture v_alt -%}{{ name }} in {{ v.title | downcase }}{%- endcapture -%}
+              {%- capture v_alt -%}{% if var_files != '' %}{{ name }} in {{ v.title | downcase }}{% else %}{{ name }} · {{ v.title | capitalize }}{% endif %}{%- endcapture -%}
               <figure class="sk-gal__slide is-product" data-media-id="{{ v.featured_media.id }}">{% render 'sk-img', img: v_img, sizes: '(min-width: 1000px) 55vw, 100vw', alt: v_alt, eager: forloop.first %}</figure>
             {%- endif -%}
           {%- endfor -%}

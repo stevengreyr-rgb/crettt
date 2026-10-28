@@ -35,6 +35,8 @@
         assign hb_desc = 'A face and neck massager with seven LED colors, seven modes and three vibration levels on a curved 160° head. USB-C rechargeable. Free US shipping.'
       when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
         assign hb_desc = 'Booster Pro: a handheld LED facial wand in pink or black, with selectable light colors and a digital display. USB rechargeable. Free US shipping.'
+      when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca'
+        assign hb_desc = 'Biodance gel toner pads and their matching ampoule, in pink Collagen or blue Cera-Nol. With the pads, the ampoule is free. Free US shipping.'
       else
         assign hb_desc = product.description | strip_html | strip_newlines | truncate: 155
     endcase
