@@ -97,7 +97,7 @@ p { margin: 0; }
 .rh-layers__media { position: relative; margin: -8px -8px -8px 0; }
 .rh-layers__media img { width: 100%; mix-blend-mode: multiply; }
 .rh-tag { position: absolute; right: 2%; padding: 5px 9px; background: rgb(255 255 255 / .86); font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-.rh-tag--1 { top: 13%; } .rh-tag--2 { top: 40%; } .rh-tag--3 { top: 76%; }
+.rh-tag--1 { top: 33%; } .rh-tag--2 { top: 52%; } .rh-tag--3 { top: 80%; }
 .rh-modes { display: flex; flex-direction: column; }
 .rh-modes__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: center; flex: 1; }
 .rh-modes__media img { width: 100%; mix-blend-mode: multiply; filter: drop-shadow(0 30px 40px rgb(217 65 90 / .12)); }
@@ -149,6 +149,8 @@ p { margin: 0; }
 .rh-card--wide .rh-price { margin-bottom: 18px; }
 .rh-card__media--photo img { object-fit: contain; padding: 8%; mix-blend-mode: multiply; }
 .rh-card__media--lezo img { padding: 4%; }
+.rh-card__media--model img { object-position: 50% 30%; }
+.rh-card__media--lezo-shot img { object-position: 50% 60%; }
 .rh-card__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
 
 /* Rituals (dark, premium) */

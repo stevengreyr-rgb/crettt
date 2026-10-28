@@ -31,6 +31,7 @@
     endcase
   endfor
   assign v_bp = v_bp_pink | default: booster.selected_or_first_available_variant
+  assign v_cover = v_bp_black | default: v_bp
   assign v_lezo = lezo.selected_or_first_available_variant
 
   assign cdn = 'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/'
@@ -40,6 +41,8 @@
   assign img_bp_pink = images['sc-booster-pink.jpg'] | image_url: width: 900
   assign img_bp_black = images['sc-booster-black.jpg'] | image_url: width: 900
   assign img_bp_thumb = images['sc-booster-pink.jpg'] | image_url: width: 300
+  assign img_amp_pink_m = images['sc-v3-ampoule-pink.png'] | image_url: width: 800
+  assign img_amp_blue_m = images['sc-v3-ampoule-blue.png'] | image_url: width: 800
   assign img_lezo = cdn | append: 'lezo-pdp-front-2026_7618a7d8-ef1a-4ea9-886a-45b9290e056b.webp'
 
   assign whole_pink = v_pads_pink.price | plus: v_amp_pink.price | plus: v_bp.price | plus: v_lezo.price
@@ -78,7 +81,7 @@
     {%- comment -%} 01 — Cover: the daily-ritual campaign shot, copy on the right {%- endcomment -%}
     <section class="rh-cover" aria-labelledby="rh-cover-title">
       <div class="rh-cover__media">
-        <img src="{{ images['sc-booster-cover.jpg'] | image_url: width: 2400 }}" srcset="{{ images['sc-booster-cover.jpg'] | image_url: width: 1200 }} 1200w, {{ images['sc-booster-cover.jpg'] | image_url: width: 1800 }} 1800w, {{ images['sc-booster-cover.jpg'] | image_url: width: 2400 }} 2400w" sizes="100vw" width="2400" height="1343" alt="Woman pressing the pink Booster Pro LED wand against her cheek" fetchpriority="high">
+        <img src="{{ images['sc-v3-cover.png'] | image_url: width: 2400 }}" srcset="{{ images['sc-v3-cover.png'] | image_url: width: 1200 }} 1200w, {{ images['sc-v3-cover.png'] | image_url: width: 1800 }} 1800w, {{ images['sc-v3-cover.png'] | image_url: width: 2688 }} 2688w" sizes="100vw" width="2688" height="1520" alt="Woman pressing the black Booster Pro LED wand against her cheek" fetchpriority="high">
       </div>
       <div class="rh-cover__copy">
         <p class="rh-eyebrow">Daily ritual</p>
@@ -91,7 +94,7 @@
           <div><dt>&minus;20%</dt><dd>Whole ritual</dd></div>
         </dl>
         <div class="rh-hero__cta">
-          <button type="button" class="rh-btn" data-rh-add='[{"id":{{ v_bp.id }},"quantity":1}]' {% unless v_bp.available %}disabled{% endunless %}>Shop the Booster Pro · {{ v_bp.price | money }} <span aria-hidden="true">→</span></button>
+          <button type="button" class="rh-btn" data-rh-add='[{"id":{{ v_cover.id }},"quantity":1}]' {% unless v_cover.available %}disabled{% endunless %}>Shop the Booster Pro · {{ v_cover.price | money }} <span aria-hidden="true">→</span></button>
           <a class="rh-link" href="#rituals">Build your ritual −20%</a>
         </div>
       </div>
@@ -121,7 +124,7 @@
               </ol>
             </div>
             <div class="rh-layers__media">
-              <img src="{{ images['sc-skin-layers-only.jpg'] | image_url: width: 1400 }}" srcset="{{ images['sc-skin-layers-only.jpg'] | image_url: width: 900 }} 900w, {{ images['sc-skin-layers-only.jpg'] | image_url: width: 1400 }} 1400w" sizes="(max-width: 820px) 100vw, 40vw" width="2336" height="1282" loading="lazy" alt="Skin cross-section: light and vibration waves moving through the epidermis, dermis and hypodermis">
+              <img src="{{ images['sc-v3-skin.png'] | image_url: width: 1400 }}" srcset="{{ images['sc-v3-skin.png'] | image_url: width: 900 }} 900w, {{ images['sc-v3-skin.png'] | image_url: width: 1400 }} 1400w" sizes="(max-width: 820px) 100vw, 40vw" width="2336" height="1744" loading="lazy" alt="Booster Pro head on a skin cross-section: vibration and light waves moving through the epidermis, dermis and hypodermis">
               <span class="rh-tag rh-tag--1" aria-hidden="true">Epidermis</span>
               <span class="rh-tag rh-tag--2" aria-hidden="true">Dermis</span>
               <span class="rh-tag rh-tag--3" aria-hidden="true">Hypodermis</span>
@@ -144,7 +147,7 @@
         </div>
 
         <ol class="rh-steps" role="list" aria-label="How the ritual works, step by step">
-          {%- assign step_x = '0,-25.19,-50.41,-75.67' | split: ',' -%}
+          {%- assign step_x = '0,-25.19,-50.33,-75.56' | split: ',' -%}
           {%- capture s1 -%}Before|Less circulation, dull appearance{%- endcapture -%}
           {%- capture s2 -%}Vibration activated|Energy waves move across the skin's surface{%- endcapture -%}
           {%- capture s3 -%}Product absorption|Your serum is massaged in deeper{%- endcapture -%}
@@ -156,7 +159,7 @@
               <p class="rh-step__title"><span>{{ forloop.index }}.</span> {{ parts[0] }}</p>
               <p class="rh-step__text">{{ parts[1] }}</p>
               <div class="rh-step__media" style="--x: {{ step_x[forloop.index0] }}%">
-                <img src="{{ images['sc-ritual-steps.png'] | image_url: width: 2688 }}" width="2688" height="1152" loading="lazy" alt="">
+                <img src="{{ images['sc-v3-steps.png'] | image_url: width: 2688 }}" width="2688" height="1152" loading="lazy" alt="">
               </div>
             </li>
           {%- endfor -%}
@@ -203,21 +206,21 @@
                   assign c_name = 'Pore Tightening Collagen Ampoule'
                   assign c_desc = '30 ml · tightening, firming'
                   assign c_tone = 'pink'
-                  assign c_img = img_amp_pink
-                  assign c_pos = 'center'
+                  assign c_img = img_amp_pink_m
+                  assign c_pos = 'model'
                 when 'amp_blue'
                   assign cv = v_amp_blue
                   assign c_name = 'Hydro Cera-Nol Ampoule'
                   assign c_desc = '30 ml · calming, hydrating'
                   assign c_tone = 'blue'
-                  assign c_img = img_amp_blue
-                  assign c_pos = 'center'
+                  assign c_img = img_amp_blue_m
+                  assign c_pos = 'model'
               endcase
             -%}
             {%- if cv -%}
             <article class="rh-card rh-card--{{ c_tone }}">
               <div class="rh-card__media rh-card__media--{{ c_pos }}">
-                <img src="{{ c_img }}?width=800" srcset="{{ c_img }}?width=500 500w, {{ c_img }}?width=800 800w" sizes="(max-width: 820px) 50vw, 25vw" width="800" height="800" loading="lazy" alt="{{ c_name }}">
+                {%- if c_pos == 'model' -%}<img src="{{ c_img }}" width="800" height="1071" loading="lazy" alt="{{ c_name }}">{%- else -%}<img src="{{ c_img }}?width=800" srcset="{{ c_img }}?width=500 500w, {{ c_img }}?width=800 800w" sizes="(max-width: 820px) 50vw, 25vw" width="800" height="800" loading="lazy" alt="{{ c_name }}">{%- endif -%}
                 <span class="rh-badge">Buy 1 · Get 1 free</span>
                 <span class="rh-swatch" aria-hidden="true"></span>
               </div>
@@ -272,8 +275,8 @@
             </div>
           </article>
           <article class="rh-card rh-card--wide">
-            <div class="rh-card__media rh-card__media--photo rh-card__media--lezo">
-              <img src="{{ img_lezo }}?width=900" width="900" height="900" loading="lazy" alt="LEZO 7-color LED face mask">
+            <div class="rh-card__media rh-card__media--lezo-shot">
+              <img src="{{ images['sc-v3-mask-pedestal.png'] | image_url: width: 1000 }}" width="1792" height="2240" loading="lazy" alt="LEZO 7-color LED face mask glowing blue on a stone pedestal">
               {%- if v_lezo.compare_at_price > v_lezo.price -%}
                 {%- assign lezo_off = v_lezo.compare_at_price | minus: v_lezo.price | times: 100 | divided_by: v_lezo.compare_at_price -%}
                 <span class="rh-badge">{{ lezo_off }}% off · launch price</span>
@@ -309,7 +312,7 @@
         <div class="rh-ritual-grid">
           <article class="rh-ritual rh-ritual--hero" data-rh-ritual>
             <div class="rh-ritual__media">
-              <img src="{{ images['sc-ritual-vanity.png'] | image_url: width: 1100 }}" width="1536" height="2048" loading="lazy" alt="Evening skincare ritual at a vanity with gel pads, ampoule and LED mask">
+              <img src="{{ images['sc-v3-vanity.png'] | image_url: width: 1100 }}" width="1744" height="2336" loading="lazy" alt="Evening ritual with Biodance pads and ampoules, the Booster Pro and the LEZO mask">
               <span class="rh-badge rh-badge--light">Best value · 4 steps</span>
             </div>
             <div class="rh-ritual__body">
@@ -383,19 +386,19 @@
         </div>
         <ol class="rh-routine__grid" role="list">
           <li>
-            <img src="{{ images['sc-ritual-pads-model.png'] | image_url: width: 800 }}" width="1536" height="2048" loading="lazy" alt="Woman pressing a pink gel toner pad onto her cheek">
+            <img src="{{ images['sc-v3-pads.png'] | image_url: width: 800 }}" width="1744" height="2336" loading="lazy" alt="Woman pressing a Biodance Collagen Gel Toner Pad onto her cheek">
             <p class="rh-step__title"><span>01</span> Prep</p><p>Swipe or press a gel toner pad over clean skin.</p>
           </li>
           <li>
-            <img class="rh-top" src="{{ images['sc-ritual-ampoule-model.png'] | image_url: width: 800 }}" width="1536" height="2048" loading="lazy" alt="Woman with glowing skin and a pink collagen ampoule">
+            <img src="{{ images['sc-v3-ampoule-blue.png'] | image_url: width: 800 }}" width="1744" height="2336" loading="lazy" alt="Woman holding the Biodance Hydro Cera-Nol Ampoule">
             <p class="rh-step__title"><span>02</span> Treat</p><p>Press a few drops of ampoule into face and neck.</p>
           </li>
           <li>
-            <img src="{{ images['sc-booster-cover.jpg'] | image_url: width: 900, height: 1200, crop: 'left' }}" width="900" height="1200" loading="lazy" alt="Woman pressing the Booster Pro wand to her cheek">
+            <img src="{{ images['sc-v3-cover.png'] | image_url: width: 900, height: 1200, crop: 'left' }}" width="900" height="1200" loading="lazy" alt="Woman pressing the black Booster Pro wand to her cheek">
             <p class="rh-step__title"><span>03</span> Sculpt</p><p>Glide the Booster Pro upward and outward to massage it in.</p>
           </li>
           <li>
-            <img src="{{ images['sc-ritual-mask-lounge.png'] | image_url: width: 800 }}" width="1536" height="2048" loading="lazy" alt="Woman relaxing on a sofa wearing a white LED face mask glowing red">
+            <img src="{{ images['sc-v3-mask-lounge.png'] | image_url: width: 800 }}" width="1744" height="2336" loading="lazy" alt="Woman in a bathrobe relaxing in the LEZO LED mask glowing blue">
             <p class="rh-step__title"><span>04</span> Glow</p><p>Lie back under the LED mask and choose your light.</p>
           </li>
         </ol>
