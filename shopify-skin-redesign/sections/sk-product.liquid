@@ -103,13 +103,6 @@
         {%- if p.variants.size == 1 -%}
           <input type="hidden" name="id" value="{{ cur.id }}">
           {%- if k == 'lezo' -%}
-            <div class="hb-opt">
-              <div class="hb-opt__row"><span class="hb-opt__lab">Light modes <span>7</span></span><a class="hb-link" href="#hb-colors">Try the colors</a></div>
-              <div class="hb-modes" aria-hidden="true">
-                {%- assign mc = '#e0463f,#3acb68,#3975f2,#a25ada,#f0c13e,#26c5ce,#f3efe6' | split: ',' -%}
-                {%- for c in mc -%}<a href="#hb-colors" style="--c:{{ c }}" tabindex="-1"></a>{%- endfor -%}
-              </div>
-            </div>
           {%- endif -%}
         {%- else -%}
           <fieldset class="hb-opt">
