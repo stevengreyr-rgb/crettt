@@ -13,7 +13,19 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#d8457f">
-<title>{% if request.page_type == 'index' %}SEVENCRUSH — LED masks, skin tools and collagen care{% else %}{{ page_title | escape }} — SEVENCRUSH{% endif %}</title>
+{%- capture hb_title -%}
+  {%- case request.page_type -%}
+    {%- when 'index' -%}SEVENCRUSH — LED masks, skin tools and collagen care
+    {%- when 'product' -%}{% render 'hb-name', p: product %} — SEVENCRUSH
+    {%- when 'cart' -%}Your bag — SEVENCRUSH
+    {%- when 'collection' -%}{{ collection.title | escape }} — SEVENCRUSH
+    {%- when 'search' -%}Search — SEVENCRUSH
+    {%- when 'page' -%}{% if page.handle == 'contact' %}Help &amp; contact{% else %}{{ page.title | escape }}{% endif %} — SEVENCRUSH
+    {%- when '404' -%}Page not found — SEVENCRUSH
+    {%- else -%}{{ page_title | escape }} — SEVENCRUSH
+  {%- endcase -%}
+{%- endcapture -%}
+<title>{{ hb_title }}</title>
 {%- liquid
   if request.page_type == 'product'
     assign hb_desc = product.description | strip_html | strip_newlines | truncate: 155
@@ -25,7 +37,7 @@
 -%}
 <meta name="description" content="{{ hb_desc | escape }}">
 <link rel="canonical" href="{{ canonical_url }}">
-<meta property="og:site_name" content="SEVENCRUSH"><meta property="og:title" content="{{ page_title | escape }}"><meta property="og:description" content="{{ hb_desc | escape }}"><meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:site_name" content="SEVENCRUSH"><meta property="og:title" content="{{ hb_title | strip_html | escape }}"><meta property="og:description" content="{{ hb_desc | escape }}"><meta property="og:url" content="{{ canonical_url }}">
 {%- if request.page_type == 'product' and product.featured_image -%}<meta property="og:type" content="product"><meta property="og:image" content="https:{{ product.featured_image | image_url: width: 1200 }}">{%- else -%}<meta property="og:image" content="https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-hero-2026.webp?v=1792897033">{%- endif -%}
 <link rel="icon" type="image/svg+xml" href="{{ 'lezo-favicon.svg' | asset_url }}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
