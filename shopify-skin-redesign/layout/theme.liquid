@@ -41,14 +41,8 @@
 {%- if request.page_type == 'product' and product.featured_image -%}<meta property="og:type" content="product"><meta property="og:image" content="https:{{ product.featured_image | image_url: width: 1200 }}">{%- else -%}<meta property="og:image" content="https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-hero-2026.webp?v=1792897033">{%- endif -%}
 <link rel="icon" type="image/svg+xml" href="{{ 'lezo-favicon.svg' | asset_url }}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&family=Archivo+Narrow:wght@600;700&family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-{%- if request.page_type == 'index' -%}
-{{ 'lezo-studio.css' | asset_url | stylesheet_tag }}
-{{ 'lezo-premium.css' | asset_url | stylesheet_tag }}
-<script>window.LEZO_PX={turn:{{ 'lezo-turn.mp4' | asset_url | json }},poster:{{ 'lezo-turn-poster.webp' | asset_url | json }}};</script>
-<script src="{{ 'lezo-studio.js' | asset_url }}" defer></script>
-<script src="{{ 'lezo-premium.js' | asset_url }}" defer></script>
-{%- endif -%}
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Anton&family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&family=Archivo+Narrow:wght@600;700&family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+{%- if request.page_type == 'index' -%}{{ 'sc-cover.css' | asset_url | stylesheet_tag }}{%- endif -%}
 {{ 'sk.css' | asset_url | stylesheet_tag }}
 {{ 'hb.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'sk.js' | asset_url }}" defer></script>

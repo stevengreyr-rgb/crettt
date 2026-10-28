@@ -1,0 +1,12 @@
+{% comment %}
+  Section contract.
+  Home cover: renders the store's existing cover (snippets/sc-cover) unchanged, so the
+  portada stays exactly as designed while the rest of the page uses the site system.
+  @example
+  <!-- templates/index.json → "cover" -->
+{% endcomment %}
+{%- assign p = all_products['lezo-7-color-led-face-mask'] -%}
+{% render 'sc-cover', p: p %}
+{% schema %}
+{"name": "HB · Cover (existing)", "settings": [], "presets": [{"name": "HB · Cover (existing)"}]}
+{% endschema %}
