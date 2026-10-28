@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#e7378c">
+<title>{{ page_title | escape }} — Sevencrush</title><meta name="description" content="{{ page_description | escape }}"><link rel="canonical" href="{{ canonical_url }}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+{{ 'sc-rebuild.css' | asset_url | stylesheet_tag }}
+{% if request.page_type == 'index' %}{{ 'sc-cover.css' | asset_url | stylesheet_tag }}{% endif %}
+<script src="{{ 'sc-rebuild.js' | asset_url }}" defer></script>
+{{ content_for_header }}
+{% if request.page_type == 'product' %}<script type="application/ld+json">{{ product | structured_data }}</script>{% endif %}
+</head><body>
+<a class="sc-skip" href="#main">{{ 'sc_rebuild.skip' | t }}</a>
+{% render 'sc-new-header' %}
+<main id="main" tabindex="-1">
+{% case request.page_type %}
+{% when 'product' %}{{ content_for_layout }}
+{% when 'cart' %}{% section 'sc-new-cart' %}
+{% when 'collection' %}{% section 'sc-new-collection' %}
+{% when 'search' %}{% section 'sc-new-search' %}
+{% when 'page' %}<article class="sc-document"><h1>{{ page.title | escape }}</h1>{{ page.content }}</article>
+{% else %}{{ content_for_layout }}
+{% endcase %}
+</main>{% render 'sc-new-footer' %}
+<p class="sc-toast" role="status" aria-live="polite" hidden></p>
+</body></html>

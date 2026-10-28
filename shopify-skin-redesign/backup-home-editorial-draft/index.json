@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "lezo-home",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

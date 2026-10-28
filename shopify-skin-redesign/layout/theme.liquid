@@ -18,7 +18,7 @@
     {%- when 'index' -%}SEVENCRUSH — LED masks, skin tools and collagen care
     {%- when 'product' -%}{% render 'hb-name', p: product %} — SEVENCRUSH
     {%- when 'cart' -%}Your bag — SEVENCRUSH
-    {%- when 'collection' -%}{{ collection.title | escape }} — SEVENCRUSH
+    {%- when 'collection' -%}{% if collection.handle == 'all' %}Shop all{% else %}{{ collection.title | escape }}{% endif %} — SEVENCRUSH
     {%- when 'search' -%}Search — SEVENCRUSH
     {%- when 'page' -%}{% if page.handle == 'contact' %}Help &amp; contact{% else %}{{ page.title | escape }}{% endif %} — SEVENCRUSH
     {%- when '404' -%}Page not found — SEVENCRUSH
