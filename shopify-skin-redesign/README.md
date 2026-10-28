@@ -19,6 +19,10 @@ below were added or changed; everything else in that theme is identical to live.
 | `snippets/sk-cart-drawer.liquid`, `snippets/sk-header.liquid`, `snippets/sk-img.liquid` | Shared pieces. |
 | `assets/sk.css`, `assets/sk.js` | Styles and behavior (cart drawer, bundles, variants, sticky add to cart, LED explorer). |
 
+## LED product refinement (Oct 28)
+See `LED-REFINEMENT.md`: gallery curation, copy and mobile fixes on the draft theme
+`168304640219`, eight-image production briefs per LED product, and the open product questions.
+
 ## Hero is kept as is
 The home hero is still rendered by `lezo-studio.js` / `lezo-premium.js`. `sk.js` removes the
 app's own chapters below the hero (`#main > :not(#mask3d)`) and routes its "Add to bag" and bag
