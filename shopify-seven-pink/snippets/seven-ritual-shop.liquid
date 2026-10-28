@@ -49,22 +49,22 @@
             assign cv = v_pads_pink
             assign c_name = 'COLLAGEN GEL PADS'
             assign c_desc = 'Biodance · 60 pads · firming, hydrating'
-            assign c_img = 'sp-ugc-pads-pink.png'
+            assign c_img = 'lz-pads-pink.png'
           when 'amp_pink'
             assign cv = v_amp_pink
             assign c_name = 'COLLAGEN AMPOULE'
             assign c_desc = 'Biodance · 30 ml · pore tightening, firming'
-            assign c_img = 'sp-ugc-ampoule-pink.png'
+            assign c_img = 'lz-ampoule-pink.png'
           when 'pads_blue'
             assign cv = v_pads_blue
             assign c_name = 'CERA-NOL GEL PADS'
             assign c_desc = 'Biodance · 60 pads · soothing, barrier care'
-            assign c_img = 'sp-ugc-pads-blue.png'
+            assign c_img = 'lz-pads-blue.png'
           when 'amp_blue'
             assign cv = v_amp_blue
             assign c_name = 'HYDRO CERA-NOL AMPOULE'
             assign c_desc = 'Biodance · 30 ml · calming, hydrating'
-            assign c_img = 'sp-ugc-ampoule-blue.png'
+            assign c_img = 'lz-ampoule-blue.png'
         endcase
       -%}
       {%- if cv -%}
@@ -85,7 +85,7 @@
     <article class="sp-product-card"><a href="{{ lezo.url }}"><img src="{{ images['lz-mask-studio.png'] | image_url: width: 900, height: 900, crop: 'center' }}" width="900" height="900" loading="lazy" alt="Woman holding the LEZO LED mask"><span class="sp-tag">3 STEPS · −20%</span><h2>FIRM &amp; GLOW RITUAL</h2></a><p>Collagen pads + collagen ampoule + LEZO LED mask</p><strong>{{ glow_total | times: 0.8 | round | money }}</strong> <s>{{ glow_total | money }}</s><button type="button" class="lh-btn" data-sr-code data-sr-add='[{"id":{{ v_pads_pink.id }},"quantity":1},{"id":{{ v_amp_pink.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]'>ADD THE RITUAL</button></article>
     <article class="sp-product-card"><a href="{{ lezo.url }}"><img src="{{ images['lz-mask-sofa.png'] | image_url: width: 900 }}" width="900" height="1125" loading="lazy" alt="Woman relaxing on a sofa wearing the LEZO LED mask"><span class="sp-tag">3 STEPS · −20%</span><h2>CALM &amp; LIGHT RITUAL</h2></a><p>Cera-Nol pads + Hydro Cera-Nol ampoule + LEZO LED mask</p><strong>{{ calm_total | times: 0.8 | round | money }}</strong> <s>{{ calm_total | money }}</s><button type="button" class="lh-btn" data-sr-code data-sr-add='[{"id":{{ v_pads_blue.id }},"quantity":1},{"id":{{ v_amp_blue.id }},"quantity":1},{"id":{{ v_lezo.id }},"quantity":1}]'>ADD THE RITUAL</button></article>
     {%- if v_bp -%}
-    <article class="sp-product-card"><a href="{{ booster.url }}?variant={{ v_bp.id }}"><img src="{{ images['sc-booster-black.jpg'] | image_url: width: 900 }}" width="900" height="1200" loading="lazy" alt="Booster Pro LED wand in black"><span class="sp-tag">LED · EMS · VIBRATION</span><h2>BOOSTER PRO WAND</h2></a><p>7-color LED, EMS microcurrent and sonic vibration in one wand</p><strong>{{ v_bp.price | money }}</strong><button type="button" class="lh-btn" data-sr-add='[{"id":{{ v_bp.id }},"quantity":1}]' {% unless v_bp.available %}disabled{% endunless %}>{% if v_bp.available %}ADD TO BAG{% else %}SOLD OUT{% endif %}</button></article>
+    <article class="sp-product-card"><a href="{{ booster.url }}?variant={{ v_bp.id }}"><img src="{{ images['lz-booster-cheek.png'] | image_url: width: 900 }}" width="900" height="672" loading="lazy" alt="Woman pressing the black Booster Pro LED wand against her cheek"><span class="sp-tag">LED · EMS · VIBRATION</span><h2>BOOSTER PRO WAND</h2></a><p>7-color LED, EMS microcurrent and sonic vibration in one wand</p><strong>{{ v_bp.price | money }}</strong><button type="button" class="lh-btn" data-sr-add='[{"id":{{ v_bp.id }},"quantity":1}]' {% unless v_bp.available %}disabled{% endunless %}>{% if v_bp.available %}ADD TO BAG{% else %}SOLD OUT{% endif %}</button></article>
     {%- endif -%}
   </section>
   <a href="{{ routes.cart_url }}" data-pink-cart data-sr-open hidden tabindex="-1" aria-hidden="true"></a>
