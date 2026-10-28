@@ -1,0 +1,52 @@
+{% comment %}
+  Section contract.
+  Home: editorial lifestyle photographs of the products in use. The hero's "How to use"
+  navigation link (/#ritual) lands here.
+  @example
+  <!-- templates/index.json → "sk_lifestyle" -->
+{% endcomment %}
+{%- liquid
+  assign img_a = section.settings.image_a | default: images['lz-mask-sofa.png']
+  assign img_b = section.settings.image_b | default: images['sc-v3-vanity.png']
+  assign img_c = section.settings.image_c | default: images['lz-ritual-table.webp']
+-%}
+<section class="sk sk-sect" id="ritual" aria-labelledby="sk-life-title">
+  <div class="sk-wrap">
+    <div class="sk-edit">
+      <figure class="sk-edit__a">
+        <div class="sk-frame">{% render 'sk-img', img: img_a, sizes: '(min-width: 900px) 42vw, 100vw' %}</div>
+        <figcaption class="sk-cap">{{ section.settings.cap_a | escape }}</figcaption>
+      </figure>
+      <div class="sk-edit__copy">
+        <span class="sk-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+        <h2 id="sk-life-title">{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.text | escape }}</p>
+      </div>
+      <figure>
+        <div class="sk-frame sk-frame--3x4">{% render 'sk-img', img: img_b, sizes: '(min-width: 900px) 28vw, 50vw' %}</div>
+        <figcaption class="sk-cap">{{ section.settings.cap_b | escape }}</figcaption>
+      </figure>
+      <figure>
+        <div class="sk-frame sk-frame--3x4">{% render 'sk-img', img: img_c, sizes: '(min-width: 900px) 28vw, 50vw' %}</div>
+        <figcaption class="sk-cap">{{ section.settings.cap_c | escape }}</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "SK · Lifestyle",
+  "settings": [
+    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "In use"},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Made for the end <em>of the day.</em>"},
+    {"type": "textarea", "id": "text", "label": "Text", "default": "Strap on the mask and lie back with your hands free. Follow with the wand where you want more attention, then a gel pad and an ampoule before bed."},
+    {"type": "image_picker", "id": "image_a", "label": "Large image"},
+    {"type": "text", "id": "cap_a", "label": "Large caption", "default": "LEZO on red, on the sofa."},
+    {"type": "image_picker", "id": "image_b", "label": "Image two"},
+    {"type": "text", "id": "cap_b", "label": "Caption two", "default": "The full routine at the vanity."},
+    {"type": "image_picker", "id": "image_c", "label": "Image three"},
+    {"type": "text", "id": "cap_c", "label": "Caption three", "default": "Pads and ampoule after the mask."}
+  ],
+  "presets": [{"name": "SK · Lifestyle"}]
+}
+{% endschema %}

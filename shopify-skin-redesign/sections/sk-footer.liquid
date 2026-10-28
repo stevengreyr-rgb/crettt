@@ -1,0 +1,56 @@
+{% comment %}
+  Section contract.
+  Footer for the SEVENCRUSH skincare home and product landings: wordmark, shop links,
+  help pages, contact and payment note.
+  @example
+  {% section 'sk-footer' %}
+{% endcomment %}
+<footer class="sk sk-foot" aria-labelledby="sk-foot-title">
+  <div class="sk-wrap">
+    <div class="sk-foot__top">
+      <div>
+        <h2 class="sk-foot__mark" id="sk-foot-title">SEVENCRUSH</h2>
+        <p class="sk-foot__line">At-home LED and collagen skincare, chosen to work together and priced to be bought together.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="/products/lezo-7-color-led-face-mask">LEZO LED Mask</a></li>
+          <li><a href="/products/new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool">Booster Pro Wand</a></li>
+          <li><a href="/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca">Collagen Pads &amp; Ampoules</a></li>
+          <li><a href="/products/home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument">Face &amp; Neck Massager</a></li>
+          <li><a href="/#sk-bundles">Bundles · 20% off</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <ul>
+          <li><a href="/pages/shipping">Shipping</a></li>
+          <li><a href="/pages/returns">Returns &amp; refunds</a></li>
+          <li><a href="/pages/faq">FAQ</a></li>
+          <li><a href="/pages/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Talk to us</h4>
+        <ul>
+          <li><a href="mailto:{{ shop.email }}">{{ shop.email }}</a></li>
+          <li><a href="https://wa.me/17042267049" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li>Free US shipping</li>
+          <li>30 days to return unopened items</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sk-foot__base">
+      <span>© {{ 'now' | date: '%Y' }} SevenCrush. Secure checkout with card, PayPal or Shop Pay.</span>
+      <span>
+        {%- for policy in shop.policies -%}
+          <a href="{{ policy.url }}">{{ policy.title | escape }}</a>{% unless forloop.last %} · {% endunless %}
+        {%- endfor -%}
+      </span>
+    </div>
+  </div>
+</footer>
+{% schema %}
+{"name": "SK · Footer", "settings": [], "presets": [{"name": "SK · Footer"}]}
+{% endschema %}

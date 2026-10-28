@@ -1,0 +1,29 @@
+{% doc %}
+  Side cart drawer shared by the home page and the product landings. sk.js fills it from
+  /cart.js, so it always shows Shopify's own line prices and automatic discounts.
+
+  @example
+  {% render 'sk-cart-drawer' %}
+{% enddoc %}
+<div class="sk sk-cart" id="sk-cart" aria-hidden="true">
+  <button type="button" class="sk-cart__scrim" data-sk-cart-close tabindex="-1" aria-label="Close cart"></button>
+  <div class="sk-cart__panel" role="dialog" aria-modal="true" aria-labelledby="sk-cart-title">
+    <div class="sk-cart__head">
+      <h2 id="sk-cart-title">Your cart <span class="sk-small" data-sk-cart-n></span></h2>
+      <button type="button" class="sk-x" data-sk-cart-close aria-label="Close cart">×</button>
+    </div>
+    <div class="sk-cart__body" data-sk-cart-body>
+      <div class="sk-cart__empty"><p>Your cart is empty.</p></div>
+    </div>
+    <div class="sk-cart__foot" data-sk-cart-foot hidden>
+      <p class="sk-cart__hint" data-sk-cart-hint hidden></p>
+      <div class="sk-sumrow"><span>Subtotal before discounts</span><span data-sk-cart-orig></span></div>
+      <div class="sk-sumrow is-off" data-sk-cart-offrow hidden><span data-sk-cart-offname>Discounts</span><span data-sk-cart-off></span></div>
+      <div class="sk-sumrow is-total"><span>Total</span><span data-sk-cart-total></span></div>
+      <p class="sk-small">Taxes and shipping are calculated at checkout. Free shipping to the US.</p>
+      <a href="{{ routes.root_url }}checkout" class="sk-btn sk-btn--block" data-sk-checkout>Checkout</a>
+      <p class="sk-msg" data-sk-cart-msg role="status"></p>
+    </div>
+  </div>
+</div>
+<script>window.SK_CART={{ cart | json }};window.SK_MONEY={{ shop.money_format | json }};</script>

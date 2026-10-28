@@ -1,0 +1,64 @@
+{% comment %}
+  Section contract.
+  Home: how LEZO's seven modes are built from its three LED channels (470, 520, 630 nm),
+  as listed in the product description, plus the five-step use guide the hero links to
+  (#como-usar). No treatment claims: session time and eye protection point to the manual.
+  @example
+  <!-- templates/index.json → "sk_led" -->
+{% endcomment %}
+{%- assign lezo = all_products['lezo-7-color-led-face-mask'] -%}
+{%- assign led_img = section.settings.image | default: images['sc-v3-mask-lounge.png'] -%}
+<section class="sk sk-sect sk-sect--cream" id="sk-led" aria-labelledby="sk-led-title">
+  <div class="sk-wrap">
+    <div class="sk-led" data-sk-led>
+      <figure class="sk-led__visual sk-frame" style="--sk-glow:#e0463f" data-sk-led-visual>
+        {% render 'sk-img', img: led_img, sizes: '(min-width: 1000px) 45vw, 100vw' %}
+        <figcaption>{{ section.settings.caption | escape }}</figcaption>
+      </figure>
+      <div>
+        <span class="sk-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+        <h2 id="sk-led-title">{{ section.settings.heading }}</h2>
+        <p class="sk-lede" style="margin-top:18px">{{ section.settings.text | escape }}</p>
+        <div class="sk-led__modes" role="group" aria-label="LEZO light modes">
+          {%- assign modes = 'Red|#e0463f|630,Green|#3acb68|520,Blue|#3975f2|470,Purple|#a25ada|630+470,Yellow|#f0c13e|630+520,Cyan|#26c5ce|470+520,White|#f3efe6|470+520+630' | split: ',' -%}
+          {%- for m in modes -%}
+            {%- assign p = m | split: '|' -%}
+            <button type="button" class="sk-mode" style="--c:{{ p[1] }}" data-name="{{ p[0] }}" data-c="{{ p[1] }}" data-nm="{{ p[2] }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{{ p[0] }} light"><i></i></button>
+          {%- endfor -%}
+        </div>
+        <h3 class="sk-led__name" data-sk-led-name aria-live="polite">Red <em>light</em></h3>
+        <p class="sk-led__nm" data-sk-led-nm>630 nm channel</p>
+        <div class="sk-channels" aria-label="LED channels in use">
+          <div class="sk-ch" data-ch="470"><b>470</b><span>nm</span></div>
+          <div class="sk-ch" data-ch="520"><b>520</b><span>nm</span></div>
+          <div class="sk-ch is-on" data-ch="630"><b>630</b><span>nm</span></div>
+        </div>
+        <p class="sk-led__note">Session length, eye protection and charging are set out in the manual that comes in the box. Follow it for every mode.</p>
+        <p style="margin-top:26px"><a class="sk-btn" href="{{ lezo.url }}">Shop LEZO · {{ lezo.price | money }}</a></p>
+      </div>
+    </div>
+
+    <div id="como-usar" style="scroll-margin-top:90px">
+      <ol class="sk-steps" aria-label="How to use LEZO">
+        <li><b>01</b><span>Charge the mask fully before the first session.</span></li>
+        <li><b>02</b><span>Start with clean, dry skin.</span></li>
+        <li><b>03</b><span>Fit the strap so the shell sits evenly over your face.</span></li>
+        <li><b>04</b><span>Pick a color and keep to the session time in your manual.</span></li>
+        <li><b>05</b><span>Clean the mask as the manual describes and store it dry.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "SK · LED technology",
+  "settings": [
+    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Inside LEZO"},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Three LEDs. <em>Seven modes.</em>"},
+    {"type": "textarea", "id": "text", "label": "Text", "default": "Every LEZO mode is built from three LED channels: 470, 520 and 630 nm. Tap a color to see which ones it uses."},
+    {"type": "image_picker", "id": "image", "label": "Image"},
+    {"type": "text", "id": "caption", "label": "Image caption", "default": "Photographed in blue mode."}
+  ],
+  "presets": [{"name": "SK · LED technology"}]
+}
+{% endschema %}

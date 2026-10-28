@@ -1,0 +1,28 @@
+{% doc %}
+  Responsive image for the sk sections. Accepts an image object (image_picker setting,
+  product media, or an entry of the global `images` object for files in Settings › Files).
+
+  @param {image} img - image to render
+  @param {string} [sizes] - sizes attribute, defaults to 100vw
+  @param {string} [alt] - alt text, defaults to the image alt
+  @param {boolean} [eager] - load eagerly (first visible image only)
+  @param {string} [widths] - comma-separated srcset widths
+
+  @example
+  {% render 'sk-img', img: images['lz-mask-sofa.png'], sizes: '(min-width: 900px) 50vw, 100vw' %}
+{% enddoc %}
+{%- if img -%}
+  {%- liquid
+    assign widths = widths | default: '360,540,720,960,1280,1600'
+    assign sizes = sizes | default: '100vw'
+    assign alt = alt | default: img.alt
+    if eager
+      assign loading = 'eager'
+      assign priority = 'high'
+    else
+      assign loading = 'lazy'
+      assign priority = 'auto'
+    endif
+  -%}
+  {{ img | image_url: width: 1600 | image_tag: widths: widths, sizes: sizes, alt: alt, loading: loading, fetchpriority: priority }}
+{%- endif -%}

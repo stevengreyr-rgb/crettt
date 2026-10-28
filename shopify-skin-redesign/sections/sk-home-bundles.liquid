@@ -1,0 +1,32 @@
+{% comment %}
+  Section contract.
+  Home: the bundle builder (The Daily Ritual, Light & Collagen, The Complete Routine).
+  The saving shown is computed from live variant prices; checkout applies the automatic
+  "Ritual bundle · 20% off 2+" discount.
+  @example
+  <!-- templates/index.json → "sk_bundles" -->
+{% endcomment %}
+<section class="sk sk-sect sk-sect--stone" id="sk-bundles" aria-labelledby="sk-bundles-title" style="scroll-margin-top:60px">
+  <div class="sk-wrap">
+    <div class="sk-head">
+      <div>
+        <span class="sk-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+        <h2 id="sk-bundles-title">{{ section.settings.heading }}</h2>
+      </div>
+      <p class="sk-lede">{{ section.settings.text | escape }}</p>
+    </div>
+    {% render 'sk-bundles', selected: section.settings.selected, uid: section.id %}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "SK · Bundles",
+  "settings": [
+    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Bundles · 20% off"},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Buy the routine. <em>Keep 20%.</em>"},
+    {"type": "textarea", "id": "text", "label": "Text", "default": "Choose a ritual, pick your finish and your collagen step. The saving is worked out from today’s prices and applied automatically at checkout."},
+    {"type": "select", "id": "selected", "label": "Bundle shown first", "options": [{"value": "daily", "label": "The Daily Ritual"}, {"value": "collagen", "label": "Light & Collagen"}, {"value": "complete", "label": "The Complete Routine"}], "default": "complete"}
+  ],
+  "presets": [{"name": "SK · Bundles"}]
+}
+{% endschema %}

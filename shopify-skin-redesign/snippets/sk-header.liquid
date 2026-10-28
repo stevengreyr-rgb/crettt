@@ -1,0 +1,38 @@
+{% doc %}
+  Header for the SEVENCRUSH product landings: wordmark, the four skincare products,
+  bundles link and a cart button that opens the sk cart drawer.
+
+  @example
+  {% render 'sk-header' %}
+{% enddoc %}
+<div class="sk">
+  <div class="sk-bar">Free US shipping · 30-day returns · Bundles save 20% automatically</div>
+  <header class="sk-header">
+    <div class="sk-wrap sk-header__in">
+      <a href="{{ routes.root_url }}" class="sk-brand" aria-label="SEVENCRUSH home">SEVENCRUSH<small>Skin tools &amp; rituals</small></a>
+      <nav class="sk-nav" aria-label="Main">
+        <a href="/products/lezo-7-color-led-face-mask">LED Mask</a>
+        <a href="/products/new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool">Booster Pro</a>
+        <a href="/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca">Collagen</a>
+        <a href="/products/home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument">Face &amp; Neck</a>
+        <a href="/#sk-bundles">Bundles</a>
+      </nav>
+      <div class="sk-tools">
+        <button type="button" class="sk-icon-btn" data-sk-cart-open aria-label="Open cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M5 7h14l-1 14H6L5 7Z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>
+          <span class="sk-count" data-sk-count>{{ cart.item_count }}</span>
+        </button>
+        <button type="button" class="sk-icon-btn sk-menu-btn" data-sk-menu aria-expanded="false" aria-controls="sk-mnav" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h18M3 16h18"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="sk-mnav" id="sk-mnav" aria-label="Mobile">
+      <a href="/products/lezo-7-color-led-face-mask">LEZO LED Mask</a>
+      <a href="/products/new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool">Booster Pro Wand</a>
+      <a href="/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca">Collagen Pads &amp; Ampoules</a>
+      <a href="/products/home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument">Face &amp; Neck Massager</a>
+      <a href="/#sk-bundles">Bundles · save 20%</a>
+    </nav>
+  </header>
+</div>
