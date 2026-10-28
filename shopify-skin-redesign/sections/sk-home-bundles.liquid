@@ -1,32 +1,32 @@
 {% comment %}
   Section contract.
-  Home: the bundle builder (The Daily Ritual, Light & Collagen, The Complete Routine).
-  The saving shown is computed from live variant prices; checkout applies the automatic
-  "Ritual bundle · 20% off 2+" discount.
+  Home: rituals. The kits panel (live prices, 20% worked out the way checkout applies the
+  automatic discount) with the posters for the live offers.
   @example
   <!-- templates/index.json → "sk_bundles" -->
 {% endcomment %}
-<section class="sk sk-sect sk-sect--stone" id="sk-bundles" aria-labelledby="sk-bundles-title" style="scroll-margin-top:60px">
-  <div class="sk-wrap">
-    <div class="sk-head">
-      <div>
-        <span class="sk-eyebrow">{{ section.settings.eyebrow | escape }}</span>
-        <h2 id="sk-bundles-title">{{ section.settings.heading }}</h2>
+<section class="hb hb-sec hb-sec--blush" id="sk-bundles" aria-labelledby="hb-rit-h">
+  <div class="hb-wrap hb-rituals">
+    <div>
+      <div class="hb-sec__head hb-sec__head--l">
+        <span class="hb-new">{{ section.settings.kicker | escape }}</span>
+        <h2 class="hb-sec__h hb-sec__h--l" id="hb-rit-h">{{ section.settings.heading | escape }}</h2>
+        <p class="hb-sec__lede hb-sec__lede--l">{{ section.settings.text | escape }}</p>
       </div>
-      <p class="sk-lede">{{ section.settings.text | escape }}</p>
+      {% render 'hb-poster', pill: 'Ritual · Save 20%', title: 'The<br>Complete<br>Routine', sub: 'Mask, wand, pads and ampoule.<br>20% off everything', art: 'complete', url: '#hb-kits' %}
+      {% render 'hb-poster', pill: 'Complimentary gift', title: 'Collagen<br>Ampoule', sub: 'Free with any Biodance<br>gel toner pads', art: 'collagen', url: '/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca' %}
     </div>
-    {% render 'sk-bundles', selected: section.settings.selected, uid: section.id %}
+    <div>{% render 'hb-kits' %}</div>
   </div>
 </section>
 {% schema %}
 {
-  "name": "SK · Bundles",
+  "name": "HB · Rituals",
   "settings": [
-    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Bundles · 20% off"},
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Buy the routine. <em>Keep 20%.</em>"},
-    {"type": "textarea", "id": "text", "label": "Text", "default": "Choose a ritual, pick your finish and your collagen step. The saving is worked out from today’s prices and applied automatically at checkout."},
-    {"type": "select", "id": "selected", "label": "Bundle shown first", "options": [{"value": "daily", "label": "The Daily Ritual"}, {"value": "collagen", "label": "Light & Collagen"}, {"value": "complete", "label": "The Complete Routine"}], "default": "complete"}
+    {"type": "text", "id": "kicker", "label": "Kicker", "default": "Rituals"},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Buy the routine. Keep 20%."},
+    {"type": "textarea", "id": "text", "label": "Text", "default": "Every kit is priced from today’s prices, and the 20% is applied by Shopify at checkout, line by line. What you see here is what you pay."}
   ],
-  "presets": [{"name": "SK · Bundles"}]
+  "presets": [{"name": "HB · Rituals"}]
 }
 {% endschema %}

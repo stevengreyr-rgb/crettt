@@ -1,0 +1,37 @@
+{% comment %}
+  Section contract.
+  Product grid for collection pages, the search page and the collections list.
+  @example
+  {% section 'hb-grid' %}
+{% endcomment %}
+<section class="hb hb-wrap hb-gridpage">
+  {%- case request.page_type -%}
+    {%- when 'search' -%}
+      <h1 class="hb-title">Search</h1>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="hb-search">
+        <label class="hb-vh" for="hb-q">Search the store</label>
+        <input id="hb-q" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Try “mask” or “collagen”">
+        <input type="hidden" name="type" value="product">
+        <button type="submit" class="hb-pill hb-pill--pk">Search</button>
+      </form>
+      {%- if search.performed -%}
+        <p class="hb-desc">{{ search.results_count }} result{% if search.results_count != 1 %}s{% endif %} for “{{ search.terms | escape }}”</p>
+        <div class="hb-grid">
+          {%- for r in search.results -%}{%- if r.object_type == 'product' -%}{% render 'hb-card', p: r %}{%- endif -%}{%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- when 'list-collections' -%}
+      <h1 class="hb-title">Shop</h1>
+      <ul class="hb-collist">{%- for c in collections -%}{%- if c.products_count > 0 -%}<li><a href="{{ c.url }}">{{ c.title | escape }} <span>{{ c.products_count }}</span></a></li>{%- endif -%}{%- endfor -%}</ul>
+    {%- else -%}
+      <h1 class="hb-title">{{ collection.title | escape }}</h1>
+      {%- if collection.description != blank -%}<div class="hb-desc">{{ collection.description }}</div>{%- endif -%}
+      {%- paginate collection.products by 24 -%}
+        <div class="hb-grid">{%- for pr in collection.products -%}{% render 'hb-card', p: pr %}{%- endfor -%}</div>
+        {%- if paginate.pages > 1 -%}<nav class="hb-pager" aria-label="Pages">{{ paginate | default_pagination }}</nav>{%- endif -%}
+      {%- endpaginate -%}
+  {%- endcase -%}
+</section>
+{% schema %}
+{"name": "HB · Product grid", "settings": []}
+{% endschema %}

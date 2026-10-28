@@ -126,6 +126,7 @@
       cart = await api('cart/change.js', { id: key, quantity });
       paintCount();
       renderCart();
+      document.dispatchEvent(new CustomEvent('sk:cart', { detail: cart }));
       if (!d.contains(document.activeElement)) { const x = $('.sk-x', d); x && x.focus(); }
     } catch (e) {
       $('[data-sk-cart-msg]', d).textContent = e.message;
@@ -206,79 +207,6 @@
     });
   }
 
-  /* ---------------- Bundles ---------------- */
-  function initBundle(el) {
-    let data;
-    try { data = JSON.parse($('[data-sk-bundle-data]', el).textContent); } catch { return; }
-    const pick = {}; // product key → variant id
-    Object.entries(data.products).forEach(([k, p]) => {
-      const v = p.variants.find((x) => x.available) || p.variants[0];
-      if (v) pick[k] = v.id;
-    });
-    let current = data.bundles.find((b) => b.key === el.dataset.selected) || data.bundles[0];
-    const tabs = $$('.sk-tab', el);
-    const items = $('[data-sk-bitems]', el);
-    const btn = $('[data-sk-badd]', el);
-    const msg = $('[data-sk-bmsg]', el);
-    const variantOf = (k) => data.products[k].variants.find((v) => v.id === pick[k]) || data.products[k].variants[0];
-
-    function paint() {
-      tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.key === current.key)));
-      items.style.setProperty('--n', current.items.length);
-      items.innerHTML = current.items.map((k) => {
-        const p = data.products[k], v = variantOf(k);
-        const select = p.variants.length > 1
-          ? `<label class="sk-vh" for="${el.id}-${k}">${esc(p.label)}</label><select id="${el.id}-${k}" data-k="${k}">${p.variants.map((x) => `<option value="${x.id}"${x.id === v.id ? ' selected' : ''}${x.available ? '' : ' disabled'}>${esc(x.name)}${x.available ? '' : ' · sold out'}</option>`).join('')}</select>`
-          : '';
-        return `<div class="sk-bitem"><a class="sk-frame" href="${esc(p.url)}"><img src="${esc(v.img)}" alt="${esc(p.title)}" width="500" height="500" loading="lazy"></a>
-          <div class="sk-bitem__b"><span class="sk-bitem__t">${esc(p.title)}</span><span class="sk-bitem__p">${money(v.price, data.money)}</span>${select}</div></div>`;
-      }).join('');
-      const vs = current.items.map(variantOf);
-      const orig = vs.reduce((s, v) => s + v.price, 0);
-      // Matches checkout: the percentage is taken per line and rounded down to the cent.
-      const off = vs.reduce((s, v) => s + Math.floor(v.price * data.pct / 100), 0);
-      const ok = vs.every((v) => v.available);
-      $('[data-sk-bcount]', el).textContent = `${current.items.length} products · 20% off`;
-      $('[data-sk-bname]', el).textContent = current.name;
-      $('[data-sk-bfor]', el).textContent = current.for;
-      $('[data-sk-borig]', el).textContent = money(orig, data.money);
-      $('[data-sk-borig2]', el).textContent = money(orig, data.money);
-      $('[data-sk-boff]', el).textContent = '−' + money(off, data.money);
-      $('[data-sk-bfinal]', el).textContent = money(orig - off, data.money);
-      $('[data-sk-bsave]', el).textContent = `You save ${money(off, data.money)}`;
-      btn.disabled = !ok;
-      btn.textContent = ok ? `Add bundle to cart · ${money(orig - off, data.money)}` : 'One item is sold out';
-      msg.textContent = '';
-    }
-    tabs.forEach((t) => t.addEventListener('click', () => { current = data.bundles.find((b) => b.key === t.dataset.key); paint(); }));
-    el.addEventListener('keydown', (e) => {
-      if (!e.target.matches('.sk-tab') || !['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
-      const i = tabs.indexOf(e.target) + (e.key === 'ArrowRight' ? 1 : -1);
-      const t = tabs[(i + tabs.length) % tabs.length];
-      t.focus(); t.click();
-    });
-    items.addEventListener('change', (e) => {
-      if (e.target.matches('select[data-k]')) { pick[e.target.dataset.k] = Number(e.target.value); paint(); }
-    });
-    btn.addEventListener('click', async () => {
-      if (btn.disabled) return;
-      btn.disabled = true;
-      btn.setAttribute('aria-busy', 'true');
-      msg.classList.remove('is-err');
-      try {
-        await addItems(current.items.map((k) => ({ id: pick[k], quantity: 1, properties: { _bundle: current.name } })));
-        msg.textContent = `${current.name} is in your cart.`;
-      } catch (err) {
-        msg.textContent = err.message;
-        msg.classList.add('is-err');
-      } finally {
-        btn.disabled = false;
-        btn.removeAttribute('aria-busy');
-      }
-    });
-    paint();
-  }
-
   /* ---------------- LED explorer ---------------- */
   function initLed(el) {
     const modes = $$('.sk-mode', el);
@@ -315,12 +243,18 @@
       if (disc) { was.textContent = money(v.compare); off.textContent = 'Save ' + money(v.compare - v.price); }
       const st = $('[data-sk-stock]', el);
       st.classList.toggle('is-out', !v.available);
-      $('span', st).textContent = v.available ? 'In stock, ready to ship' : 'Sold out';
+      $('span', st).textContent = v.available ? 'In stock, ships in 1–3 business days' : 'Sold out';
       [atc, buy, stickyBtn].forEach((b) => b && (b.disabled = !v.available));
-      atc.textContent = v.available ? 'Add to cart' : 'Sold out';
+      atc.textContent = v.available ? 'Add to bag' : 'Sold out';
       const sp = $('[data-sk-sticky-price]', el); sp && (sp.textContent = money(v.price));
       const checked = form.querySelector('input[name=id]:checked');
       const lab = $('[data-sk-vlabel]', el); lab && checked && (lab.textContent = checked.dataset.label);
+      if (sel && checked) {
+        sel.value = checked.value;
+        const sw = $('[data-hb-select-sw]', el); sw && sw.style.setProperty('--c', checked.dataset.dot || '#ddd');
+        const sl = $('[data-hb-select-label]', el); sl && (sl.textContent = checked.dataset.label);
+      }
+      paintStickyQty();
       const pair = $('[data-sk-pair]', el);
       if (pair) {
         const isPads = PAIRS[v.id] !== undefined;
@@ -333,7 +267,35 @@
       if (scroll) { const u = new URL(location.href); u.searchParams.set('variant', v.id); history.replaceState(null, '', u); }
     }
 
+    // Native select mirrors the swatch radios (the radios stay the form field).
+    const sel = $('[data-hb-select]', el);
+    if (sel) {
+      $$('input[name=id]', form).forEach((r) => sel.add(new Option(r.dataset.label + (r.disabled ? ' · sold out' : ''), r.value, false, r.checked)));
+      [...sel.options].forEach((o, i) => { o.disabled = $$('input[name=id]', form)[i].disabled; });
+      sel.addEventListener('change', () => {
+        const r = form.querySelector(`input[name=id][value="${sel.value}"]`);
+        if (r) { r.checked = true; paintVariant(true); }
+      });
+    }
     form.addEventListener('change', (e) => { if (e.target.name === 'id') paintVariant(true); });
+
+    // Sticky bag: "Add to bag" until this variant is in the cart, then a quantity pill.
+    const sq = $('[data-hb-sticky-qty]', el);
+    let sqLine = null;
+    function paintStickyQty() {
+      if (!sq || !sticky || !cart) return;
+      sqLine = (cart.items || []).find((it) => (it.variant_id || it.id) === vid() && !(it.properties && it.properties._bundle));
+      sticky.classList.toggle('has-qty', !!sqLine);
+      if (sqLine) $('[data-hb-sq-n]', sq).textContent = sqLine.quantity;
+      const trash = $('[data-hb-sq="-1"]', sq);
+      if (trash && sqLine) trash.setAttribute('aria-label', sqLine.quantity > 1 ? 'Remove one' : 'Remove from bag');
+    }
+    sq && sq.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-hb-sq]');
+      if (!b || !sqLine) return;
+      changeLine(sqLine.key, Math.max(0, sqLine.quantity + Number(b.dataset.hbSq)));
+    });
+    document.addEventListener('sk:cart', paintStickyQty);
     $$('[data-sk-qty]', el).forEach((b) => b.addEventListener('click', () => {
       qty.value = Math.max(1, Math.min(20, (parseInt(qty.value, 10) || 1) + Number(b.dataset.skQty)));
     }));
@@ -388,17 +350,72 @@
     if (sticky) {
       let raf2 = 0, was = null;
       const check = () => {
-        const on = atc.getBoundingClientRect().bottom < 0;
+        const r = atc.getBoundingClientRect();
+        const on = r.bottom < 0 || r.top > innerHeight; // off-screen above or below, like a bag bar
         if (on === was) return;
         was = on;
         sticky.classList.toggle('is-on', on);
         sticky.setAttribute('aria-hidden', String(!on));
         stickyBtn.tabIndex = on ? 0 : -1;
       };
-      addEventListener('scroll', () => { cancelAnimationFrame(raf2); raf2 = requestAnimationFrame(check); }, { passive: true });
+      const queue = () => { cancelAnimationFrame(raf2); raf2 = requestAnimationFrame(check); };
+      addEventListener('scroll', queue, { passive: true });
+      addEventListener('resize', queue);
       check();
     }
     paintVariant(false);
+  }
+
+
+  /* ---------------- Ritual kits (product landings + home) ---------------- */
+  function initKit(el) {
+    let data;
+    try { data = JSON.parse($('[data-hb-kit-data]', el).textContent); } catch { return; }
+    const pick = data.slots.map(() => 0);
+    const msg = $('[data-hb-kit-msg]', el);
+    const btns = $$('[data-hb-kit-add],[data-hb-kit-buy]', el);
+    const items = () => data.slots.flatMap((opts, i) => opts[pick[i]].items);
+    function paint() {
+      const its = items();
+      const total = its.reduce((t, x) => t + x.price, 0);
+      // Same as checkout: the percentage per line, rounded down to the cent.
+      const off = its.reduce((t, x) => t + Math.floor(x.price * data.pct / 100), 0);
+      $('[data-hb-kit-was]', el).textContent = money(total);
+      $('[data-hb-kit-now]', el).textContent = money(total - off);
+      data.slots.forEach((opts, i) => { const im = $(`[data-slot-img="${i}"]`, el); if (im && opts[pick[i]].img) im.src = opts[pick[i]].img; });
+    }
+    $$('select[data-slot]', el).forEach((sel) => sel.addEventListener('change', () => { pick[Number(sel.dataset.slot)] = Number(sel.value); paint(); }));
+    async function go(checkout) {
+      btns.forEach((b) => { b.disabled = true; b.setAttribute('aria-busy', 'true'); });
+      msg.textContent = ''; msg.classList.remove('is-err');
+      const lines = items().map((x) => ({ id: x.id, quantity: 1, properties: { _bundle: data.name } }));
+      try {
+        if (checkout) { await api('cart/add.js', { items: lines }); location.href = root + 'checkout'; return; }
+        await addItems(lines);
+        msg.textContent = `${data.name} is in your bag.`;
+      } catch (err) {
+        msg.textContent = err.message; msg.classList.add('is-err');
+      } finally {
+        btns.forEach((b) => { b.disabled = false; b.removeAttribute('aria-busy'); });
+      }
+    }
+    $('[data-hb-kit-add]', el).addEventListener('click', () => go(false));
+    $('[data-hb-kit-buy]', el).addEventListener('click', () => go(true));
+    paint();
+  }
+
+  /* Estimated delivery: business days from today, per the shipping policy. */
+  function initDelivery(el) {
+    const add = (n) => { const d = new Date(); let k = 0; while (k < n) { d.setDate(d.getDate() + 1); if (d.getDay() % 6) k++; } return d; };
+    const f = (d) => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    el.textContent = `${f(add(Number(el.dataset.min)))} – ${f(add(Number(el.dataset.max)))}`;
+  }
+
+  /* Cart page: quantity changes post the native cart form. */
+  function initCartPage() {
+    const form = $('[data-hb-cartform]');
+    if (!form) return;
+    form.addEventListener('change', (e) => { if (e.target.matches('[data-hb-autoupdate]')) form.requestSubmit(); });
   }
 
   /* ---------------- Home: keep only the LEZO hero from the app ---------------- */
@@ -441,9 +458,11 @@
     bindQuickAdd();
     initMenu();
     initHome();
-    $$('[data-sk-bundle]').forEach(initBundle);
     $$('[data-sk-led]').forEach(initLed);
     $$('[data-sk-pdp]').forEach(initPdp);
+    $$('[data-hb-kit]').forEach(initKit);
+    $$('[data-hb-delivery]').forEach(initDelivery);
+    initCartPage();
     paintCount();
     window.SK = { openCart, closeCart, addItems, refresh };
   }

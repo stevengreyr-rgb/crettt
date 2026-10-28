@@ -1,0 +1,56 @@
+{% comment %}
+  Section contract.
+  Full cart page (/cart). Server-rendered native cart form: quantities post to /cart,
+  "Checkout" goes to the Shopify checkout. Shows Shopify's own discount allocations.
+  @example
+  {% section 'hb-cart' %}
+{% endcomment %}
+{%- liquid
+  assign elig = 0
+  for it in cart.items
+    if it.product_id == 10372429086939 or it.product_id == 10379096785115 or it.product_id == 10378972561627
+      assign elig = elig | plus: it.quantity
+    endif
+  endfor
+-%}
+<section class="hb hb-wrap hb-cartpage" aria-labelledby="hb-cart-h">
+  <h1 class="hb-title" id="hb-cart-h">Your bag</h1>
+  {%- if cart.item_count == 0 -%}
+    <p class="hb-desc">Nothing here yet. Start with the mask, or build a ritual and save 20%.</p>
+    <p class="hb-help__btns"><a class="hb-pill hb-pill--pk" href="/#sk-shop">Shop the line-up</a> <a class="hb-pill" href="/#hb-kits">See the rituals</a></p>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" class="hb-cartpage__grid" data-hb-cartform>
+      <div>
+        {%- for it in cart.items -%}
+          <div class="hb-cline">
+            <a href="{{ it.url }}" class="hb-cline__img">{% if it.image %}{{ it.image | image_url: width: 240 | image_tag: alt: it.product.title, loading: 'lazy', width: 120, height: 120 }}{% endif %}</a>
+            <div>
+              <a class="hb-cline__t" href="{{ it.url }}">{% render 'hb-name', p: it.product %}</a>
+              {%- unless it.product.has_only_default_variant -%}<p class="hb-cline__v">{{ it.variant.title }}</p>{%- endunless -%}
+              {%- if it.properties._bundle -%}<p class="hb-cline__v">{{ it.properties._bundle }}</p>{%- endif -%}
+              {%- for a in it.line_level_discount_allocations -%}<p class="hb-cline__d">{{ a.discount_application.title }} · −{{ a.amount | money }}</p>{%- endfor -%}
+              <div class="hb-cline__row">
+                <label class="hb-vh" for="hb-q-{{ forloop.index }}">Quantity of {{ it.product.title | escape }}</label>
+                <input class="hb-cline__q" id="hb-q-{{ forloop.index }}" type="number" name="updates[]" value="{{ it.quantity }}" min="0" data-hb-autoupdate>
+                <a class="hb-cline__rm" href="{{ it.url_to_remove }}">Remove</a>
+              </div>
+            </div>
+            <p class="hb-cline__p">{% if it.final_line_price < it.original_line_price %}<s>{{ it.original_line_price | money }}</s>{% endif %}{{ it.final_line_price | money }}</p>
+          </div>
+        {%- endfor -%}
+        <noscript><button type="submit" class="hb-pill" name="update">Update bag</button></noscript>
+      </div>
+      <aside class="hb-cartpage__sum">
+        {%- if elig == 1 -%}<p class="hb-cartpage__hint">Add one more of the LEZO mask, Booster Pro or Biodance and 20% comes off both at checkout.</p>{%- endif -%}
+        <div class="hb-sumrow"><span>Subtotal</span><span>{{ cart.original_total_price | money }}</span></div>
+        {%- if cart.total_discount > 0 -%}<div class="hb-sumrow is-off"><span>Discounts</span><span>−{{ cart.total_discount | money }}</span></div>{%- endif -%}
+        <div class="hb-sumrow is-total"><span>Total</span><span>{{ cart.total_price | money }}</span></div>
+        <p class="hb-note">Free US shipping. Taxes are calculated at checkout.</p>
+        <button type="submit" name="checkout" class="hb-pill hb-pill--pk hb-buynow">Checkout</button>
+      </aside>
+    </form>
+  {%- endif -%}
+</section>
+{% schema %}
+{"name": "HB · Cart", "settings": []}
+{% endschema %}

@@ -1,0 +1,65 @@
+{% doc %}
+  Product tile for grids (home line-up, collections, search). Short names and the
+  one-line reason to buy come from the product handle; any other product falls back to
+  its own title.
+
+  @param {product} p - product to show
+  @param {string} [sizes] - image sizes attribute
+
+  @example
+  {% render 'hb-card', p: product %}
+{% enddoc %}
+{%- liquid
+  assign v = p.selected_or_first_available_variant
+  assign name = p.title
+  assign why = ''
+  assign tag = ''
+  assign quick = true
+  case p.handle
+    when 'lezo-7-color-led-face-mask'
+      assign name = 'LEZO LED Mask'
+      assign why = 'Seven light modes on a hands-free strap.'
+      assign tag = 'New'
+    when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
+      assign name = 'Booster Pro Wand'
+      assign why = 'Handheld LED wand. Pink or black.'
+      assign tag = 'New'
+      assign quick = false
+    when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca'
+      assign name = 'Biodance Collagen'
+      assign why = 'Gel pads + ampoule. The ampoule is on us.'
+      assign tag = 'Free ampoule'
+      assign quick = false
+    when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument'
+      assign name = 'Face & Neck Massager'
+      assign why = '7 colors, 3 vibration levels, a curved head.'
+  endcase
+  if p.variants.size > 1
+    assign quick = false
+  endif
+  assign img = p.featured_image
+  case p.handle
+    when 'lezo-7-color-led-face-mask'
+      assign img = images['sk-cut-lezo.png'] | default: p.featured_image
+    when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
+      assign img = images['sk-cut-booster-black.png'] | default: p.featured_image
+    when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca'
+      assign img = images['sk-cut-collagen-duo.png'] | default: p.featured_image
+    when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument'
+      assign img = images['sk-cut-neck.png'] | default: p.featured_image
+  endcase
+-%}
+<article class="hb-card">
+  <a class="hb-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+    {%- if img -%}{% render 'sk-img', img: img, sizes: '(min-width: 900px) 25vw, 50vw', alt: '', widths: '300,450,600,800' %}{%- endif -%}
+    {%- if tag != '' -%}<span class="hb-card__tag">{{ tag }}</span>{%- endif -%}
+  </a>
+  <h3 class="hb-card__name"><a href="{{ p.url }}">{{ name }}</a></h3>
+  {%- if why != '' -%}<p class="hb-card__why">{{ why }}</p>{%- endif -%}
+  <p class="hb-card__price">{% if p.price_varies %}From {% endif %}{{ v.price | money }}{% if v.compare_at_price > v.price %} <s>{{ v.compare_at_price | money }}</s>{% endif %}</p>
+  {%- if quick and v.available -%}
+    <button type="button" class="hb-pill hb-pill--pk hb-card__btn" data-sk-add='[{"id":{{ v.id }},"quantity":1}]'>Add to bag</button>
+  {%- else -%}
+    <a class="hb-pill hb-card__btn" href="{{ p.url }}">{% if v.available %}Choose{% else %}Sold out{% endif %}</a>
+  {%- endif -%}
+</article>

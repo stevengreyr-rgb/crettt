@@ -1,0 +1,16 @@
+{% comment %}
+  Section contract.
+  Not-found page with a way back into the line-up.
+  @example
+  {% section 'hb-404' %}
+{% endcomment %}
+{%- assign handles = 'lezo-7-color-led-face-mask,new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool,korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca,home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument' | split: ',' -%}
+<section class="hb hb-wrap hb-gridpage">
+  <span class="hb-new">404</span>
+  <h1 class="hb-title">This page isn’t here.</h1>
+  <p class="hb-desc">The link may be old. Everything we sell is below.</p>
+  <div class="hb-grid">{%- for h in handles -%}{%- assign pr = all_products[h] -%}{%- if pr and pr.id -%}{% render 'hb-card', p: pr %}{%- endif -%}{%- endfor -%}</div>
+</section>
+{% schema %}
+{"name": "HB · 404", "settings": []}
+{% endschema %}

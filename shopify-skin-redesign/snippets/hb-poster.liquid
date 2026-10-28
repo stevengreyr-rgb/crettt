@@ -1,0 +1,38 @@
+{% doc %}
+  Blush promo poster (pill, heavy brown title, condensed subline, product cutouts).
+  Only use it for offers that are live in the store.
+
+  @param {string} pill - small label, e.g. "Complimentary gift"
+  @param {string} title - headline; use <br> for the line break
+  @param {string} sub - one or two short lines; use <br> for the break
+  @param {string} art - cutout set: lezo, daily, complete, collagen, ceranol, neck
+  @param {string} [url] - where the poster links to
+
+  @example
+  {% render 'hb-poster', pill: 'Bundle · Save 20%', title: 'The Daily<br>Ritual', sub: 'LEZO mask + Booster Pro', art: 'daily', url: '#hb-kits' %}
+{% enddoc %}
+{%- liquid
+  assign c_lezo = images['sk-cut-lezo.png'] | image_url: width: 500
+  assign c_bk = images['sk-cut-booster-black.png'] | image_url: width: 300
+  assign c_pk = images['sk-cut-booster-pink.png'] | image_url: width: 300
+  assign c_col = images['sk-cut-collagen-duo.png'] | image_url: width: 500
+  assign c_cer = images['sk-cut-ceranol-duo.png'] | image_url: width: 500
+  assign c_neck = images['sk-cut-neck.png'] | image_url: width: 400
+-%}
+<a class="hb-poster" href="{{ url | default: '#hb-kits' }}">
+  <div class="hb-poster__c">
+    <span class="hb-poster__pill">{{ pill }}</span>
+    <p class="hb-poster__t">{{ title }}</p>
+    <p class="hb-poster__s">{{ sub }}</p>
+  </div>
+  <div class="hb-poster__art" aria-hidden="true">
+    {%- case art -%}
+      {%- when 'lezo' -%}<img src="{{ c_lezo }}" alt="" loading="lazy" style="right:6%;height:100%">
+      {%- when 'daily' -%}<img src="{{ c_lezo }}" alt="" loading="lazy" style="left:0;height:80%"><img src="{{ c_bk }}" alt="" loading="lazy" style="right:4%;height:100%">
+      {%- when 'complete' -%}<img src="{{ c_lezo }}" alt="" loading="lazy" style="left:0;height:72%;bottom:4px"><img src="{{ c_pk }}" alt="" loading="lazy" style="left:46%;height:100%;z-index:2"><img src="{{ c_col }}" alt="" loading="lazy" style="right:0;height:44%;z-index:3">
+      {%- when 'collagen' -%}<img src="{{ c_col }}" alt="" loading="lazy" style="right:2%;height:88%">
+      {%- when 'ceranol' -%}<img src="{{ c_cer }}" alt="" loading="lazy" style="right:4%;height:100%">
+      {%- when 'neck' -%}<img src="{{ c_neck }}" alt="" loading="lazy" style="right:14%;height:100%">
+    {%- endcase -%}
+  </div>
+</a>

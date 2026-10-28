@@ -1,0 +1,50 @@
+{% comment %}
+  Section contract.
+  Site footer: brand statement, shop links, help links, contact and payment note.
+  @example
+  {% section 'hb-footer' %}
+{% endcomment %}
+<footer class="hb hb-foot" aria-labelledby="hb-foot-mark">
+  <div class="hb-wrap">
+    <div class="hb-foot__top">
+      <div>
+        <p class="hb-foot__mark" id="hb-foot-mark">Sevencrush</p>
+        <p class="hb-foot__line">Four tools for skin, chosen to be used together: light, touch and hydration, at home, on your own time.</p>
+      </div>
+      <div>
+        <h2 class="hb-foot__h">Shop</h2>
+        <ul>
+          <li><a href="/products/lezo-7-color-led-face-mask">LEZO LED Mask</a></li>
+          <li><a href="/products/new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool">Booster Pro Wand</a></li>
+          <li><a href="/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca">Biodance Collagen</a></li>
+          <li><a href="/products/home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument">Face &amp; Neck Massager</a></li>
+          <li><a href="/#hb-kits">Rituals · 20% off</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="hb-foot__h">Help</h2>
+        <ul>
+          <li><a href="/pages/contact#faq">FAQ</a></li>
+          <li><a href="/policies/shipping-policy">Shipping</a></li>
+          <li><a href="/pages/contact">Contact us</a></li>
+          <li><a href="/policies/privacy-policy">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="hb-foot__h">Talk to us</h2>
+        <ul>
+          <li><a href="mailto:sevencrush.store@gmail.com">sevencrush.store@gmail.com</a></li>
+          <li><a href="https://wa.me/17042267049" target="_blank" rel="noopener">WhatsApp · +1 704 226 7049</a></li>
+          <li>Replies within a few hours</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hb-foot__base">
+      <span>© {{ 'now' | date: '%Y' }} SevenCrush · Charlotte, NC</span>
+      <span>Secure checkout · Card, PayPal, Shop Pay</span>
+    </div>
+  </div>
+</footer>
+{% schema %}
+{"name": "HB · Footer", "settings": []}
+{% endschema %}

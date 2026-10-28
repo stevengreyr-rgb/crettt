@@ -1,0 +1,13 @@
+{% assign lezo_product = all_products['lezo-7-color-led-face-mask'] %}
+<a href="#main" class="skip">{{ 'lezo.skip' | t }}</a>
+<div id="app"><main id="main" class="wrap section"><h1>{{ lezo_product.title | escape }}</h1>{{ lezo_product.description }}<a href="{{ lezo_product.url }}">{{ 'lezo.explore' | t }}</a></main></div>
+<dialog id="cart" class="cart-drawer" aria-labelledby="cart-title"></dialog>
+<dialog id="policy" aria-labelledby="policy-title"></dialog>
+<dialog id="zoom" aria-label="{{ 'lezo.image' | t }}"><button class="close" aria-label="{{ 'lezo.close' | t }}" onclick="this.closest('dialog').close()">×</button><img alt="{{ lezo_product.title | escape }}" width="1254" height="1254"></dialog>
+<div id="toast" role="status"></div>
+{%- assign lz_v = lezo_product.selected_or_first_available_variant -%}
+<script>window.LEZO_SHOPIFY={locale:{{ request.locale.iso_code | json }},available:{{ lezo_product.available | json }},cart:{{ cart | json }},price:{{ lz_v.price | divided_by: 100.0 | json }},compare:{{ lz_v.compare_at_price | default: 0 | divided_by: 100.0 | json }}};</script>
+<style>:root{--wine:{{ section.settings.accent_color }}};</style>
+{% schema %}
+{"name":"LEZO Light Studio","settings":[{"type":"color","id":"accent_color","label":"Accent color","default":"#722c3d"}],"presets":[{"name":"LEZO Light Studio"}]}
+{% endschema %}

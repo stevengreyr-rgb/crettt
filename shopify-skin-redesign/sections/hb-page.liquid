@@ -1,0 +1,45 @@
+{% comment %}
+  Section contract.
+  Pages. /pages/contact becomes the help page: channels, contact form and the FAQ
+  (#faq, linked from the header and footer). Any other page shows its own content.
+  @example
+  {% section 'hb-page' %}
+{% endcomment %}
+<section class="hb hb-wrap hb-pagewrap">
+  {%- if page.handle == 'contact' -%}
+    <span class="hb-new">Help</span>
+    <h1 class="hb-title">Talk to us</h1>
+    <p class="hb-desc">A real person answers, usually within a few hours. Tell us your order number if you have one.</p>
+    <ul class="hb-rows" style="margin-bottom:28px">
+      <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20l1.5-4A8 8 0 1 1 8 18.5L4 20Z"/></svg></span><a class="hb-link" href="https://wa.me/17042267049" target="_blank" rel="noopener">WhatsApp · +1 704 226 7049</a></li>
+      <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg></span><a class="hb-link" href="mailto:sevencrush.store@gmail.com">sevencrush.store@gmail.com</a></li>
+    </ul>
+    {%- form 'contact', class: 'hb-form' -%}
+      {%- if form.posted_successfully? -%}<p class="hb-form__ok" role="status">Thanks, your message is in. We’ll reply by email.</p>{%- endif -%}
+      {%- if form.errors -%}<div class="hb-msg is-err" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+      <label for="hb-c-name">Name</label><input id="hb-c-name" name="contact[name]" autocomplete="name" value="{{ form.name }}">
+      <label for="hb-c-email">Email</label><input id="hb-c-email" name="contact[email]" type="email" autocomplete="email" required value="{{ form.email }}">
+      <label for="hb-c-order">Order number (optional)</label><input id="hb-c-order" name="contact[order]">
+      <label for="hb-c-msg">Message</label><textarea id="hb-c-msg" name="contact[body]" rows="5" required>{{ form.body }}</textarea>
+      <button type="submit" class="hb-pill hb-pill--pk">Send message</button>
+    {%- endform -%}
+
+    <div id="faq" class="hb-acc" style="scroll-margin-top:84px">
+      <h2 class="hb-sec__h hb-sec__h--l" style="margin:48px 0 6px">FAQ</h2>
+      <details><summary>When will my order arrive?</summary><div class="hb-acc__b"><p>We ship in 1–3 business days. Delivery then takes 7–14 business days in the US, tracked from the day it leaves. Your tracking number arrives by email.</p></div></details>
+      <details><summary>Is shipping free?</summary><div class="hb-acc__b"><p>Yes, on every US order. Where we ship internationally, the rate is shown at checkout before you pay.</p></div></details>
+      <details><summary>How does the 20% ritual discount work?</summary><div class="hb-acc__b"><p>Put any two or more of the LEZO mask, the Booster Pro and Biodance pads or ampoules in your bag and 20% comes off those items automatically at checkout. It doesn’t combine with other codes; checkout keeps the single offer that saves you more.</p></div></details>
+      <details><summary>How do I get the free ampoule?</summary><div class="hb-acc__b"><p>Add Biodance gel toner pads and the ampoule in the same color. Pink pads go with the Collagen ampoule, blue pads with the Hydro Cera-Nol ampoule. The ampoule’s price comes off at checkout.</p></div></details>
+      <details><summary>Can I return something?</summary><div class="hb-acc__b"><p>You have 30 days from delivery to return unopened, unused items in their original packaging. If something arrives damaged, faulty or wrong, send us one photo within 48 hours and we’ll replace or refund it.</p></div></details>
+      <details><summary>How can I pay?</summary><div class="hb-acc__b"><p>Card, PayPal or Shop Pay, through Shopify’s secure checkout. You see the final total before you confirm.</p></div></details>
+      <details><summary>Are these medical devices?</summary><div class="hb-acc__b"><p>No. LEZO, the Booster Pro and the face and neck massager are cosmetic devices for at-home use. They’re not intended to diagnose, treat, cure or prevent any disease, and results vary.</p></div></details>
+      <details><summary>How long should a LEZO session be?</summary><div class="hb-acc__b"><p>Follow the manual in the box: it sets the session time, the eye protection and the charging and cleaning for every mode.</p></div></details>
+    </div>
+  {%- else -%}
+    <h1 class="hb-title">{{ page.title | escape }}</h1>
+    <div class="hb-acc__b hb-pagecontent">{{ page.content }}</div>
+  {%- endif -%}
+</section>
+{% schema %}
+{"name": "HB · Page", "settings": []}
+{% endschema %}

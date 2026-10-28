@@ -1,0 +1,114 @@
+{% doc %}
+  "Save with rituals" panel for the product landings. Each kit lists real variants priced
+  live from Shopify; the 20% shown is worked out the way checkout applies the automatic
+  "Ritual bundle · 20% off 2+" discount (per line, rounded down). Kits add every item in
+  one request; "Checkout" adds and goes straight to the Shopify checkout.
+
+  @example
+  {% render 'hb-kits' %}
+{% enddoc %}
+{%- liquid
+  assign lezo = all_products['lezo-7-color-led-face-mask']
+  assign booster = all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
+  assign bd = all_products['korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca']
+  assign v_lezo = lezo.selected_or_first_available_variant
+  for v in booster.variants
+    if v.id == 50957033046235
+      assign v_bk = v
+    elsif v.id == 50957033013467
+      assign v_pk = v
+    endif
+  endfor
+  for v in bd.variants
+    case v.id
+      when 50956618858715
+        assign v_pads_pink = v
+      when 50956618891483
+        assign v_amp_pink = v
+      when 50956618629339
+        assign v_pads_blue = v
+      when 50956618825947
+        assign v_amp_blue = v
+    endcase
+  endfor
+  assign kits = 'complete,daily,collagen' | split: ','
+-%}
+{%- capture o_lezo -%}{"name":"LEZO LED Mask","img":{{ images['sk-cut-lezo.png'] | image_url: width: 300 | json }},"items":[{"id":{{ v_lezo.id }},"price":{{ v_lezo.price }}}]}{%- endcapture -%}
+{%- capture o_bk -%}{"name":"Booster Pro · Black","img":{{ images['sk-cut-booster-black.png'] | image_url: width: 200 | json }},"items":[{"id":{{ v_bk.id }},"price":{{ v_bk.price }}}]}{%- endcapture -%}
+{%- capture o_pk -%}{"name":"Booster Pro · Pink","img":{{ images['sk-cut-booster-pink.png'] | image_url: width: 200 | json }},"items":[{"id":{{ v_pk.id }},"price":{{ v_pk.price }}}]}{%- endcapture -%}
+{%- capture o_bdp -%}{"name":"Pink Collagen pads + ampoule","img":{{ images['sk-cut-collagen-duo.png'] | image_url: width: 300 | json }},"items":[{"id":{{ v_pads_pink.id }},"price":{{ v_pads_pink.price }}},{"id":{{ v_amp_pink.id }},"price":{{ v_amp_pink.price }}}]}{%- endcapture -%}
+{%- capture o_bdb -%}{"name":"Blue Cera-Nol pads + ampoule","img":{{ images['sk-cut-ceranol-duo.png'] | image_url: width: 300 | json }},"items":[{"id":{{ v_pads_blue.id }},"price":{{ v_pads_blue.price }}},{"id":{{ v_amp_blue.id }},"price":{{ v_amp_blue.price }}}]}{%- endcapture -%}
+<section class="hb-kits" id="hb-kits" aria-labelledby="hb-kits-h">
+  <h2 class="hb-kits__h" id="hb-kits-h">Save with rituals</h2>
+  {%- for k in kits -%}
+    {%- liquid
+      case k
+        when 'complete'
+          assign k_name = 'The Complete Routine'
+          assign k_what = 'LEZO mask + Booster Pro wand + Biodance pads and ampoule. Everything, 20% off.'
+          assign k_vars = v_lezo.price | append: ',' | append: v_bk.price | append: ',' | append: v_pads_pink.price | append: ',' | append: v_amp_pink.price
+        when 'daily'
+          assign k_name = 'The Daily Ritual'
+          assign k_what = 'LEZO mask + Booster Pro wand.'
+          assign k_vars = v_lezo.price | append: ',' | append: v_bk.price
+        when 'collagen'
+          assign k_name = 'Light & Hydration'
+          assign k_what = 'LEZO mask + Biodance pads and ampoule.'
+          assign k_vars = v_lezo.price | append: ',' | append: v_pads_pink.price | append: ',' | append: v_amp_pink.price
+      endcase
+      assign k_total = 0
+      assign k_off = 0
+      assign k_prices = k_vars | split: ','
+      for pr in k_prices
+        assign pi = pr | plus: 0
+        assign k_total = k_total | plus: pi
+        assign line_off = pi | times: 20 | divided_by: 100
+        assign k_off = k_off | plus: line_off
+      endfor
+      assign k_final = k_total | minus: k_off
+    -%}
+    {%- capture k_json -%}{"name":{{ k_name | json }},"pct":20,"slots":[
+      [{{ o_lezo }}]
+      {%- if k == 'complete' or k == 'daily' -%},[{{ o_bk }},{{ o_pk }}]{%- endif -%}
+      {%- if k == 'complete' or k == 'collagen' -%},[{{ o_bdp }},{{ o_bdb }}]{%- endif -%}
+    ]}{%- endcapture -%}
+    <article class="hb-kit" data-hb-kit>
+      <script type="application/json" data-hb-kit-data>{{ k_json | strip_newlines }}</script>
+      <div class="hb-kit__img" aria-hidden="true">
+        {%- if k == 'complete' -%}
+          <img data-slot-img="0" src="{{ images['sk-cut-lezo.png'] | image_url: width: 300 }}" alt="" style="left:0;height:72%" loading="lazy">
+          <img data-slot-img="1" src="{{ images['sk-cut-booster-black.png'] | image_url: width: 200 }}" alt="" style="left:44%;height:100%;z-index:2" loading="lazy">
+          <img data-slot-img="2" src="{{ images['sk-cut-collagen-duo.png'] | image_url: width: 300 }}" alt="" style="right:0;height:44%;z-index:3" loading="lazy">
+        {%- elsif k == 'daily' -%}
+          <img data-slot-img="0" src="{{ images['sk-cut-lezo.png'] | image_url: width: 300 }}" alt="" style="left:0;height:78%" loading="lazy">
+          <img data-slot-img="1" src="{{ images['sk-cut-booster-black.png'] | image_url: width: 200 }}" alt="" style="right:4%;height:100%;z-index:2" loading="lazy">
+        {%- else -%}
+          <img data-slot-img="0" src="{{ images['sk-cut-lezo.png'] | image_url: width: 300 }}" alt="" style="left:0;top:0;height:76%" loading="lazy">
+          <img data-slot-img="1" src="{{ images['sk-cut-collagen-duo.png'] | image_url: width: 300 }}" alt="" style="right:0;height:58%;z-index:2" loading="lazy">
+        {%- endif -%}
+      </div>
+      <div>
+        <h3 class="hb-kit__name">{{ k_name }}</h3>
+        <p class="hb-kit__what">{{ k_what }}</p>
+        <div class="hb-kit__price"><s data-hb-kit-was>{{ k_total | money }}</s><b data-hb-kit-now>{{ k_final | money }}</b><span class="hb-save">Save 20%</span></div>
+        <div class="hb-kit__sel">
+          {%- if k == 'complete' or k == 'daily' -%}
+            <label class="hb-vh" for="hb-k-{{ k }}-1">Booster Pro finish</label>
+            <select id="hb-k-{{ k }}-1" data-slot="1"><option value="0">Booster Pro · Black</option><option value="1">Booster Pro · Pink</option></select>
+          {%- endif -%}
+          {%- if k == 'complete' or k == 'collagen' -%}
+            {%- if k == 'complete' -%}{%- assign bslot = 2 -%}{%- else -%}{%- assign bslot = 1 -%}{%- endif -%}
+            <label class="hb-vh" for="hb-k-{{ k }}-{{ bslot }}">Biodance pairing</label>
+            <select id="hb-k-{{ k }}-{{ bslot }}" data-slot="{{ bslot }}"><option value="0">Biodance · Pink Collagen</option><option value="1">Biodance · Blue Cera-Nol</option></select>
+          {%- endif -%}
+        </div>
+        <div class="hb-kit__btns">
+          <button type="button" class="hb-pill" data-hb-kit-add>Add kit</button>
+          <button type="button" class="hb-pill hb-pill--pk" data-hb-kit-buy>Checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+        </div>
+        <p class="hb-kit__msg" data-hb-kit-msg role="status"></p>
+      </div>
+    </article>
+  {%- endfor -%}
+  <p class="hb-note" style="margin:14px 4px 0">20% comes off automatically at checkout on any 2 or more of the LEZO mask, Booster Pro and Biodance pads or ampoules. It doesn’t stack with other codes; checkout keeps the single offer that saves you more.</p>
+</section>

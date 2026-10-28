@@ -1,0 +1,15 @@
+{% doc %}
+  Outputs the short display name of a product (the catalog titles are long supplier titles).
+
+  @param {product} p - product
+
+  @example
+  {% render 'hb-name', p: item.product %}
+{% enddoc %}
+{%- case p.handle -%}
+  {%- when 'lezo-7-color-led-face-mask' -%}LEZO LED Mask
+  {%- when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool' -%}Booster Pro Wand
+  {%- when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca' -%}Biodance Collagen
+  {%- when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument' -%}Face &amp; Neck Massager
+  {%- else -%}{{ p.title | escape }}
+{%- endcase -%}

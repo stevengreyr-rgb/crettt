@@ -1,157 +1,34 @@
 {% comment %}
   Section contract.
-  Home, directly under the LEZO hero: short introduction of the line-up and the six product
-  cards. Every card is a real catalog product or variant, priced live from Shopify.
+  Home, under the LEZO hero: the line-up. One tile per SEVENCRUSH skincare product,
+  priced live, with quick add where the product has a single variant.
   @example
   <!-- templates/index.json → "sk_products" -->
 {% endcomment %}
-{%- liquid
-  assign lezo = all_products['lezo-7-color-led-face-mask']
-  assign booster = all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
-  assign bd = all_products['korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca']
-  assign neck = all_products['home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument']
-  for v in bd.variants
-    case v.id
-      when 50956618858715
-        assign v_pads_pink = v
-      when 50956618891483
-        assign v_amp_pink = v
-      when 50956618629339
-        assign v_pads_blue = v
-      when 50956618825947
-        assign v_amp_blue = v
-    endcase
-  endfor
-  assign cards = 'lezo,booster,pads_pink,pads_blue,ampoule,neck' | split: ','
--%}
-<section class="sk sk-sect" id="sk-shop" aria-labelledby="sk-shop-title">
-  <div class="sk-wrap">
-    <div class="sk-head">
-      <div>
-        <span class="sk-eyebrow">{{ section.settings.eyebrow | escape }}</span>
-        <h2 id="sk-shop-title">{{ section.settings.heading }}</h2>
-      </div>
-      <p class="sk-lede">{{ section.settings.text | escape }}</p>
+{%- assign handles = 'lezo-7-color-led-face-mask,new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool,korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca,home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument' | split: ',' -%}
+<section class="hb hb-sec" id="sk-shop" aria-labelledby="hb-lineup-h">
+  <div class="hb-wrap">
+    <div class="hb-sec__head">
+      <span class="hb-new">{{ section.settings.kicker | escape }}</span>
+      <h2 class="hb-sec__h" id="hb-lineup-h">{{ section.settings.heading | escape }}</h2>
+      <p class="hb-sec__lede">{{ section.settings.text | escape }}</p>
     </div>
-    <div class="sk-cards">
-      {%- for key in cards -%}
-        {%- liquid
-          assign c_tag = ''
-          assign c_add = ''
-          assign c_cta = 'Add to cart'
-          case key
-            when 'lezo'
-              assign c_prod = lezo
-              assign c_var = lezo.selected_or_first_available_variant
-              assign c_img = section.settings.img_lezo | default: images['sc-v3-mask-pedestal.png']
-              assign c_kick = 'LED face mask'
-              assign c_title = 'LEZO 7-Color LED Mask'
-              assign c_why = 'Seven light modes and a hands-free strap, so you can lie back while it runs.'
-              assign c_url = lezo.url
-              capture c_add
-                echo '[{"id":' | append: c_var.id | append: ',"quantity":1}]'
-              endcapture
-            when 'booster'
-              assign c_prod = booster
-              assign c_var = booster.selected_or_first_available_variant
-              assign c_img = section.settings.img_booster | default: images['lz-booster-cheek.png']
-              assign c_kick = 'Handheld LED wand'
-              assign c_title = 'Booster Pro Wand'
-              assign c_why = 'A rechargeable wand with selectable light colors, in pink or black.'
-              assign c_url = booster.url
-              assign c_cta = 'Choose finish'
-            when 'pads_pink'
-              assign c_prod = bd
-              assign c_var = v_pads_pink
-              assign c_img = section.settings.img_pads_pink | default: images['lz-pads-pink.png']
-              assign c_kick = 'Biodance · pink'
-              assign c_title = 'Collagen Gel Toner Pads'
-              assign c_why = 'Gel pads for a fresh, hydrated feel. Add the pink ampoule and it’s free.'
-              assign c_url = bd.url | append: '?variant=' | append: v_pads_pink.id
-              assign c_tag = 'Ampoule free'
-              assign c_cta = 'Add pads + free ampoule'
-              capture c_add
-                echo '[{"id":' | append: v_pads_pink.id | append: ',"quantity":1},{"id":' | append: v_amp_pink.id | append: ',"quantity":1}]'
-              endcapture
-            when 'pads_blue'
-              assign c_prod = bd
-              assign c_var = v_pads_blue
-              assign c_img = section.settings.img_pads_blue | default: images['lz2-pads-blue.png']
-              assign c_kick = 'Biodance · blue'
-              assign c_title = 'Cera-Nol Gel Toner Pads'
-              assign c_why = 'The blue pairing for comfort and moisture. Add the blue ampoule and it’s free.'
-              assign c_url = bd.url | append: '?variant=' | append: v_pads_blue.id
-              assign c_tag = 'Ampoule free'
-              assign c_cta = 'Add pads + free ampoule'
-              capture c_add
-                echo '[{"id":' | append: v_pads_blue.id | append: ',"quantity":1},{"id":' | append: v_amp_blue.id | append: ',"quantity":1}]'
-              endcapture
-            when 'ampoule'
-              assign c_prod = bd
-              assign c_var = v_amp_pink
-              assign c_img = section.settings.img_ampoule | default: images['lz-ampoule-pink.png']
-              assign c_kick = 'Biodance · pink or blue'
-              assign c_title = 'Collagen Ampoules'
-              assign c_why = 'A lightweight dropper step for cleansed skin, after the pads.'
-              assign c_url = bd.url | append: '?variant=' | append: v_amp_pink.id
-              assign c_cta = 'Choose ampoule'
-            when 'neck'
-              assign c_prod = neck
-              assign c_var = neck.selected_or_first_available_variant
-              assign c_img = section.settings.img_neck | default: images['sc-ritual-cover.jpg']
-              assign c_kick = 'Face & neck device'
-              assign c_title = 'LED Face & Neck Massager'
-              assign c_why = 'Seven light colors, seven modes and three vibration levels on a curved head.'
-              assign c_url = neck.url
-              capture c_add
-                echo '[{"id":' | append: c_var.id | append: ',"quantity":1}]'
-              endcapture
-          endcase
-        -%}
-        {%- if c_var -%}
-        <article class="sk-card">
-          <a class="sk-card__media" href="{{ c_url }}" tabindex="-1" aria-hidden="true"{% if key == 'neck' %} style="--pos:28% 50%"{% endif %}>
-            {% render 'sk-img', img: c_img, sizes: '(min-width: 900px) 30vw, 50vw', alt: c_img.alt, widths: '300,450,600,800,1000' %}
-            {%- if c_tag != '' -%}<span class="sk-card__tag">{{ c_tag }}</span>{%- endif -%}
-          </a>
-          <div class="sk-card__body">
-            <span class="sk-card__kicker">{{ c_kick }}</span>
-            <h3 class="sk-card__title"><a href="{{ c_url }}">{{ c_title }}</a></h3>
-            <p class="sk-card__why">{{ c_why }}</p>
-            <div class="sk-card__row">
-              <span class="sk-price">
-                {%- if key == 'ampoule' -%}From {% endif -%}
-                {{ c_var.price | money }}
-                {%- if c_var.compare_at_price > c_var.price -%}<s>{{ c_var.compare_at_price | money }}</s>{%- endif -%}
-              </span>
-              {%- if c_add != '' -%}
-                <button type="button" class="sk-btn sk-card__add" data-sk-add='{{ c_add | strip }}' {% unless c_var.available %}disabled{% endunless %}>{% if c_var.available %}{{ c_cta }}{% else %}Sold out{% endif %}</button>
-              {%- else -%}
-                <a class="sk-btn sk-btn--ghost sk-card__add" href="{{ c_url }}">{{ c_cta }}</a>
-              {%- endif -%}
-            </div>
-          </div>
-        </article>
-        {%- endif -%}
+    <div class="hb-grid">
+      {%- for h in handles -%}
+        {%- assign pr = all_products[h] -%}
+        {%- if pr and pr.id -%}{% render 'hb-card', p: pr %}{%- endif -%}
       {%- endfor -%}
     </div>
   </div>
 </section>
-<style>#sk-shop .sk-card__media[style] img{object-position:var(--pos)}</style>
 {% schema %}
 {
-  "name": "SK · Six product cards",
+  "name": "HB · Line-up",
   "settings": [
-    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The line-up"},
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Light, touch and <em>collagen.</em>"},
-    {"type": "textarea", "id": "text", "label": "Intro", "default": "An LED mask, a handheld wand, a face and neck massager, and Biodance collagen pads and ampoules. Each works on its own. Pair any two of the mask, the wand and the collagen steps and you save 20%."},
-    {"type": "image_picker", "id": "img_lezo", "label": "LEZO card image"},
-    {"type": "image_picker", "id": "img_booster", "label": "Booster Pro card image"},
-    {"type": "image_picker", "id": "img_pads_pink", "label": "Collagen pads card image"},
-    {"type": "image_picker", "id": "img_pads_blue", "label": "Cera-Nol pads card image"},
-    {"type": "image_picker", "id": "img_ampoule", "label": "Ampoules card image"},
-    {"type": "image_picker", "id": "img_neck", "label": "Face & neck card image"}
+    {"type": "text", "id": "kicker", "label": "Kicker", "default": "The line-up"},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Four tools. One routine."},
+    {"type": "textarea", "id": "text", "label": "Intro", "default": "An LED mask for the whole face, a wand for the details, a massager shaped for the neck, and Biodance collagen to finish. Pair any two of the mask, the wand and Biodance and 20% comes off at checkout."}
   ],
-  "presets": [{"name": "SK · Six product cards"}]
+  "presets": [{"name": "HB · Line-up"}]
 }
 {% endschema %}

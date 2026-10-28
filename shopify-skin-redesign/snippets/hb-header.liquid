@@ -1,0 +1,40 @@
+{% doc %}
+  Site header for every SEVENCRUSH page: offer strip, pink bar with menu, search,
+  wordmark, account and bag (opens the sk cart drawer), plus the mobile menu.
+
+  @example
+  {% render 'hb-header' %}
+{% enddoc %}
+<div class="hb">
+  <p class="hb-strip">Any two of the mask, the wand or Biodance: <b>20% off</b> at checkout · Free US shipping</p>
+  <header class="hb-head">
+    <div class="hb-wrap hb-head__in">
+      <div class="hb-head__l">
+        <button type="button" class="hb-ico" data-sk-menu aria-controls="hb-menu" aria-expanded="false" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a class="hb-ico" href="{{ routes.search_url }}" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></svg>
+        </a>
+      </div>
+      <a class="hb-logo" href="{{ routes.root_url }}" aria-label="SEVENCRUSH home">Sevencrush</a>
+      <div class="hb-head__r">
+        <a class="hb-ico" href="{{ routes.account_url }}" aria-label="Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+        </a>
+        <button type="button" class="hb-ico" data-sk-cart-open aria-label="Open bag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span class="hb-bubble" data-sk-count>{{ cart.item_count }}</span>
+        </button>
+      </div>
+    </div>
+    <nav class="hb-menu" id="hb-menu" aria-label="Main">
+      <a href="/products/lezo-7-color-led-face-mask">LEZO LED Mask</a>
+      <a href="/products/new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool">Booster Pro Wand</a>
+      <a href="/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca">Biodance Collagen</a>
+      <a href="/products/home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument">Face &amp; Neck Massager</a>
+      <a href="/#hb-kits">Rituals · 20% off</a>
+      <a href="/pages/contact#faq">Help &amp; FAQ</a>
+    </nav>
+  </header>
+</div>

@@ -1,34 +1,63 @@
 {%- liquid
-  # SEVENCRUSH skin: the four skincare products render the sk product landing.
-  assign sk_handles = 'lezo-7-color-led-face-mask,new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool,korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca,home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument' | split: ','
-  assign sk_pdp = false
-  if request.page_type == 'product' and sk_handles contains product.handle
-    assign sk_pdp = true
-  endif
+  # SEVENCRUSH: one design system ("hb") for every storefront route except blogs,
+  # gift cards and the password page, which keep their original templates below.
+  assign hb = false
+  case request.page_type
+    when 'index', 'product', 'cart', 'collection', 'list-collections', 'search', 'page', 'policy', '404'
+      assign hb = true
+  endcase
 -%}
-{% if sk_pdp %}
+{% if hb %}
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
-<title>{{ page_title | escape }} — SEVENCRUSH</title>
-<meta name="description" content="{{ product.description | strip_html | strip_newlines | truncate: 155 | escape }}">
+<meta name="theme-color" content="#d8457f">
+<title>{% if request.page_type == 'index' %}SEVENCRUSH — LED masks, skin tools and collagen care{% else %}{{ page_title | escape }} — SEVENCRUSH{% endif %}</title>
+{%- liquid
+  if request.page_type == 'product'
+    assign hb_desc = product.description | strip_html | strip_newlines | truncate: 155
+  elsif request.page_type == 'index'
+    assign hb_desc = 'The LEZO 7-color LED mask, the Booster Pro wand and Biodance collagen pads and ampoules. Any two together are 20% off. Free US shipping.'
+  else
+    assign hb_desc = page_description | default: 'SEVENCRUSH: at-home LED and collagen skincare. Free US shipping.'
+  endif
+-%}
+<meta name="description" content="{{ hb_desc | escape }}">
 <link rel="canonical" href="{{ canonical_url }}">
-<meta property="og:type" content="product"><meta property="og:title" content="{{ product.title | escape }}"><meta property="og:url" content="{{ canonical_url }}">
-{%- if product.featured_image -%}<meta property="og:image" content="https:{{ product.featured_image | image_url: width: 1200 }}">{%- endif -%}
+<meta property="og:site_name" content="SEVENCRUSH"><meta property="og:title" content="{{ page_title | escape }}"><meta property="og:description" content="{{ hb_desc | escape }}"><meta property="og:url" content="{{ canonical_url }}">
+{%- if request.page_type == 'product' and product.featured_image -%}<meta property="og:type" content="product"><meta property="og:image" content="https:{{ product.featured_image | image_url: width: 1200 }}">{%- else -%}<meta property="og:image" content="https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-hero-2026.webp?v=1792897033">{%- endif -%}
 <link rel="icon" type="image/svg+xml" href="{{ 'lezo-favicon.svg' | asset_url }}">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=Archivo+Black&family=Archivo+Narrow:wght@600;700&family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+{%- if request.page_type == 'index' -%}
+{{ 'lezo-studio.css' | asset_url | stylesheet_tag }}
+{{ 'lezo-premium.css' | asset_url | stylesheet_tag }}
+<script>window.LEZO_PX={turn:{{ 'lezo-turn.mp4' | asset_url | json }},poster:{{ 'lezo-turn-poster.webp' | asset_url | json }}};</script>
+<script src="{{ 'lezo-studio.js' | asset_url }}" defer></script>
+<script src="{{ 'lezo-premium.js' | asset_url }}" defer></script>
+{%- endif -%}
 {{ 'sk.css' | asset_url | stylesheet_tag }}
+{{ 'hb.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'sk.js' | asset_url }}" defer></script>
 {{ content_for_header }}
-<script type="application/ld+json">{{ product | structured_data }}</script>
+{%- if request.page_type == 'product' -%}<script type="application/ld+json">{{ product | structured_data }}</script>{%- endif -%}
 </head>
-<body class="sk-page" style="margin:0;background:#fff">
-{% render 'sk-header' %}
-<main id="MainContent">{% section 'sk-product' %}</main>
-{% section 'sk-footer' %}
+<body class="hb-page{% if request.page_type == 'index' %} sk-home{% endif %}">
+<a class="hb-skip" href="#MainContent">Skip to content</a>
+{% render 'hb-header' %}
+<main id="MainContent" tabindex="-1">
+{%- case request.page_type -%}
+  {%- when 'product' -%}{% section 'sk-product' %}
+  {%- when 'cart' -%}{% section 'hb-cart' %}
+  {%- when 'collection', 'search', 'list-collections' -%}{% section 'hb-grid' %}
+  {%- when 'page' -%}{% section 'hb-page' %}
+  {%- when '404' -%}{% section 'hb-404' %}
+  {%- when 'policy' -%}<div class="hb hb-wrap hb-policy">{{ content_for_layout }}</div>
+  {%- else -%}{{ content_for_layout }}
+{%- endcase -%}
+</main>
+{% section 'hb-footer' %}
 {% render 'sk-cart-drawer' %}
 </body>
 </html>

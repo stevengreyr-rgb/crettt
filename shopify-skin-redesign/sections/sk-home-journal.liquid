@@ -1,7 +1,7 @@
 {% comment %}
   Section contract.
-  Home: community and editorial. Three practical routine notes that open in place (the
-  store blog has no articles yet) and the real support channels. No invented reviews.
+  Home: routine notes taken from the product instructions, plus the real support channels.
+  No invented reviews.
   @example
   <!-- templates/index.json → "sk_journal" -->
 {% endcomment %}
@@ -10,79 +10,58 @@
   assign img_2 = section.settings.image_2 | default: images['sc-v3-pads.png']
   assign img_3 = section.settings.image_3 | default: images['lz-ritual-ampoules.png']
 -%}
-<section class="sk sk-sect" id="sk-journal" aria-labelledby="sk-journal-title">
-  <div class="sk-wrap">
-    <div class="sk-head">
-      <div>
-        <span class="sk-eyebrow">{{ section.settings.eyebrow | escape }}</span>
-        <h2 id="sk-journal-title">{{ section.settings.heading }}</h2>
-      </div>
-      <p class="sk-lede">{{ section.settings.text | escape }}</p>
+<section class="hb hb-sec" id="sk-journal" aria-labelledby="hb-notes-h">
+  <div class="hb-wrap">
+    <div class="hb-sec__head">
+      <span class="hb-new">{{ section.settings.kicker | escape }}</span>
+      <h2 class="hb-sec__h" id="hb-notes-h">{{ section.settings.heading | escape }}</h2>
+      <p class="hb-sec__lede">{{ section.settings.text | escape }}</p>
     </div>
-    <div class="sk-notes">
-      <article class="sk-note">
-        <div class="sk-frame">{% render 'sk-img', img: img_1, sizes: '(min-width: 900px) 30vw, 82vw' %}</div>
-        <span class="sk-eyebrow sk-eyebrow--muted">Note 01 · Order of steps</span>
+    <div class="hb-notes">
+      <article class="hb-note-card">
+        <div class="hb-frame">{% render 'sk-img', img: img_1, sizes: '(min-width: 900px) 30vw, 82vw' %}</div>
+        <span class="hb-note-card__k">Order of steps</span>
         <h3>Light first, then collagen.</h3>
         <p>LEZO goes on clean, dry skin, so it comes before anything you leave on your face.</p>
-        <details><summary>The full order</summary>
-          <ol>
-            <li>Cleanse and dry your face.</li>
-            <li>LEZO mask, for the session time in its manual.</li>
-            <li>Booster Pro, following its manual for the eye area.</li>
-            <li>Biodance gel pad, then the ampoule.</li>
-          </ol>
-        </details>
+        <details><summary>The full order</summary><ol><li>Cleanse and dry.</li><li>LEZO, for the session time in its manual.</li><li>Booster Pro, following its manual around the eyes.</li><li>Biodance gel pad, then the ampoule.</li></ol></details>
       </article>
-      <article class="sk-note">
-        <div class="sk-frame">{% render 'sk-img', img: img_2, sizes: '(min-width: 900px) 30vw, 82vw' %}</div>
-        <span class="sk-eyebrow sk-eyebrow--muted">Note 02 · Pink or blue</span>
-        <h3>Pick a pairing and stay with it.</h3>
-        <p>Pink pairs the Collagen pads with the Collagen ampoule. Blue pairs the Cera-Nol pads with the Hydro Cera-Nol ampoule.</p>
-        <details><summary>Before the first use</summary>
-          <ol>
-            <li>Patch-test on a small area first.</li>
-            <li>Follow the label instructions on the jar and bottle.</li>
-            <li>Stop using it if irritation occurs.</li>
-          </ol>
-        </details>
+      <article class="hb-note-card">
+        <div class="hb-frame">{% render 'sk-img', img: img_2, sizes: '(min-width: 900px) 30vw, 82vw' %}</div>
+        <span class="hb-note-card__k">Pink or blue</span>
+        <h3>Pick a pairing. Stay with it.</h3>
+        <p>Pink is Collagen pads with the Collagen ampoule. Blue is Cera-Nol pads with the Hydro Cera-Nol ampoule.</p>
+        <details><summary>Before the first use</summary><ol><li>Patch-test on a small area.</li><li>Follow the label on the jar and bottle.</li><li>Stop if irritation occurs.</li></ol></details>
       </article>
-      <article class="sk-note">
-        <div class="sk-frame">{% render 'sk-img', img: img_3, sizes: '(min-width: 900px) 30vw, 82vw' %}</div>
-        <span class="sk-eyebrow sk-eyebrow--muted">Note 03 · Device care</span>
+      <article class="hb-note-card">
+        <div class="hb-frame">{% render 'sk-img', img: img_3, sizes: '(min-width: 900px) 30vw, 82vw' %}</div>
+        <span class="hb-note-card__k">Device care</span>
         <h3>Charged, clean, stored dry.</h3>
-        <p>All three devices are rechargeable. A little care keeps them ready for the next session.</p>
-        <details><summary>Care basics</summary>
-          <ol>
-            <li>Recharge with the cable supplied in the box.</li>
-            <li>Clean each device the way its manual describes.</li>
-            <li>Keep devices away from water unless the instructions allow it.</li>
-          </ol>
-        </details>
+        <p>The mask, the wand and the massager are all rechargeable. A minute of care keeps them ready.</p>
+        <details><summary>Care basics</summary><ol><li>Recharge with the cable in the box.</li><li>Clean each device the way its manual describes.</li><li>Keep them away from water unless the instructions allow it.</li></ol></details>
       </article>
     </div>
-    <div class="sk-follow">
+    <div class="hb-help">
       <p>{{ section.settings.follow_text | escape }}</p>
-      <div style="display:flex;flex-wrap:wrap;gap:10px">
-        <a class="sk-btn" href="{{ section.settings.whatsapp | escape }}" target="_blank" rel="noopener">WhatsApp us</a>
-        <a class="sk-btn sk-btn--ghost" href="mailto:{{ shop.email }}">Email</a>
+      <div class="hb-help__btns">
+        <a class="hb-pill hb-pill--pk" href="{{ section.settings.whatsapp | escape }}" target="_blank" rel="noopener">WhatsApp us</a>
+        <a class="hb-pill" href="/pages/contact#faq">Read the FAQ</a>
       </div>
     </div>
   </div>
 </section>
 {% schema %}
 {
-  "name": "SK · Community & notes",
+  "name": "HB · Routine notes",
   "settings": [
-    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Routine notes"},
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Questions we get <em>every week.</em>"},
-    {"type": "textarea", "id": "text", "label": "Text", "default": "Short, practical answers on order of use, pairings and device care, taken from the product instructions."},
+    {"type": "text", "id": "kicker", "label": "Kicker", "default": "Routine notes"},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "What we get asked most."},
+    {"type": "textarea", "id": "text", "label": "Text", "default": "Order of use, pairings and device care, straight from the product instructions."},
     {"type": "image_picker", "id": "image_1", "label": "Note 1 image"},
     {"type": "image_picker", "id": "image_2", "label": "Note 2 image"},
     {"type": "image_picker", "id": "image_3", "label": "Note 3 image"},
     {"type": "text", "id": "follow_text", "label": "Support line", "default": "Not sure where to start? Tell us about your routine and we’ll point you to the right tool."},
     {"type": "text", "id": "whatsapp", "label": "WhatsApp link", "default": "https://wa.me/17042267049"}
   ],
-  "presets": [{"name": "SK · Community & notes"}]
+  "presets": [{"name": "HB · Routine notes"}]
 }
 {% endschema %}
