@@ -1,0 +1,102 @@
+{% if request.page_type == 'index' %}
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#faf8f5"><title>{{ 'lezo_home.page_title' | t }}</title><meta name="description" content="{{ 'lezo_home.page_description' | t | escape }}"><link rel="canonical" href="{{ canonical_url }}"><link rel="icon" href="{{ 'lezo-favicon.svg' | asset_url }}"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">{{ 'lezo-home.css' | asset_url | stylesheet_tag }}<script src="{{ 'lezo-home.js' | asset_url }}" defer></script>{{ content_for_header }}<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">{{ 'seven-pink.css' | asset_url | stylesheet_tag }}<script src="{{ 'seven-pink.js' | asset_url }}" defer></script>{{ 'seven-ritual.css' | asset_url | stylesheet_tag }}<script src="{{ 'seven-ritual.js' | asset_url }}" defer></script></head><body>{{ content_for_layout }}{% render 'seven-ritual-shop' %}{% render 'seven-welcome' %}</body></html>
+{% else %}
+{% if request.page_type == 'index' or product.handle == 'lezo-7-color-led-face-mask' or page.handle == 'lezo-delivery' or page.handle == 'lezo-returns' or request.page_type == 'cart' %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>{% if request.page_type == 'index' %}{{ 'lezo.title' | t }}{% else %}{{ page_title | escape }} — LEZO{% endif %}</title>
+<meta name="description" content="{{ 'lezo.description' | t | escape }}">
+<link rel="canonical" href="{{ canonical_url }}">
+<meta property="og:title" content="{{ page_title | escape }}"><meta property="og:description" content="{{ 'lezo.description' | t | escape }}"><meta property="og:image" content="https://cdn.shopify.com/s/files/1/0833/3485/6923/files/lezo-hero-2026.webp?v=1792897033">
+<link rel="icon" type="image/svg+xml" href="{{ 'lezo-favicon.svg' | asset_url }}">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+{{ 'lezo-studio.css' | asset_url | stylesheet_tag }}
+{{ 'lezo-premium.css' | asset_url | stylesheet_tag }}
+<script>window.LEZO_PX={turn:{{ 'lezo-turn.mp4' | asset_url | json }},poster:{{ 'lezo-turn-poster.webp' | asset_url | json }}};</script>
+<script>window.SEVEN_IMAGES={hero:{{ 'seven-ugc-hero.webp' | asset_url | json }},trio:{{ 'seven-ugc-trio.webp' | asset_url | json }}};</script><script src="{{ 'lezo-studio.js' | asset_url }}" defer></script>
+<script src="{{ 'lezo-premium.js' | asset_url }}" defer></script>
+{{ content_for_header }}
+{% if request.page_type == 'product' %}<script type="application/ld+json">{{ product | structured_data }}</script>{% endif %}
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">{{ 'seven-pink.css' | asset_url | stylesheet_tag }}<script src="{{ 'seven-pink.js' | asset_url }}" defer></script>{{ 'seven-ritual.css' | asset_url | stylesheet_tag }}<script src="{{ 'seven-ritual.js' | asset_url }}" defer></script></head><body>
+{% if request.page_type == 'index' %}{{ content_for_layout }}{% else %}{% section 'lezo-experience' %}{% if product.handle == 'lezo-7-color-led-face-mask' %}{% render 'seven-ritual-shop' %}{% endif %}{% endif %}
+{% render 'seven-welcome' %}</body></html>
+{% else %}
+{% liquid
+  assign sevencrush_audio_page = false
+  if request.page_type == 'index' or request.page_type == 'cart' or product.handle == 'sevencrush-the-everyday-earbuds'
+    assign sevencrush_audio_page = true
+  endif
+%}
+{% if sevencrush_audio_page %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ 'sevencrush_audio.copy.t001' | t }}</title>
+<meta name="description" content="{{ 'sevencrush_audio.copy.t002' | t }}">
+<meta name="theme-color" content="#ffffff"><meta property="og:title" content="{{ 'sevencrush_audio.copy.t001' | t }}"><meta property="og:description" content="{{ 'sevencrush_audio.copy.t003' | t }}">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='white'/%3E%3Ctext x='16' y='47' font-size='48' font-family='Georgia' fill='black'%3E7%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="https://cdn.shopify.com/s/files/1/0833/3485/6923/files/sevencrish-earbuds-white-hero.png?v=1792357062" as="image"><link rel="stylesheet" href="{{ 'sevencrush-audio.css' | asset_url }}">
+<script defer src="{{ 'sevencrush-audio.js' | asset_url }}"></script>
+
+<link rel="canonical" href="{{ canonical_url }}">
+{{ content_for_header }}
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">{{ 'seven-pink.css' | asset_url | stylesheet_tag }}<script src="{{ 'seven-pink.js' | asset_url }}" defer></script></head>
+<body data-sevencrush-page="{{ request.page_type }}">
+{% if request.page_type == 'index' %}
+{{ content_for_layout }}
+{% else %}
+{% section 'sevencrush-audio' %}
+{% endif %}
+{% render 'sc-earbuds-extras' %}
+{% render 'seven-welcome' %}</body></html>
+{% else %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#e9e9e7">
+<title>{% if request.page_type == 'index' %}Store 7 — Direct supplier contacts in China and Hong Kong{% else %}{{ page_title | escape }} | Store 7{% endif %}</title>
+<meta name="description" content="{% if page.handle contains 'store7-' %}{{ page.content | strip_html | truncate: 160 | escape }}{% elsif request.page_type == 'index' %}12 supplier contacts in China and Hong Kong in one PDF, with WhatsApp links and a first message ready to send. The catalogs cover 200+ brands.{% else %}{{ 's7.meta.description' | t | escape }}{% endif %}">
+<link rel="canonical" href="{{ canonical_url }}">
+{% render 's7n-fonts' %}
+{{ 'hanken-variable.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{{ 's7-new.css' | asset_url | stylesheet_tag }}
+{{ 's7-editorial.css' | asset_url | stylesheet_tag }}
+{{ 's7-poster.css' | asset_url | stylesheet_tag }}
+<script src="{{ 's7-new.js' | asset_url }}" defer></script>
+<script src="{{ 's7-editorial.js' | asset_url }}" defer></script>
+<script src="{{ 's7-poster.js' | asset_url }}" defer></script>
+{{ content_for_header }}
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">{{ 'seven-pink.css' | asset_url | stylesheet_tag }}<script src="{{ 'seven-pink.js' | asset_url }}" defer></script></head>
+<body class="s7p{% if request.page_type == 'index' or page.handle == 'suppliers' %} s7e-home{% endif %}">
+<a class="s7-skip" href="#MainContent">{{ 's7.nav.skip' | t }}</a>
+<main id="MainContent" tabindex="-1">
+{% if request.page_type == 'policy' %}
+{% render 's7n-nav' %}
+{{ content_for_layout }}
+{% render 's7n-footer' %}
+{% elsif request.page_type == 'index' or request.page_type == 'cart' or request.page_type == '404' %}
+{{ content_for_layout }}
+{% else %}
+{% section 's7-experience' %}
+{% endif %}
+</main>
+{% render 'seven-welcome' %}</body>
+</html>
+
+
+{% endif %}
+
+
+{% endif %}
+
+
+{% endif %}
+
