@@ -1,7 +1,7 @@
 {% comment %}
   Section contract.
-  Home: LEZO color explorer (three LED channels behind seven modes, from the product
-  description) and the five-step guide the hero's "How to use" link lands on (#como-usar).
+  Home: LEZO color explorer (the six light colors, with the wavelengths the maker lists) and
+  the five-step guide the hero's "How to use" link lands on (#como-usar).
   @example
   <!-- templates/index.json → "sk_led" -->
 {% endcomment %}
@@ -14,8 +14,8 @@
         <span class="hb-new" style="margin-top:0">{{ section.settings.kicker | escape }}</span>
         <h2 class="hb-sec__h hb-sec__h--l" id="hb-led-h">{{ section.settings.heading | escape }}</h2>
         <p class="hb-sec__lede hb-sec__lede--l">{{ section.settings.text | escape }}</p>
-        <div class="hb-ledx__modes" role="group" aria-label="LEZO light modes">
-          {%- assign modes = 'Red|#e0463f|630,Green|#3acb68|520,Blue|#3975f2|470,Purple|#a25ada|630+470,Yellow|#f0c13e|630+520,Cyan|#26c5ce|470+520,White|#f3efe6|470+520+630' | split: ',' -%}
+        <div class="hb-ledx__modes" role="group" aria-label="LEZO light colors">
+          {%- assign modes = 'Red|#e0463f|630,Green|#3acb68|520,Blue|#3975f2|470,Yellow|#f0c13e|590,Purple|#a25ada|630+470,Cyan|#26c5ce|470+520' | split: ',' -%}
           {%- for m in modes -%}
             {%- assign mp = m | split: '|' -%}
             <button type="button" class="sk-mode" style="--c:{{ mp[1] }}" data-name="{{ mp[0] }}" data-c="{{ mp[1] }}" data-nm="{{ mp[2] }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{{ mp[0] }} light"><i></i></button>
@@ -23,12 +23,13 @@
         </div>
         <p class="sk-led__name" data-sk-led-name aria-live="polite">Red <em>light</em></p>
         <p class="sk-led__nm" data-sk-led-nm>630 nm channel</p>
-        <div class="sk-channels" aria-label="LED channels in use">
+        <div class="sk-channels" aria-label="Wavelength of this color" style="grid-template-columns:repeat(4,1fr)">
           <div class="sk-ch" data-ch="470"><b>470</b><span>nm</span></div>
           <div class="sk-ch" data-ch="520"><b>520</b><span>nm</span></div>
+          <div class="sk-ch" data-ch="590"><b>590</b><span>nm</span></div>
           <div class="sk-ch is-on" data-ch="630"><b>630</b><span>nm</span></div>
         </div>
-        <p class="hb-note">Photographed in blue mode. Session time and eye protection for every mode are in the manual in the box.</p>
+        <p class="hb-note">Photographed in blue mode. Session time and eye protection for every color are in the manual in the box.</p>
       </div>
     </div>
     <div id="como-usar" class="hb-steps-wrap">
@@ -49,8 +50,8 @@
   "name": "HB · LEZO explorer",
   "settings": [
     {"type": "text", "id": "kicker", "label": "Kicker", "default": "Inside LEZO"},
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Seven colors. Three LEDs."},
-    {"type": "textarea", "id": "text", "label": "Text", "default": "Every LEZO mode is a mix of the same three channels: 470, 520 and 630 nm. Tap a color to see which ones it lights."},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Six colors. One mask."},
+    {"type": "textarea", "id": "text", "label": "Text", "default": "Red, green, blue, yellow, purple and cyan. Tap a color to see it, with the wavelength behind it."},
     {"type": "image_picker", "id": "image", "label": "Image"}
   ],
   "presets": [{"name": "HB · LEZO explorer"}]

@@ -1,0 +1,145 @@
+{% comment %}
+  Section contract.
+  Home, under the cover: three editorial offer banners (photo + live copy). Every price is read
+  from Shopify, and each offer is one that checkout really applies:
+  1. LEZO mask at its sale price (variant compare-at price).
+  2. The Daily Ritual: LEZO + Booster Pro, 20% off each line ("Ritual bundle · 20% off 2+").
+  3. Biodance pink Collagen pads with the Collagen Ampoule free ("Collagen duo" BXGY).
+  Photos live in Settings › Files (sc-ed-*.png); product cutouts are the sk-cut-*.png files.
+  @example
+  <!-- templates/index.json → "editorial_offers" -->
+{% endcomment %}
+{%- liquid
+  assign mask = all_products['lezo-7-color-led-face-mask']
+  assign wand = all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
+  assign bd = all_products['korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca']
+  assign v_mask = mask.selected_or_first_available_variant
+  for v in wand.variants
+    if v.id == 50957033046235
+      assign v_bk = v
+    endif
+  endfor
+  for v in bd.variants
+    if v.id == 50956618858715
+      assign v_pads = v
+    elsif v.id == 50956618891483
+      assign v_amp = v
+    endif
+  endfor
+  assign mask_off = 0
+  if v_mask.compare_at_price > v_mask.price
+    assign mask_off = v_mask.compare_at_price | minus: v_mask.price | times: 100 | divided_by: v_mask.compare_at_price
+  endif
+  assign d_total = v_mask.price | plus: v_bk.price
+  assign d_off = v_mask.price | times: 20 | divided_by: 100
+  assign d_off2 = v_bk.price | times: 20 | divided_by: 100
+  assign d_final = d_total | minus: d_off | minus: d_off2
+  assign g_total = v_pads.price | plus: v_amp.price
+  assign ph_sizes = '(min-width: 900px) 50vw, 100vw'
+-%}
+<section class="sc-ed" aria-label="Offers">
+  <a class="sc-ed__b sc-ed__b--lezo" href="{{ mask.url }}">
+    {{ images['sc-ed-lezo-red.png'] | image_url: width: 2048 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600,2048', sizes: '100vw', alt: '', loading: 'eager', fetchpriority: 'high' }}
+    <img class="sc-ed__p sc-ed__p--mask" src="{{ images['sk-cut-lezo.png'] | image_url: width: 600 }}" alt="" loading="eager">
+    <div class="sc-ed__c">
+      <p class="sc-ed__k">LEZO LED mask</p>
+      <h2 class="sc-ed__h">Red light,<br><em>at home.</em></h2>
+      <p class="sc-ed__o"><b>{{ v_mask.price | money }}</b>{% if mask_off > 0 %}<span><s>{{ v_mask.compare_at_price | money }}</s><i>{{ mask_off }}% off</i></span>{% endif %}</p>
+      <span class="sc-ed__cta">Shop the mask</span>
+    </div>
+  </a>
+  <a class="sc-ed__b sc-ed__b--daily" href="#hb-kits">
+    {{ images['sc-ed-daily-blush.png'] | image_url: width: 1600 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600', sizes: ph_sizes, alt: '', loading: 'lazy' }}
+    <img class="sc-ed__p sc-ed__p--mask" src="{{ images['sk-cut-lezo.png'] | image_url: width: 400 }}" alt="" loading="lazy">
+    <img class="sc-ed__p sc-ed__p--wand" src="{{ images['sk-cut-booster-black.png'] | image_url: width: 300 }}" alt="" loading="lazy">
+    <div class="sc-ed__c">
+      <p class="sc-ed__k">The Daily Ritual</p>
+      <h2 class="sc-ed__h">Mask + wand,<br><em>20% off the pair.</em></h2>
+      <p class="sc-ed__o"><b>{{ d_final | money }}</b><span><s>{{ d_total | money }}</s><i>applied at checkout</i></span></p>
+      <span class="sc-ed__cta">Build the ritual</span>
+    </div>
+  </a>
+  <a class="sc-ed__b sc-ed__b--gel" href="{{ bd.url }}?variant={{ v_pads.id }}">
+    {{ images['sc-ed-biodance-gel.png'] | image_url: width: 1600 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600', sizes: ph_sizes, alt: '', loading: 'lazy' }}
+    <img class="sc-ed__p sc-ed__p--duo" src="{{ images['sk-cut-collagen-duo.png'] | image_url: width: 500 }}" alt="" loading="lazy">
+    <div class="sc-ed__c">
+      <p class="sc-ed__k">Biodance Collagen</p>
+      <h2 class="sc-ed__h">The ampoule<br><em>is on us.</em></h2>
+      <p class="sc-ed__o"><b>{{ v_pads.price | money }}</b><span><s>{{ g_total | money }}</s><i>pads + free ampoule</i></span></p>
+      <span class="sc-ed__cta">Shop the pads</span>
+    </div>
+  </a>
+</section>
+<style>
+.sc-ed{--hb-ed:"Instrument Serif","Times New Roman",serif}
+.sc-ed{display:grid;gap:12px;max-width:1440px;margin:0 auto;padding:12px;background:#fff}
+.sc-ed__b{position:relative;display:block;overflow:hidden;border-radius:22px;aspect-ratio:16/9;container-type:inline-size;text-decoration:none;isolation:isolate}
+.sc-ed__ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform 1.2s cubic-bezier(.16,1,.3,1)}
+.sc-ed__b:hover .sc-ed__ph{transform:scale(1.025)}
+.sc-ed__p{position:absolute;z-index:1;height:auto;pointer-events:none}
+.sc-ed__c{position:absolute;z-index:2}
+.sc-ed__k{margin:0 0 1.4cqi;font:800 1.55cqi/1 var(--hb-disp);letter-spacing:.22em;text-transform:uppercase}
+.sc-ed__h{margin:0;font:800 7.4cqi/.86 var(--hb-disp);text-transform:uppercase;letter-spacing:-.01em}
+.sc-ed__h em{display:inline-block;margin-top:.5cqi;font:italic 400 6.2cqi/.95 var(--hb-ed);text-transform:none;letter-spacing:-.01em}
+.sc-ed__o{display:flex;align-items:flex-end;gap:1.6cqi;margin:2.6cqi 0 0}
+.sc-ed__o b{font:800 9.6cqi/.8 var(--hb-disp);letter-spacing:-.02em}
+.sc-ed__o span{display:flex;flex-direction:column;gap:.6cqi;padding-bottom:.4cqi}
+.sc-ed__o s{font:600 1.9cqi/1 var(--hb-sans);opacity:.7}
+.sc-ed__o i{font:italic 400 2.6cqi/1 var(--hb-ed)}
+.sc-ed__cta{display:inline-flex;align-items:center;gap:1cqi;margin-top:2.6cqi;padding-bottom:.5cqi;border-bottom:.22cqi solid currentColor;font:800 1.7cqi/1 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase}
+.sc-ed__cta:after{content:"→";font-family:var(--hb-sans);font-weight:500}
+
+/* 1 · LEZO in red light */
+.sc-ed__b--lezo{background:#3a0806;color:#fff}
+.sc-ed__b--lezo .sc-ed__ph{object-position:left center}
+.sc-ed__b--lezo .sc-ed__c{left:55%;top:50%;transform:translateY(-50%);width:30%}
+.sc-ed__b--lezo .sc-ed__k{color:#ffb4a6}
+.sc-ed__b--lezo .sc-ed__h em,.sc-ed__b--lezo .sc-ed__o i{color:#ff8f7a}
+.sc-ed__b--lezo .sc-ed__p--mask{right:-3%;bottom:-10%;width:22%;transform:rotate(-9deg);filter:drop-shadow(0 0 3cqi rgba(255,40,20,.55)) drop-shadow(0 2cqi 2cqi rgba(0,0,0,.5)) brightness(.92) sepia(.25) saturate(1.4) hue-rotate(-12deg)}
+
+/* 2 · The Daily Ritual on blush */
+.sc-ed__b--daily{background:#f6dfe6;color:#1a1012}
+.sc-ed__b--daily .sc-ed__c{left:5.5%;top:7%;width:46%}
+.sc-ed__b--daily .sc-ed__h{font-size:6.3cqi}.sc-ed__b--daily .sc-ed__h em{font-size:5.3cqi}.sc-ed__b--daily .sc-ed__o{margin-top:2cqi}.sc-ed__b--daily .sc-ed__o b{font-size:7.6cqi}.sc-ed__b--daily .sc-ed__cta{margin-top:2cqi}
+.sc-ed__b--daily:before{content:"";position:absolute;left:15%;width:24%;bottom:14.6%;height:3%;border-radius:50%;background:rgba(110,50,60,.32);filter:blur(1cqi);z-index:0}
+.sc-ed__b--daily .sc-ed__k{color:#b8336a}
+.sc-ed__b--daily .sc-ed__h em,.sc-ed__b--daily .sc-ed__o i{color:#b8336a}
+.sc-ed__b--daily .sc-ed__p--mask{left:15.5%;bottom:15.2%;width:13.5%;filter:drop-shadow(0 1.4cqi 1.2cqi rgba(110,40,60,.28))}
+.sc-ed__b--daily .sc-ed__p--wand{left:30.5%;bottom:15.2%;width:6.6%;filter:drop-shadow(0 1.4cqi 1.2cqi rgba(110,40,60,.28))}
+
+/* 3 · Biodance gel */
+.sc-ed__b--gel{background:#eef0ec;color:#17191a}
+.sc-ed__b--gel .sc-ed__ph{object-position:left center}
+.sc-ed__b--gel .sc-ed__c{left:60%;top:9%;width:36%}
+.sc-ed__b--gel .sc-ed__k{color:#c04a77}
+.sc-ed__b--gel .sc-ed__h em,.sc-ed__b--gel .sc-ed__o i{color:#c04a77}
+.sc-ed__b--gel .sc-ed__p--duo{right:3%;bottom:5%;width:24%;filter:drop-shadow(0 1.6cqi 1.4cqi rgba(60,40,50,.25))}
+
+@media(min-width:900px){
+  .sc-ed{grid-template-columns:1fr 1fr;gap:14px;padding:14px}
+  .sc-ed__b--lezo{grid-column:1/-1;aspect-ratio:21/9}
+  .sc-ed__b--lezo .sc-ed__ph{object-position:0 30%}
+  .sc-ed__b--lezo .sc-ed__c{left:52%;width:28%}
+  .sc-ed__b--lezo .sc-ed__h{font-size:6.2cqi}
+  .sc-ed__b--lezo .sc-ed__h em{font-size:5.2cqi}
+  .sc-ed__b--lezo .sc-ed__o b{font-size:8cqi}
+  .sc-ed__b--lezo .sc-ed__k,.sc-ed__b--lezo .sc-ed__cta{font-size:1.3cqi}
+  .sc-ed__b--lezo .sc-ed__o s{font-size:1.6cqi}.sc-ed__b--lezo .sc-ed__o i{font-size:2.2cqi}
+  .sc-ed__b--lezo .sc-ed__p--mask{width:19%;bottom:-12%;right:-1%}
+}
+@media(max-width:899px){
+  .sc-ed__k{font-size:2.5cqi;letter-spacing:.16em}
+  .sc-ed__o s{font-size:3cqi}.sc-ed__o i{font-size:3.4cqi}
+  .sc-ed__cta{font-size:2.7cqi}
+  .sc-ed__b--gel .sc-ed__c{left:58%;width:40%}
+  .sc-ed__b--lezo .sc-ed__c{left:55%;width:31%}
+  .sc-ed__b--lezo .sc-ed__h{font-size:6.6cqi}.sc-ed__b--lezo .sc-ed__h em{font-size:5.6cqi}.sc-ed__b--lezo .sc-ed__o b{font-size:8.4cqi}
+  .sc-ed__b--lezo .sc-ed__o{flex-wrap:wrap;row-gap:1.2cqi}
+  .sc-ed__b--lezo .sc-ed__o span{flex-direction:row;align-items:baseline;gap:1.6cqi}
+  .sc-ed__b--lezo .sc-ed__p--mask{width:17%;right:-4%;bottom:-7%}
+}
+@media(prefers-reduced-motion:reduce){.sc-ed__ph{transition:none}}
+</style>
+{% schema %}
+{"name":"SC editorial offers","settings":[],"presets":[{"name":"SC editorial offers"}]}
+{% endschema %}

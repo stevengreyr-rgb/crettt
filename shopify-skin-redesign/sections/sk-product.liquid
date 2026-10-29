@@ -32,7 +32,7 @@
       assign k = 'lezo'
       assign badge = 'New'
       assign name = 'LEZO LED Mask'
-      assign desc = 'A full-face LED mask with seven light modes and an adjustable strap. Put it on, pick a color, keep your hands free.'
+      assign desc = 'A full-face LED mask with six light colors and an adjustable strap. Put it on, pick a color, keep your hands free.'
       assign gal_files = 'lezo-portrait-2026.webp,lz-mask-studio.png'
       assign gal_pick = '1,2,3,4,5'
       assign file_alts = 'Woman holding the LEZO mask beside her face'
@@ -215,19 +215,20 @@
         <p class="hb-msg" data-sk-msg role="status"></p>
       </form>
 
-      {%- unless k == 'other' -%}{% render 'hb-kits' %}{%- endunless -%}
-
-      <div class="hb-vip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8Z"/></svg>
-        <span>{% if k == 'neck' or k == 'other' %}Building a routine? The <b>mask, wand and Biodance</b> are 20% off when you buy two or more.{% else %}Pair it with the {% if k == 'lezo' %}<b>Booster Pro or Biodance</b>{% elsif k == 'booster' %}<b>LEZO mask or Biodance</b>{% else %}<b>LEZO mask or Booster Pro</b>{% endif %} and <b>20% comes off both</b> at checkout.{% endif %}</span>
-      </div>
-      <ul class="hb-rows">
+      <ul class="hb-rows" style="margin-top:14px">
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></span><span><b>Estimated delivery:</b> <span data-hb-delivery data-min="11" data-max="16">11–16 business days</span></span></li>
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7Z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg></span><span><b>Free shipping</b> on every US order, tracked</span></li>
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/></svg></span><span>Card, PayPal or Shop Pay at a secure Shopify checkout</span></li>
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 8h10a6 6 0 0 1 0 12H8M5 8l5-5M5 8l5 5"/></svg></span><span><b>30 days</b> to return unopened, unused items</span></li>
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg></span><a class="hb-link" href="/policies/shipping-policy">Shipping info</a></li>
       </ul>
+
+      <div class="hb-vip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8Z"/></svg>
+        <span>{% if k == 'neck' or k == 'other' %}Building a routine? The <b>mask, wand and Biodance</b> are 20% off when you buy two or more.{% else %}Pair it with the {% if k == 'lezo' %}<b>Booster Pro or Biodance</b>{% elsif k == 'booster' %}<b>LEZO mask or Biodance</b>{% else %}<b>LEZO mask or Booster Pro</b>{% endif %} and <b>20% comes off both</b> at checkout.{% endif %}</span>
+      </div>
+
+      {%- unless k == 'other' -%}{% render 'hb-kits' %}{%- endunless -%}
 
       <div class="hb-acc">
         <details open>
@@ -236,7 +237,7 @@
             {%- case k -%}
               {%- when 'lezo' -%}
                 <p>LEZO is the step you don’t have to hold. The white shell covers the whole face, with openings at the eyes and mouth, and the strap keeps it in place while you lie back.</p>
-                <ul><li><b>Seven light modes:</b> red, green, blue, purple, yellow, cyan and white.</li><li><b>Three LED channels</b> (470, 520 and 630 nm) behind every mode.</li><li><b>Adjustable head strap</b> for a hands-free session.</li><li><b>At home,</b> on your schedule. No appointment.</li></ul>
+                <ul><li><b>Six light colors:</b> red, green, blue, yellow, purple and cyan.</li><li><b>Wavelengths</b> listed by the maker: red 630 nm, yellow 590 nm, green 520 nm, blue 470 nm.</li><li><b>Adjustable head strap</b> for a hands-free session.</li><li><b>At home,</b> on your schedule. No appointment.</li></ul>
                 <p><em>For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Individual results vary.</em></p>
               {%- when 'booster' -%}
                 <p>A small device with a considered shape. It sits comfortably in the hand as you move it across the face, and its minimal silhouette belongs on the vanity, not in a drawer.</p>
@@ -269,7 +270,7 @@
           <summary>{% if k == 'bd' %}Ingredients{% else %}Details &amp; specs{% endif %}</summary>
           <div class="hb-acc__b">
             {%- case k -%}
-              {%- when 'lezo' -%}<dl><div><dt>Type</dt><dd>Full-face LED mask</dd></div><div><dt>Light modes</dt><dd>7</dd></div><div><dt>LED channels</dt><dd>470, 520, 630 nm</dd></div><div><dt>Shell</dt><dd>White, eye and mouth openings</dd></div><div><dt>Fit</dt><dd>Adjustable head strap</dd></div></dl>
+              {%- when 'lezo' -%}<dl><div><dt>Type</dt><dd>Full-face LED mask</dd></div><div><dt>Light colors</dt><dd>6: red, green, blue, yellow, purple, cyan</dd></div><div><dt>Wavelengths</dt><dd>470, 520, 590, 630 nm</dd></div><div><dt>Shell</dt><dd>White, eye and mouth openings</dd></div><div><dt>Fit</dt><dd>Adjustable head strap</dd></div></dl>
               {%- when 'booster' -%}<dl><div><dt>Format</dt><dd>Handheld wand</dd></div><div><dt>Light</dt><dd>Multiple selectable colors</dd></div><div><dt>Display</dt><dd>Digital, shows the current setting</dd></div><div><dt>Power</dt><dd>USB rechargeable, press-and-hold on/off</dd></div><div><dt>Finishes</dt><dd>Pink, Black</dd></div></dl>
               {%- when 'bd' -%}<p>The full ingredient list is printed on each jar and bottle, so you can check it before your first use. Skin tolerance varies: patch-test first.</p>
               {%- when 'neck' -%}<dl><div><dt>Material</dt><dd>ABS, electroplated finish</dd></div><div><dt>Battery</dt><dd>400 mAh polymer lithium</dd></div><div><dt>Charge / use</dt><dd>3 h / 1–2 h</dd></div><div><dt>Input</dt><dd>5 V 1 A, 3 W rated</dd></div><div><dt>Size</dt><dd>13.9 × 8.8 × 3.8 cm</dd></div><div><dt>In the box</dt><dd>Device, USB-C cable, manual</dd></div></dl>
@@ -292,7 +293,7 @@
       {%- case k -%}
         {%- when 'lezo' -%}
           {%- if cur.compare_at_price > cur.price -%}
-            {%- capture ps -%}Seven light modes, hands-free.<br>Now {{ cur.price | money }}, was {{ cur.compare_at_price | money }}{%- endcapture -%}
+            {%- capture ps -%}Six light colors, hands-free.<br>Now {{ cur.price | money }}, was {{ cur.compare_at_price | money }}{%- endcapture -%}
             {%- capture pp -%}Save {{ cur.compare_at_price | minus: cur.price | money }}{%- endcapture -%}
             {% render 'hb-poster', pill: pp, title: 'LEZO<br>LED Mask', sub: ps, art: 'lezo', url: '#hb-kits' %}
           {%- endif -%}
@@ -316,10 +317,10 @@
     <figure class="sk-led__visual" style="--sk-glow:#e0463f" data-sk-led-visual>{% render 'sk-img', img: images['lezo-detail-2026.webp'], sizes: '(min-width: 900px) 45vw, 100vw', alt: 'Inside of the LEZO mask with the LEDs lit' %}</figure>
     <div>
       <span class="hb-new" style="margin-top:0">Explore</span>
-      <h2 id="hb-colors-h">Seven colors. Three LEDs.</h2>
-      <p>Every LEZO mode is a mix of the same three channels. Tap a color and see which ones it lights.</p>
+      <h2 id="hb-colors-h">Six colors. One mask.</h2>
+      <p>LEZO has six light colors: red, green, blue, yellow, purple and cyan. Tap one to see it, with the wavelength behind it.</p>
       <div class="hb-ledx__modes" role="group" aria-label="LEZO light modes">
-        {%- assign modes = 'Red|#e0463f|630,Green|#3acb68|520,Blue|#3975f2|470,Purple|#a25ada|630+470,Yellow|#f0c13e|630+520,Cyan|#26c5ce|470+520,White|#f3efe6|470+520+630' | split: ',' -%}
+        {%- assign modes = 'Red|#e0463f|630,Green|#3acb68|520,Blue|#3975f2|470,Yellow|#f0c13e|590,Purple|#a25ada|630+470,Cyan|#26c5ce|470+520' | split: ',' -%}
         {%- for m in modes -%}
           {%- assign mp = m | split: '|' -%}
           <button type="button" class="sk-mode" style="--c:{{ mp[1] }}" data-name="{{ mp[0] }}" data-c="{{ mp[1] }}" data-nm="{{ mp[2] }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{{ mp[0] }} light"><i></i></button>
@@ -327,9 +328,10 @@
       </div>
       <p class="sk-led__name" data-sk-led-name aria-live="polite">Red <em>light</em></p>
       <p class="sk-led__nm" data-sk-led-nm>630 nm channel</p>
-      <div class="sk-channels" aria-label="LED channels in use">
+      <div class="sk-channels" aria-label="Wavelength of this color" style="grid-template-columns:repeat(4,1fr)">
         <div class="sk-ch" data-ch="470"><b>470</b><span>nm</span></div>
         <div class="sk-ch" data-ch="520"><b>520</b><span>nm</span></div>
+        <div class="sk-ch" data-ch="590"><b>590</b><span>nm</span></div>
         <div class="sk-ch is-on" data-ch="630"><b>630</b><span>nm</span></div>
       </div>
       <p class="hb-note">Session time and eye protection for every mode are in the manual that comes in the box.</p>
