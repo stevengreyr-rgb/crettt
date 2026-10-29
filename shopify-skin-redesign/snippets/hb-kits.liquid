@@ -5,7 +5,8 @@
   in one request; "Check out now" adds and goes straight to the Shopify checkout.
 
   Finish and pairing choices are swatch radios that drive a hidden select[data-slot], which is
-  what initKit() in sk.js listens to; the small script at the end keeps "You save" in step.
+  what initKit() in sk.js listens to; the small script at the end keeps "Save $X" in step. Each card is an editorial banner on the
+  same micrographs as snippets/hb-poster.
 
   @example
   {% render 'hb-kits' %}
@@ -91,37 +92,57 @@
       {%- if k == 'complete' or k == 'daily' -%},[{{ o_bk }},{{ o_pk }}]{%- endif -%}
       {%- if k == 'complete' or k == 'collagen' -%},[{{ o_bdp }},{{ o_bdb }}]{%- endif -%}
     ]}{%- endcapture -%}
+    {%- liquid
+      case k
+        when 'complete'
+          assign k_sci = 'hb-sci-complete.png'
+          assign k_h = 'The Complete'
+          assign k_em = 'Routine.'
+          assign k_what = 'Mask · wand · pads + ampoule'
+          assign k_tone = 'light'
+        when 'daily'
+          assign k_sci = 'hb-sci-daily.png'
+          assign k_h = 'The Daily'
+          assign k_em = 'Ritual.'
+          assign k_what = 'Mask · wand'
+          assign k_tone = 'dark'
+        else
+          assign k_sci = 'hb-sci-collagen.png'
+          assign k_h = 'Light &'
+          assign k_em = 'Hydration.'
+          assign k_what = 'Mask · pads + ampoule'
+          assign k_tone = 'light'
+      endcase
+    -%}
     <article class="rk-card rk-card--{{ k }}" data-hb-kit>
       <script type="application/json" data-hb-kit-data>{{ k_json | strip_newlines }}</script>
-      {%- case k -%}{%- when 'complete' -%}{%- assign k_sci = 'hb-sci-complete.png' -%}{%- when 'daily' -%}{%- assign k_sci = 'hb-sci-daily.png' -%}{%- else -%}{%- assign k_sci = 'hb-sci-collagen.png' -%}{%- endcase -%}
-      <div class="rk-card__stage{% if k == 'daily' %} rk-card__stage--dark{% endif %}" aria-hidden="true"{% if images[k_sci] %} style="--rk-sci:url('{{ images[k_sci] | image_url: width: 1400 }}')"{% endif %}>
-        <span class="rk-card__flag">{{ k_flag }}</span>
-        <span class="rk-card__save" data-rk-save>Save {{ k_off | money }}</span>
-        <div class="rk-card__art">
+      <div class="rk-ban rk-ban--{{ k_tone }}">
+        {%- if images[k_sci] -%}{{ images[k_sci] | image_url: width: 1400 | image_tag: class: 'rk-ban__ph', widths: '600,900,1200,1400', sizes: '(min-width: 1000px) 45vw, 100vw', alt: '', loading: 'lazy' }}{%- endif -%}
+        <div class="rk-ban__art" aria-hidden="true">
           {%- if k == 'complete' -%}
-            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="left:2%;bottom:6%;height:74%" loading="lazy">
-            <img data-slot-img="1" src="{{ i_bk }}" alt="" style="left:47%;bottom:2%;height:98%;z-index:2" loading="lazy">
-            <img data-slot-img="2" src="{{ i_bdp }}" alt="" style="right:0;bottom:0;height:46%;z-index:3" loading="lazy">
+            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="right:29%;bottom:9%;width:24%" loading="lazy">
+            <img data-slot-img="1" src="{{ i_bk }}" alt="" style="right:18%;bottom:6%;width:12%;z-index:2" loading="lazy">
+            <img data-slot-img="2" src="{{ i_bdp }}" alt="" style="right:1%;bottom:5%;width:22%;z-index:3" loading="lazy">
           {%- elsif k == 'daily' -%}
-            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="left:6%;bottom:4%;height:82%" loading="lazy">
-            <img data-slot-img="1" src="{{ i_bk }}" alt="" style="right:10%;bottom:0;height:100%;z-index:2" loading="lazy">
+            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="right:19%;bottom:7%;width:30%" loading="lazy">
+            <img data-slot-img="1" src="{{ i_bk }}" alt="" style="right:5%;bottom:6%;width:13%;z-index:2" loading="lazy">
           {%- else -%}
-            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="left:4%;bottom:10%;height:82%" loading="lazy">
-            <img data-slot-img="1" src="{{ i_bdp }}" alt="" style="right:0;bottom:0;height:60%;z-index:2" loading="lazy">
+            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="right:25%;bottom:8%;width:27%" loading="lazy">
+            <img data-slot-img="1" src="{{ i_bdp }}" alt="" style="right:2%;bottom:5%;width:26%;z-index:2" loading="lazy">
           {%- endif -%}
         </div>
+        <div class="rk-ban__c">
+          <p class="rk-ban__k">0{{ forloop.index }} · {{ k_count }} · {{ k_flag }}</p>
+          <h3 class="rk-ban__h">{{ k_h }}<br><em>{{ k_em }}</em></h3>
+          <p class="rk-ban__o"><b data-hb-kit-now>{{ k_final | money }}</b><span><s data-hb-kit-was>{{ k_total | money }}</s><i data-rk-save>Save {{ k_off | money }}</i></span></p>
+          <p class="rk-ban__w">{{ k_what }}</p>
+        </div>
+        <span class="rk-ban__cap">Illustrative micrograph</span>
       </div>
       <div class="rk-card__body">
-        <p class="rk-card__n">0{{ forloop.index }} · {{ k_count }}</p>
-        <h3 class="rk-card__name">{{ k_name }}</h3>
-        <ul class="rk-card__inc">
-          <li>LEZO LED Mask</li>
-          {%- if k == 'complete' or k == 'daily' -%}<li>Booster Pro wand</li>{%- endif -%}
-          {%- if k == 'complete' or k == 'collagen' -%}<li>Biodance gel pads + ampoule</li>{%- endif -%}
-        </ul>
         {%- if k == 'complete' or k == 'daily' -%}
           <fieldset class="rk-opt" data-rk-for="hb-k-{{ k }}-1">
-            <legend>Wand finish</legend>
+            <legend>Wand</legend>
             <label><input type="radio" name="rk-{{ k }}-1" value="0" checked><i style="--c:#161616"></i>Black</label>
             <label><input type="radio" name="rk-{{ k }}-1" value="1"><i style="--c:#f4c3cf"></i>Pink</label>
           </fieldset>
@@ -135,13 +156,10 @@
           </fieldset>
           <select id="hb-k-{{ k }}-{{ bslot }}" data-slot="{{ bslot }}" hidden tabindex="-1" aria-hidden="true"><option value="0">Biodance · Pink Collagen</option><option value="1">Biodance · Blue Cera-Nol</option></select>
         {%- endif -%}
-        <div class="rk-card__price">
-          <b data-hb-kit-now>{{ k_final | money }}</b>
-          <s data-hb-kit-was>{{ k_total | money }}</s>
-          <span>20% off</span>
+        <div class="rk-card__btns">
+          <button type="button" class="rk-card__add" data-hb-kit-add>Add ritual to bag</button>
+          <button type="button" class="rk-card__buy" data-hb-kit-buy>Or check out now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
         </div>
-        <button type="button" class="rk-card__add" data-hb-kit-add>Add ritual to bag</button>
-        <button type="button" class="rk-card__buy" data-hb-kit-buy>Or check out now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
         <p class="rk-card__msg" data-hb-kit-msg role="status"></p>
       </div>
     </article>
@@ -149,51 +167,48 @@
   <p class="rk__note">20% comes off automatically at checkout on any 2 or more of the LEZO mask, Booster Pro and Biodance pads or ampoules. It doesn’t stack with other codes; checkout keeps the single offer that saves you more.</p>
 </section>
 <style>
-.rk{scroll-margin-top:84px;margin:26px 0;font-family:var(--hb-sans);color:var(--hb-ink)}
+.rk{scroll-margin-top:84px;margin:26px 0;font-family:var(--hb-sans);color:var(--hb-ink);--rk-ed:"Instrument Serif","Times New Roman",serif}
 .rk__head{display:flex;flex-direction:column;gap:6px;margin:0 0 18px}
 .rk__eyebrow{margin:0;font:800 15px/1 var(--hb-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--hb-pk)}
 .rk__h{margin:0;font:800 clamp(38px,6vw,54px)/.92 var(--hb-disp);text-transform:uppercase;letter-spacing:-.005em}
-.rk-card{display:grid;background:#fff;border-radius:24px;overflow:hidden;margin-top:16px;box-shadow:0 1px 0 rgba(0,0,0,.03),0 18px 40px -22px rgba(120,40,70,.28)}
-.rk-card__stage{position:relative;overflow:hidden;aspect-ratio:16/10;background:var(--rk-sci,none) 70% 50%/cover no-repeat,radial-gradient(70% 80% at 55% 40%,#fff 0%,#fbf1f4 55%,#f5dfe7 100%)}
-.rk-card__stage--dark{background-color:#1a0608}
-.rk-card__stage--dark .rk-card__flag{background:#fff;color:var(--hb-ink)}
-.rk-card__stage--dark .rk-card__art img{filter:drop-shadow(0 0 18px rgba(255,40,60,.35)) drop-shadow(0 14px 12px rgba(0,0,0,.55))}
-.rk-card__stage:after{content:"";position:absolute;left:12%;right:12%;bottom:9%;height:14px;border-radius:50%;background:rgba(120,40,70,.14);filter:blur(10px)}
-.rk-card__art{position:absolute;inset:12% 9% 10%;z-index:1;pointer-events:none}
-.rk-card__art img{position:absolute;object-fit:contain;max-width:none;width:auto;filter:drop-shadow(0 0 16px rgba(255,255,255,.75)) drop-shadow(0 14px 12px rgba(90,30,50,.22)) drop-shadow(0 3px 3px rgba(90,30,50,.14));transition:opacity .25s}
-.rk-card__flag{position:absolute;left:16px;top:16px;z-index:3;background:var(--hb-ink);color:#fff;border-radius:999px;padding:7px 12px 6px;font:800 14px/1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase}
-.rk-card__save{position:absolute;right:14px;top:14px;z-index:3;display:grid;place-items:center;width:84px;height:84px;border-radius:50%;background:var(--hb-pk);color:#fff;text-align:center;font:800 19px/.95 var(--hb-disp);text-transform:uppercase;padding:10px;transform:rotate(8deg);box-shadow:0 10px 22px -8px rgba(216,69,127,.6)}
-.rk-card__body{padding:20px 20px 18px}
-.rk-card__n{margin:0 0 6px;font:700 13px/1 var(--hb-sans);letter-spacing:.14em;text-transform:uppercase;color:var(--hb-grey)}
-.rk-card__name{margin:0;font:800 clamp(32px,5vw,40px)/.92 var(--hb-disp);text-transform:uppercase}
-.rk-card__inc{list-style:none;margin:14px 0 4px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
-.rk-card__inc li{display:inline-flex;align-items:center;gap:6px;background:var(--hb-pk-soft);border-radius:999px;padding:6px 11px;font:600 13px/1.1 var(--hb-sans)}
-.rk-card__inc li:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--hb-pk)}
-.rk-opt{border:0;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.rk-opt legend{float:left;margin-right:4px;font:700 12px/1 var(--hb-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--hb-grey);padding:0;width:100%;margin-bottom:8px}
+.rk-card{background:#fff;border-radius:22px;overflow:hidden;margin-top:16px;box-shadow:0 1px 0 rgba(0,0,0,.03),0 18px 40px -22px rgba(120,40,70,.28)}
+.rk-ban{position:relative;overflow:hidden;aspect-ratio:16/9;container-type:inline-size;isolation:isolate;background:#f6dfe6;color:#1a1012;--rk-ac:#b8336a}
+.rk-ban--dark{background:#1a0608;color:#fff;--rk-ac:#ff8f9f}
+.rk-ban__ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.rk-ban__art{position:absolute;inset:0;z-index:1;pointer-events:none}
+.rk-ban__art img{position:absolute;height:auto;max-width:none;filter:drop-shadow(0 0 2.2cqi rgba(255,255,255,.75)) drop-shadow(0 1.6cqi 1.4cqi rgba(40,15,25,.32));transition:opacity .25s}
+.rk-ban--dark .rk-ban__art img{filter:drop-shadow(0 0 2.4cqi rgba(255,40,60,.35)) drop-shadow(0 1.8cqi 1.6cqi rgba(0,0,0,.55))}
+.rk-ban__c{position:absolute;left:5.5%;top:50%;transform:translateY(-50%);width:46%;z-index:2}
+.rk-ban__k{margin:0 0 1.6cqi;font:800 max(2.1cqi,10px)/1.2 var(--hb-disp);letter-spacing:.18em;text-transform:uppercase;color:var(--rk-ac)}
+.rk-ban__h{margin:0;font:800 7.2cqi/.86 var(--hb-disp);text-transform:uppercase;letter-spacing:-.01em}
+.rk-ban__h em{display:inline-block;margin-top:.6cqi;font:italic 400 6cqi/.95 var(--rk-ed);text-transform:none;color:var(--rk-ac)}
+.rk-ban__o{display:flex;flex-wrap:wrap;align-items:flex-end;gap:1cqi 1.8cqi;margin:2.8cqi 0 0}
+.rk-ban__o b{font:800 9cqi/.8 var(--hb-disp);letter-spacing:-.02em}
+.rk-ban__o span{display:flex;flex-direction:column;gap:.7cqi;padding-bottom:.3cqi}
+.rk-ban__o s{font:600 max(2.4cqi,11px)/1 var(--hb-sans);opacity:.7}
+.rk-ban__o i{font:italic 400 max(3cqi,13px)/1 var(--rk-ed);color:var(--rk-ac)}
+.rk-ban__w{margin:2.4cqi 0 0;padding-bottom:.5cqi;font:800 max(2.3cqi,11px)/1 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase}
+.rk-ban__cap{position:absolute;right:4%;top:5%;z-index:2;font:600 max(1.5cqi,8px)/1 var(--hb-sans);letter-spacing:.14em;text-transform:uppercase;opacity:.55}
+.rk-card__body{display:grid;gap:14px;padding:18px 20px 16px}
+.rk-opt{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-inline-size:0}
+.rk-opt legend{float:left;width:100%;margin:0 0 8px;padding:0;font:800 13px/1 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase;color:var(--hb-grey)}
 .rk-opt label{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px 0 8px;border:1.5px solid var(--hb-line);border-radius:999px;font:600 14px/1 var(--hb-sans);cursor:pointer;transition:border-color .2s,box-shadow .2s}
 .rk-opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
 .rk-opt i{width:24px;height:24px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
 .rk-opt label:has(input:checked){border-color:var(--hb-ink);box-shadow:inset 0 0 0 1px var(--hb-ink)}
 .rk-opt label:has(input:focus-visible){outline:2px solid var(--hb-pk);outline-offset:2px}
-.rk-card__price{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:18px 0 14px}
-.rk-card__price b{font:800 40px/1 var(--hb-disp);letter-spacing:-.01em}
-.rk-card__price s{font:600 17px/1 var(--hb-sans);color:#8b8b8b}
-.rk-card__price span{font:800 14px/1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase;color:var(--hb-pk)}
-.rk-card__add{display:flex;align-items:center;justify-content:center;width:100%;min-height:56px;border:0;border-radius:999px;background:var(--hb-pk);color:#fff;font:800 20px/1 var(--hb-disp);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .2s}
+.rk-card__btns{display:grid;gap:2px;margin-top:2px}
+.rk-card__add{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border:0;border-radius:999px;background:var(--hb-pk);color:#fff;font:800 20px/1 var(--hb-disp);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .2s}
 .rk-card__add:hover{background:var(--hb-pk-dk)}
 .rk-card__add:active{transform:scale(.99)}
-.rk-card__buy{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:4px;border:0;background:none;color:var(--hb-ink);font:700 14px/1 var(--hb-sans);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.rk-card__buy{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:42px;border:0;background:none;color:var(--hb-ink);font:800 15px/1 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
 .rk-card__buy svg{width:16px;height:16px}
 .rk-card [disabled],.rk-card [aria-busy=true]{opacity:.55;cursor:not-allowed}
-.rk-card__msg{margin:6px 0 0;min-height:1em;font-size:13px;text-align:center}
+.rk-card__msg{margin:0;min-height:1em;font-size:13px;text-align:center}
 .rk-card__msg.is-err{color:#b3261e}
 .rk__note{margin:16px 4px 0;font-size:13px;line-height:1.45;color:var(--hb-grey)}
-@media(min-width:620px){
-  .rk-card__stage{aspect-ratio:16/8}
-  .rk-card__art{inset:12% 16% 10%}
-  .rk-card__body{padding:24px 28px 22px}
-}
+.rk-opt legend{float:left;width:auto;line-height:40px;margin:0 6px 0 0;min-width:72px}
+@media(min-width:620px){.rk-card__body{padding:20px 24px 18px}}
 </style>
 <script>
 (() => {
