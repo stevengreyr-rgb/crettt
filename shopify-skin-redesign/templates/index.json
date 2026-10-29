@@ -4,33 +4,28 @@
       "type": "hb-cover",
       "settings": {}
     },
+    "editorial_offers": {
+      "type": "sc-editorial-offers",
+      "settings": {}
+    },
     "sk_products": {
       "type": "sk-home-products",
       "settings": {}
     },
-    "sk_led": {
-      "type": "sk-home-led",
-      "settings": {}
-    },
-    "sk_lifestyle": {
-      "type": "sk-home-lifestyle",
+    "sk_science": {
+      "type": "sk-home-science",
       "settings": {}
     },
     "sk_bundles": {
       "type": "sk-home-bundles",
       "settings": {}
-    },
-    "sk_journal": {
-      "type": "sk-home-journal",
-      "settings": {}
     }
   },
   "order": [
     "cover",
+    "editorial_offers",
     "sk_products",
-    "sk_led",
-    "sk_lifestyle",
-    "sk_bundles",
-    "sk_journal"
+    "sk_science",
+    "sk_bundles"
   ]
 }

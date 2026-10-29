@@ -32,7 +32,7 @@
       assign k = 'lezo'
       assign badge = 'New'
       assign name = 'LEZO LED Mask'
-      assign desc = 'A full-face LED mask with six light colors and an adjustable strap. Put it on, pick a color, keep your hands free.'
+      assign desc = 'Six wavelengths, from blue 470 nm to red 630 nm, on a full-face mask with an adjustable strap. Pick the color, lie back, keep your hands free.'
       assign gal_files = 'lezo-portrait-2026.webp,lz-mask-studio.png'
       assign gal_pick = '1,2,3,4,5'
       assign file_alts = 'Woman holding the LEZO mask beside her face'
@@ -236,8 +236,8 @@
           <div class="hb-acc__b">
             {%- case k -%}
               {%- when 'lezo' -%}
-                <p>LEZO is the step you don’t have to hold. The white shell covers the whole face, with openings at the eyes and mouth, and the strap keeps it in place while you lie back.</p>
-                <ul><li><b>Six light colors:</b> red, green, blue, yellow, purple and cyan.</li><li><b>Wavelengths</b> listed by the maker: red 630 nm, yellow 590 nm, green 520 nm, blue 470 nm.</li><li><b>Adjustable head strap</b> for a hands-free session.</li><li><b>At home,</b> on your schedule. No appointment.</li></ul>
+                <p>LEZO is the step you don’t have to hold. Each color is a different photon energy, and skin only absorbs the light it resonates with, so the color you pick is the choice that matters. The white shell covers the whole face, with openings at the eyes and mouth, and the strap keeps it in place while you lie back.</p>
+                <ul><li><b>Six light colors:</b> red, green, blue, yellow, purple and cyan.</li><li><b>Wavelengths</b> listed by the maker: red 630 nm, yellow 590 nm, green 520 nm, blue 470 nm.</li><li><b>Photon energy</b> from 1.97 eV (red) to 2.64 eV (blue). Shorter waves stay near the surface; red travels deeper.</li><li><b>Adjustable head strap</b> for a hands-free session.</li><li><b>At home,</b> on your schedule. No appointment.</li></ul>
                 <p><em>For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Individual results vary.</em></p>
               {%- when 'booster' -%}
                 <p>A small device with a considered shape. It sits comfortably in the hand as you move it across the face, and its minimal silhouette belongs on the vanity, not in a drawer.</p>
@@ -310,8 +310,8 @@
     <figure class="sk-led__visual" style="--sk-glow:#e0463f" data-sk-led-visual>{% render 'sk-img', img: images['lezo-detail-2026.webp'], sizes: '(min-width: 900px) 45vw, 100vw', alt: 'Inside of the LEZO mask with the LEDs lit' %}</figure>
     <div>
       <span class="hb-new" style="margin-top:0">Explore</span>
-      <h2 id="hb-colors-h">Six colors. One mask.</h2>
-      <p>LEZO has six light colors: red, green, blue, yellow, purple and cyan. Tap one to see it, with the wavelength behind it.</p>
+      <h2 id="hb-colors-h">Six wavelengths. One mask.</h2>
+      <p>Each color is a different photon energy: E = hc/λ. Red 630 nm carries 1.97 eV, yellow 590 nm 2.10 eV, green 520 nm 2.38 eV, blue 470 nm 2.64 eV. Tap a color to see the wavelength behind it.</p>
       <div class="hb-ledx__modes" role="group" aria-label="LEZO light modes">
         {%- assign modes = 'Red|#e0463f|630,Green|#3acb68|520,Blue|#3975f2|470,Yellow|#f0c13e|590,Purple|#a25ada|630+470,Cyan|#26c5ce|470+520' | split: ',' -%}
         {%- for m in modes -%}
