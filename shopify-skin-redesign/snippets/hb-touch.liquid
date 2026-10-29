@@ -1,0 +1,78 @@
+{% doc %}
+  Touch layer for every SEVENCRUSH page (rendered once by the layout). Press feedback that
+  fires on touch-down (iOS doesn't run :active without a listener), a ripple from the finger
+  on the buy buttons, a spinner while a button is busy, an "Added" confirmation after
+  anything lands in the bag, a spinner on the cart's Checkout link, and prefetch of the next
+  page on hover/touch so moving around feels instant. All motion is off for reduced motion.
+
+  @example
+  {% render 'hb-touch' %}
+{% enddoc %}
+<style>
+:root{--t-ease:cubic-bezier(.16,1,.3,1)}
+.hb a,.hb button,.hb label,.sk a,.sk button,.pr a,.pr button,.pr label,.rk a,.rk button,.rk label{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:is(.hb-pill,.hb-atc,.hb-buynow,.sk-btn,.rk-card__add,.hbc__btn,.pr-btn,.hb-news__row button,.hb-card__btn){position:relative;overflow:hidden;transition:transform .5s var(--t-ease),box-shadow .3s,background-color .2s,filter .2s;-webkit-user-select:none;user-select:none}
+:is(.hb-pill,.hb-atc,.hb-buynow,.sk-btn,.rk-card__add,.hbc__btn,.pr-btn,.hb-news__row button,.hb-card__btn).is-press{transform:scale(.955);filter:brightness(.95);transition-duration:.09s}
+:is(.hb-ico,.sk-x,.rk-card__buy,.pr-link,.hb-link,.sk-line__rm,.sk-qty button,.hb-qty button,.rk-opt label,.pr-opt label,.hb-menu a,.pr__back,.hb-logo,.sk-mode,.sk-gal__dots button,.hb-news__code,.pr-cross,.pr-item){transition:transform .45s var(--t-ease),opacity .2s,background-color .2s}
+:is(.hb-ico,.sk-x,.rk-card__buy,.pr-link,.hb-link,.sk-line__rm,.sk-qty button,.hb-qty button,.rk-opt label,.pr-opt label,.hb-menu a,.pr__back,.hb-logo,.sk-mode,.sk-gal__dots button,.hb-news__code,.pr-cross,.pr-item).is-press{transform:scale(.94);opacity:.78;transition-duration:.08s}
+.hb-ico{position:relative;display:inline-grid;place-items:center;min-width:44px;min-height:44px;border-radius:999px}
+.hb-ico.is-press{background:rgba(255,255,255,.2)}
+.t-rip{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;background:currentColor;opacity:.24;transform:translate(-50%,-50%) scale(0);animation:t-rip .65s var(--t-ease) forwards}
+@keyframes t-rip{to{transform:translate(-50%,-50%) scale(1);opacity:0}}
+:is(.hb-pill,.hb-atc,.hb-buynow,.sk-btn,.rk-card__add,.hbc__btn,.pr-btn,.hb-news__row button,.hb-card__btn)[aria-busy=true]{color:transparent!important;pointer-events:none;opacity:1!important}
+:is(.hb-pill,.hb-atc,.hb-buynow,.sk-btn,.rk-card__add,.hbc__btn,.pr-btn,.hb-news__row button,.hb-card__btn)[aria-busy=true]:before{content:"";position:absolute;inset:0;margin:auto;width:20px;height:20px;border-radius:50%;border:2.5px solid var(--t-spin-bg,rgba(255,255,255,.4));border-top-color:var(--t-spin,#fff);animation:t-spin .7s linear infinite}
+.hb-buynow,.hb-pill:not(.hb-pill--pk){--t-spin:#111;--t-spin-bg:rgba(0,0,0,.15)}
+.t-done{color:transparent!important}
+.t-done:before{content:"Added ✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:inherit;letter-spacing:inherit;animation:t-pop .45s var(--t-ease)}
+.hb-buynow.t-done:before,.hb-pill:not(.hb-pill--pk).t-done:before{color:#111}
+@keyframes t-spin{to{transform:rotate(1turn)}}
+@keyframes t-pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+.hb-bubble.t-bump{animation:t-bump .5s var(--t-ease)}
+@keyframes t-bump{40%{transform:scale(1.35)}}
+@media(prefers-reduced-motion:reduce){.t-rip{display:none}:is(.hb-pill,.hb-atc,.hb-buynow,.sk-btn,.rk-card__add,.hbc__btn,.pr-btn,.hb-ico,.pr-item,.pr-cross).is-press{transform:none}.t-done:before,.hb-bubble.t-bump{animation:none}}
+</style>
+<script type="speculationrules">{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/cart*","/checkout*","/account*","/*logout*","/*/cart*"]}}]},"eagerness":"moderate"}]}</script>
+<script>
+(() => {
+  const PRIMARY = '.hb-pill,.hb-atc,.hb-buynow,.sk-btn,.rk-card__add,.hbc__btn,.pr-btn,.hb-news__row button,.hb-card__btn';
+  const SECONDARY = '.hb-ico,.sk-x,.rk-card__buy,.pr-link,.hb-link,.sk-line__rm,.sk-qty button,.hb-qty button,.rk-opt label,.pr-opt label,.hb-menu a,.pr__back,.hb-logo,.sk-mode,.sk-gal__dots button,.hb-news__code,.pr-cross,.pr-item';
+  const ALL = PRIMARY + ',' + SECONDARY;
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let pressed = null, lastAdd = null;
+  const release = () => { document.querySelectorAll('.is-press').forEach((el) => el.classList.remove('is-press')); pressed = null; };
+  document.addEventListener('pointerdown', (e) => {
+    const t = e.target.closest(ALL);
+    if (!t || t.disabled || t.getAttribute('aria-busy') === 'true') return;
+    pressed = t; t.classList.add('is-press');
+    if (!t.matches(PRIMARY)) return;
+    if (t.matches('[data-sk-add],[data-hb-kit-add],.hb-atc,[data-pr-add]')) lastAdd = t;
+    if (navigator.vibrate && e.pointerType === 'touch') navigator.vibrate(6);
+    if (calm) return;
+    const r = t.getBoundingClientRect(), d = Math.hypot(r.width, r.height) * 2;
+    const s = document.createElement('span');
+    s.className = 't-rip';
+    s.style.cssText = `width:${d}px;height:${d}px;left:${e.clientX - r.left}px;top:${e.clientY - r.top}px`;
+    t.appendChild(s);
+    s.addEventListener('animationend', () => s.remove());
+  }, { passive: true });
+  ['pointerup', 'pointercancel', 'dragstart'].forEach((ev) => document.addEventListener(ev, release, { passive: true }));
+  addEventListener('scroll', () => pressed && release(), { passive: true });
+  // Keyboard: same feedback on Enter/Space
+  document.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches(ALL)) e.target.classList.add('is-press'); });
+  document.addEventListener('keyup', release);
+  // Something landed in the bag: confirm on the button that sent it, bump the bag count
+  document.addEventListener('sk:cart', () => {
+    document.querySelectorAll('.hb-bubble').forEach((b) => { b.classList.remove('t-bump'); void b.offsetWidth; b.classList.add('t-bump'); });
+    const b = lastAdd; lastAdd = null;
+    if (!b) return;
+    const wait = () => { if (b.getAttribute('aria-busy') === 'true') return requestAnimationFrame(wait); b.classList.add('t-done'); setTimeout(() => b.classList.remove('t-done'), 1400); };
+    wait();
+  });
+  // Checkout link in the cart: show it's on its way
+  document.addEventListener('click', (e) => {
+    const c = e.target.closest('[data-sk-checkout]');
+    if (c) c.setAttribute('aria-busy', 'true');
+  });
+  addEventListener('pageshow', () => document.querySelectorAll('[data-sk-checkout][aria-busy]').forEach((c) => c.removeAttribute('aria-busy')));
+})();
+</script>
