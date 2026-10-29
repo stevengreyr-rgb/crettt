@@ -1,7 +1,9 @@
 {% doc %}
-  Product tile for grids (home line-up, collections, search). Short names and the
-  one-line reason to buy come from the product handle; any other product falls back to
-  its own title.
+  Product tile for grids (home line-up, collections, search), in the editorial banner system
+  (snippets/hb-poster): the product cutout on its science micrograph, the name set as display
+  + italic line, and the live price with the saving. Short names, the one-line reason to buy
+  and the micrograph come from the product handle; any other product falls back to its own
+  title and image on a plain blush tile.
 
   @param {product} p - product to show
   @param {string} [sizes] - image sizes attribute
@@ -11,56 +13,99 @@
 {% enddoc %}
 {%- liquid
   assign v = p.selected_or_first_available_variant
-  assign name = p.title
+  assign name = p.title | escape
+  assign em = ''
+  assign kicker = ''
   assign why = ''
   assign tag = ''
+  assign note = ''
+  assign sci = ''
+  assign tone = 'light'
   assign quick = true
+  assign img = p.featured_image
   case p.handle
     when 'lezo-7-color-led-face-mask'
-      assign name = 'LEZO LED Mask'
+      assign name = 'LEZO'
+      assign em = 'LED mask.'
+      assign kicker = 'Light · 6 colors'
       assign why = 'Six light colors on a hands-free strap.'
       assign tag = 'New'
+      assign sci = 'hb-sci-lezo.png'
+      assign tone = 'dark'
+      assign img = images['sk-cut-lezo.png'] | default: p.featured_image
     when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
-      assign name = 'Booster Pro Wand'
+      assign name = 'Booster Pro'
+      assign em = 'LED wand.'
+      assign kicker = 'Light · handheld'
       assign why = 'Handheld LED wand. Pink or black.'
       assign tag = 'New'
+      assign sci = 'hb-sci-daily.png'
+      assign tone = 'dark'
       assign quick = false
+      assign img = images['sk-cut-booster-black.png'] | default: p.featured_image
     when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca'
-      assign name = 'Biodance Collagen'
+      assign name = 'Biodance'
+      assign em = 'Collagen.'
+      assign kicker = 'Hydration · gel pads'
       assign why = 'Gel pads + ampoule. The ampoule is on us.'
       assign tag = 'Free ampoule'
+      assign note = 'ampoule free'
+      assign sci = 'hb-sci-collagen.png'
       assign quick = false
+      assign img = images['sk-cut-collagen-duo.png'] | default: p.featured_image
     when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument'
-      assign name = 'Face & Neck Massager'
+      assign name = 'Face &amp; Neck'
+      assign em = 'Massager.'
       assign why = '7 colors, 3 vibration levels, a curved head.'
   endcase
   if p.variants.size > 1
     assign quick = false
   endif
-  assign img = p.featured_image
-  case p.handle
-    when 'lezo-7-color-led-face-mask'
-      assign img = images['sk-cut-lezo.png'] | default: p.featured_image
-    when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
-      assign img = images['sk-cut-booster-black.png'] | default: p.featured_image
-    when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca'
-      assign img = images['sk-cut-collagen-duo.png'] | default: p.featured_image
-    when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument'
-      assign img = p.featured_image
-      assign editorial_url = 'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/sevencrush-editorial-white-neck-massager.png?v=1793197127'
-  endcase
+  if v.compare_at_price > v.price
+    assign pct = v.compare_at_price | minus: v.price | times: 100 | divided_by: v.compare_at_price
+    assign note = pct | append: '% off'
+  endif
 -%}
-<article class="hb-card sc-studio-card">
-  <a class="hb-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
-    {%- if editorial_url != blank -%}<img src="{{ editorial_url }}" alt="{{ name | escape }}" loading="lazy" width="800" height="800">{%- elsif img -%}{% render 'sk-img', img: img, sizes: '(min-width: 900px) 33vw, 50vw', alt: '', widths: '300,450,600,800' %}{%- endif -%}
-    {%- if tag != '' -%}<span class="hb-card__tag">{{ tag }}</span>{%- endif -%}
+<article class="hb-card hbc hbc--{{ tone }}">
+  <a class="hb-card__media hbc__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+    {%- if sci != blank and images[sci] -%}{{ images[sci] | image_url: width: 900 | image_tag: class: 'hbc__ph', widths: '400,600,900', sizes: '(min-width: 900px) 33vw, 50vw', alt: '', loading: 'lazy' }}{%- endif -%}
+    {%- if img -%}{{ img | image_url: width: 800 | image_tag: class: 'hbc__p', widths: '300,450,600,800', sizes: '(min-width: 900px) 25vw, 45vw', alt: '', loading: 'lazy' }}{%- endif -%}
+    {%- if tag != '' -%}<span class="hb-card__tag hbc__tag">{{ tag }}</span>{%- endif -%}
+    {%- if sci != blank -%}<span class="hbc__cap">Micrograph</span>{%- endif -%}
   </a>
-  <h3 class="hb-card__name"><a href="{{ p.url }}">{{ name }}</a></h3>
-  {%- if why != '' -%}<p class="hb-card__why">{{ why }}</p>{%- endif -%}
-  <p class="hb-card__price">{% if p.price_varies %}From {% endif %}{{ v.price | money }}{% if v.compare_at_price > v.price %} <s>{{ v.compare_at_price | money }}</s>{% endif %}</p>
+  {%- if kicker != '' -%}<p class="hbc__k">{{ kicker }}</p>{%- endif -%}
+  <h3 class="hb-card__name hbc__name"><a href="{{ p.url }}">{{ name }}{% if em != '' %} <em>{{ em }}</em>{% endif %}</a></h3>
+  {%- if why != '' -%}<p class="hb-card__why hbc__why">{{ why }}</p>{%- endif -%}
+  <p class="hb-card__price hbc__price"><b>{% if p.price_varies %}<small>From</small> {% endif %}{{ v.price | money }}</b>{% if v.compare_at_price > v.price %}<s>{{ v.compare_at_price | money }}</s>{% endif %}{% if note != '' %}<i>{{ note }}</i>{% endif %}</p>
   {%- if quick and v.available -%}
-    <button type="button" class="hb-pill hb-pill--pk hb-card__btn" data-sk-add='[{"id":{{ v.id }},"quantity":1}]'>Add to bag</button>
+    <button type="button" class="hb-card__btn hbc__btn" data-sk-add='[{"id":{{ v.id }},"quantity":1}]'>Add to bag</button>
   {%- else -%}
-    <a class="hb-pill hb-card__btn" href="{{ p.url }}">{% if v.available %}Choose{% else %}Sold out{% endif %}</a>
+    <a class="hb-card__btn hbc__btn" href="{{ p.url }}">{% if v.available %}Choose{% else %}Sold out{% endif %}</a>
   {%- endif -%}
-</article><style>.sc-studio-card .hb-card__media{background:radial-gradient(ellipse at 52% 37%,#fff 28%,#f6f3f1 76%,#ebe6e2 100%)!important;border-radius:18px!important;overflow:hidden!important;aspect-ratio:1/1.06!important;display:flex!important;align-items:center!important;justify-content:center!important;box-shadow:inset 0 1px 2px #fff,0 9px 28px #29211d0c!important}.sc-studio-card .hb-card__media img{width:100%!important;height:100%!important;object-fit:contain!important;padding:6%!important;filter:drop-shadow(0 14px 12px #21171326)!important}.sc-studio-card .hb-card__name{font-weight:900!important;letter-spacing:-.035em!important;text-transform:uppercase!important}.sc-studio-card .hb-card__btn{border-radius:999px!important;background:#eb2e8b!important;color:#fff!important}@media(max-width:700px){.sc-studio-card .hb-card__name{font-size:clamp(16px,3.5vw,23px)!important}}</style>
+</article><style>
+.hbc{--hbc-ac:#b8336a;--hbc-ed:"Instrument Serif","Times New Roman",serif}
+.hbc .hbc__media{position:relative;display:block;aspect-ratio:4/5;border-radius:20px;overflow:hidden;isolation:isolate;container-type:inline-size;background:radial-gradient(70% 80% at 55% 40%,#fff 0%,#fbf1f4 55%,#f5dfe7 100%);box-shadow:0 18px 40px -24px rgba(120,40,70,.35)}
+.hbc--dark .hbc__media{background:#1a0608}
+.hbc .hbc__ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;padding:0;filter:none;z-index:-1;transition:transform 1.2s cubic-bezier(.16,1,.3,1)}
+.hbc .hbc__p{position:absolute;inset:12% 10% 8%;width:80%;height:80%;object-fit:contain;padding:0;filter:drop-shadow(0 0 5cqi rgba(255,255,255,.7)) drop-shadow(0 4cqi 3.5cqi rgba(40,15,25,.32));transition:transform .8s cubic-bezier(.16,1,.3,1)}
+.hbc--dark .hbc__p{filter:drop-shadow(0 0 6cqi rgba(255,40,60,.35)) drop-shadow(0 4cqi 4cqi rgba(0,0,0,.55))}
+.hbc:hover .hbc__ph{transform:scale(1.04)}
+.hbc:hover .hbc__p{transform:translateY(-1.5%)}
+.hbc .hbc__tag{position:absolute;left:6cqi;top:6cqi;z-index:2;border:0;background:var(--hb-pk);color:#fff;border-radius:999px;font:800 max(4.2cqi,11px)/1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase;padding:2.2cqi 3.4cqi 1.9cqi}
+.hbc__cap{position:absolute;right:5cqi;bottom:4.5cqi;z-index:2;font:600 max(2.6cqi,7px)/1 var(--hb-sans);letter-spacing:.14em;text-transform:uppercase;opacity:.55;color:#1a1012}
+.hbc--dark .hbc__cap{color:#fff}
+.hbc__k{margin:14px 0 6px;font:800 12px/1.2 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase;color:var(--hbc-ac)}
+.hbc .hbc__name{margin:0 0 6px;font:800 clamp(22px,2.6vw,32px)/.9 var(--hb-disp);text-transform:uppercase;letter-spacing:-.01em}
+.hbc .hbc__name a{text-decoration:none;color:inherit}
+.hbc .hbc__name em{display:block;margin-top:2px;font:italic 400 clamp(21px,2.4vw,30px)/1 var(--hbc-ed);text-transform:none;color:var(--hbc-ac)}
+.hbc .hbc__why{color:var(--hb-grey);font-size:14px;line-height:1.35;margin:0 0 10px}
+.hbc .hbc__price{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;margin:0 0 12px;font-weight:400}
+.hbc__price b{font:800 clamp(28px,3vw,38px)/.9 var(--hb-disp);letter-spacing:-.01em}
+.hbc__price b small{font:800 .5em/1 var(--hb-disp);letter-spacing:.1em;text-transform:uppercase;vertical-align:.35em}
+.hbc .hbc__price s{font:600 14px/1 var(--hb-sans);color:#8b8b8b;margin:0}
+.hbc__price i{font:italic 400 17px/1 var(--hbc-ed);color:var(--hbc-ac)}
+.hbc .hbc__btn{display:flex;align-items:center;justify-content:center;margin-top:auto;min-height:48px;padding:0 14px;border:0;border-radius:999px;background:var(--hb-pk);color:#fff;font:800 17px/1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:background .2s}
+.hbc .hbc__btn:hover{background:var(--hb-pk-dk)}
+.hbc .hbc__btn[disabled],.hbc .hbc__btn[aria-busy=true]{opacity:.55;cursor:not-allowed}
+@media(prefers-reduced-motion:reduce){.hbc .hbc__ph,.hbc .hbc__p{transition:none}}
+</style>
