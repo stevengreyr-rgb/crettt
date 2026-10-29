@@ -1,13 +1,13 @@
 {% comment %}
   Section contract.
   Home: "The physics of light on skin". Four short, factual notes (photon energy, resonant
-  absorption, depth by wavelength, the best-studied absorber in red-light research) on the red
-  micrograph used by the LEZO banner. Physics only: no treatment or result claims.
+  absorption, depth by wavelength, the best-studied absorber in red-light research) on a light
+  micrograph. Physics only: no treatment or result claims.
   @example
   <!-- templates/index.json → "sk_science" -->
 {% endcomment %}
 <section class="hb sci" id="science" aria-labelledby="sci-h">
-  {%- if images['hb-sci-lezo.png'] -%}{{ images['hb-sci-lezo.png'] | image_url: width: 2000 | image_tag: class: 'sci__ph', widths: '800,1200,1600,2000', sizes: '100vw', alt: '', loading: 'lazy' }}{%- endif -%}
+  {%- if images['hb-sci-glow.png'] -%}{{ images['hb-sci-glow.png'] | image_url: width: 2000 | image_tag: class: 'sci__ph', widths: '800,1200,1600,2000', sizes: '100vw', alt: '', loading: 'lazy' }}{%- endif -%}
   <div class="hb-wrap sci__in">
     <header class="sci__head">
       <p class="sci__k">{{ section.settings.kicker | escape }}</p>
@@ -43,23 +43,23 @@
   </div>
 </section>
 <style>
-.sci{position:relative;overflow:hidden;isolation:isolate;background:#14050a;color:#fff;padding:clamp(64px,9vw,112px) 0;--sci-ac:#ff8f9f;--sci-ed:"Instrument Serif","Times New Roman",serif}
-.sci__ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;z-index:-2;opacity:.85}
-.sci:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(20,5,10,.96) 0%,rgba(20,5,10,.82) 45%,rgba(20,5,10,.45) 100%)}
+.sci{position:relative;overflow:hidden;isolation:isolate;background:#fbf3f5;color:#1a1012;padding:clamp(64px,9vw,112px) 0;--sci-ac:#c2413a;--sci-ed:"Instrument Serif","Times New Roman",serif}
+.sci__ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;z-index:-2}
+.sci:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(251,243,245,.97) 0%,rgba(251,243,245,.85) 45%,rgba(251,243,245,.35) 100%)}
 .sci__head{max-width:760px;margin-bottom:clamp(32px,5vw,56px)}
 .sci__k{margin:0 0 14px;font:800 15px/1 var(--hb-disp);letter-spacing:.2em;text-transform:uppercase;color:var(--sci-ac)}
 .sci__h{margin:0;font:800 clamp(48px,8vw,104px)/.86 var(--hb-disp);text-transform:uppercase;letter-spacing:-.01em}
 .sci__h em{display:inline-block;margin-top:6px;font:italic 400 clamp(42px,7vw,92px)/.95 var(--sci-ed);text-transform:none;color:var(--sci-ac)}
-.sci__lede{margin:22px 0 0;max-width:56ch;font-size:clamp(16px,1.4vw,19px);line-height:1.5;color:#f3dfe4}
+.sci__lede{margin:22px 0 0;max-width:56ch;font-size:clamp(16px,1.4vw,19px);line-height:1.5;color:#4a3a3e}
 .sci__grid{list-style:none;margin:0;padding:0;display:grid;gap:12px}
-.sci__c{padding:22px 22px 24px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.sci__c{padding:22px 22px 24px;border-radius:20px;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.9);box-shadow:0 18px 40px -26px rgba(120,40,70,.35);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .sci__n{display:block;font:800 13px/1 var(--hb-disp);letter-spacing:.2em;text-transform:uppercase;color:var(--sci-ac)}
 .sci__d{display:block;margin:14px 0 12px;font:800 clamp(30px,3vw,40px)/.95 var(--hb-disp);letter-spacing:-.01em;text-transform:none}
-.sci__c p{margin:0;font-size:15px;line-height:1.5;color:#f0dde2}
+.sci__c p{margin:0;font-size:15px;line-height:1.5;color:#4a3a3e}
 .sci__foot{display:grid;gap:16px;margin-top:clamp(28px,4vw,44px)}
-.sci__cta{justify-self:start;display:inline-flex;align-items:center;gap:10px;padding-bottom:6px;border-bottom:2px solid currentColor;color:#fff;text-decoration:none;font:800 18px/1 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase}
+.sci__cta{justify-self:start;display:inline-flex;align-items:center;gap:10px;padding-bottom:6px;border-bottom:2px solid currentColor;color:#1a1012;text-decoration:none;font:800 18px/1 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase}
 .sci__cta:after{content:"→";font-family:var(--hb-sans);font-weight:500}
-.sci__fine{margin:0;max-width:70ch;font-size:12.5px;line-height:1.5;color:#c9b0b7}
+.sci__fine{margin:0;max-width:70ch;font-size:12.5px;line-height:1.5;color:#7a666b}
 @media(min-width:700px){.sci__grid{grid-template-columns:1fr 1fr}}
 @media(min-width:1100px){.sci__grid{grid-template-columns:repeat(4,1fr);gap:16px}}
 </style>
