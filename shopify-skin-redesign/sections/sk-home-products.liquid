@@ -1,7 +1,8 @@
 {% comment %}
   Section contract.
-  Home, under the LEZO hero: the line-up. One tile per SEVENCRUSH skincare product,
-  priced live, with quick add where the product has a single variant.
+  Home, under the LEZO hero: the line-up. One tile per SEVENCRUSH skincare product that is
+  live on the online store, priced live, with quick add where the product has a single variant.
+  Archived or unpublished products are skipped (all_products still returns them, with no url).
   @example
   <!-- templates/index.json → "sk_products" -->
 {% endcomment %}
@@ -13,21 +14,29 @@
       <h2 class="hb-sec__h" id="hb-lineup-h">{{ section.settings.heading | escape }}</h2>
       <p class="hb-sec__lede">{{ section.settings.text | escape }}</p>
     </div>
-    <div class="hb-grid">
+    <div class="hb-grid hb-grid--lineup">
       {%- for h in handles -%}
         {%- assign pr = all_products[h] -%}
-        {%- if pr and pr.id -%}{% render 'hb-card', p: pr %}{%- endif -%}
+        {%- if pr and pr.id and pr.title != blank and pr.url != blank and pr.price > 0 -%}{% render 'hb-card', p: pr %}{%- endif -%}
       {%- endfor -%}
     </div>
   </div>
 </section>
+<style>
+@media(min-width:900px){.hb-grid--lineup{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:899px){
+  .hb-grid--lineup>.hb-card:last-of-type:nth-of-type(odd){grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;column-gap:14px;align-items:start}
+  .hb-grid--lineup>.hb-card:last-of-type:nth-of-type(odd) .hb-card__media{grid-row:1/span 5}
+  .hb-grid--lineup>.hb-card:last-of-type:nth-of-type(odd) .hb-card__name{margin-top:6px}
+}
+</style>
 {% schema %}
 {
   "name": "HB · Line-up",
   "settings": [
     {"type": "text", "id": "kicker", "label": "Kicker", "default": "The line-up"},
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Four tools. One routine."},
-    {"type": "textarea", "id": "text", "label": "Intro", "default": "An LED mask for the whole face, a wand for the details, a massager shaped for the neck, and Biodance collagen to finish. Pair any two of the mask, the wand and Biodance and 20% comes off at checkout."}
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Three tools. One routine."},
+    {"type": "textarea", "id": "text", "label": "Intro", "default": "An LED mask for the whole face, a wand for the details and Biodance collagen to finish. Pair any two and 20% comes off at checkout."}
   ],
   "presets": [{"name": "HB · Line-up"}]
 }

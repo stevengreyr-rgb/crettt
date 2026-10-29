@@ -1,15 +1,41 @@
 {% comment %}
   Section contract.
-  Site footer: brand statement, shop links, help links, contact and payment note.
+  Site footer: email sign-up (Shopify customer form, tagged "newsletter", offers the live
+  WELCOME10 code), brand statement, shop links, help links, contact and payment note.
   @example
   {% section 'hb-footer' %}
 {% endcomment %}
 <footer class="hb hb-foot" aria-labelledby="hb-foot-mark">
   <div class="hb-wrap">
+    <div class="hb-news" id="hb-news">
+      <div class="hb-news__copy">
+        <p class="hb-news__k">The Sevencrush list</p>
+        <h2 class="hb-news__h">Take <em>10% off</em><br>your first order</h2>
+        <p class="hb-news__t">Join for routine notes, restocks and first word on new rituals. Your code arrives right here, as soon as you sign up.</p>
+      </div>
+      {%- form 'customer', id: 'hb-news-form', class: 'hb-news__f' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter, welcome10">
+        {%- if form.posted_successfully? -%}
+          <div class="hb-news__ok" role="status">
+            <p class="hb-news__okh">You’re on the list.</p>
+            <p>Your code for 10% off your first order:</p>
+            <button type="button" class="hb-news__code" data-hb-copy="WELCOME10" aria-label="Copy code WELCOME10">WELCOME10 <span>Copy</span></button>
+          </div>
+        {%- else -%}
+          <label class="hb-vh" for="hb-news-email">Email address</label>
+          <div class="hb-news__row">
+            <input id="hb-news-email" type="email" name="contact[email]" placeholder="Your email" autocomplete="email" autocapitalize="off" spellcheck="false" required{% if form.errors %} aria-invalid="true" aria-describedby="hb-news-err"{% endif %}>
+            <button type="submit">Get 10% off</button>
+          </div>
+          {%- if form.errors -%}<p class="hb-news__err" id="hb-news-err">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>{%- endif -%}
+          <p class="hb-news__fine">One code per customer, for a first order. It doesn’t combine with the 20% ritual discount. Unsubscribe anytime · <a href="/policies/privacy-policy">Privacy</a></p>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
     <div class="hb-foot__top">
       <div>
         <p class="hb-foot__mark" id="hb-foot-mark">Sevencrush</p>
-        <p class="hb-foot__line">Four tools for skin, chosen to be used together: light, touch and hydration, at home, on your own time.</p>
+        <p class="hb-foot__line">Three tools for skin, chosen to be used together: light, touch and hydration, at home, on your own time.</p>
       </div>
       <div>
         <h2 class="hb-foot__h">Shop</h2>
@@ -17,7 +43,6 @@
           <li><a href="/products/lezo-7-color-led-face-mask">LEZO LED Mask</a></li>
           <li><a href="/products/new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool">Booster Pro Wand</a></li>
           <li><a href="/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca">Biodance Collagen</a></li>
-          <li><a href="/products/home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument">Face &amp; Neck Massager</a></li>
           <li><a href="/#hb-kits">Rituals · 20% off</a></li>
         </ul>
       </div>
@@ -45,6 +70,41 @@
     </div>
   </div>
 </footer>
+<style>
+.hb-news{position:relative;overflow:hidden;display:grid;gap:22px;margin:0 0 clamp(48px,7vw,72px);padding:clamp(28px,5vw,52px);border-radius:28px;background:radial-gradient(120% 140% at 100% 0%,#f36aa4 0%,var(--hb-pk) 45%,#b8336a 100%);color:#fff}
+.hb-news:after{content:"10%";position:absolute;right:-.06em;bottom:-.2em;font:800 clamp(150px,26vw,300px)/1 var(--hb-disp);color:rgba(255,255,255,.1);pointer-events:none}
+.hb-news>*{position:relative;z-index:1}
+.hb-news__k{margin:0 0 10px;font:800 15px/1 var(--hb-disp);letter-spacing:.1em;text-transform:uppercase;color:#ffe3ee}
+.hb-news__h{margin:0;font:800 clamp(44px,7vw,76px)/.9 var(--hb-disp);text-transform:uppercase;color:#fff}
+.hb-news__h em{font-style:normal;color:#111;background:#fff;padding:0 .12em;border-radius:6px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hb-news__t{margin:14px 0 0;max-width:44ch;font-size:16px;line-height:1.45;color:#ffe9f1}
+.hb-news__f{align-self:end}
+.hb-news__row{display:flex;gap:8px;background:#fff;border-radius:999px;padding:6px}
+.hb-news__row input{flex:1;min-width:0;border:0;background:none;padding:0 16px;min-height:52px;font:500 16px var(--hb-sans);color:#111;outline:none}
+.hb-news__row input::placeholder{color:#8a8a8a}
+.hb-news__row:focus-within{box-shadow:0 0 0 3px rgba(255,255,255,.55)}
+.hb-news__row button{flex:none;border:0;border-radius:999px;background:#111;color:#fff;padding:0 24px;min-height:52px;font:800 19px/1 var(--hb-disp);letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.hb-news__row button:hover{background:#000}
+.hb-news__err{margin:10px 4px 0;font-weight:700;color:#fff;background:rgba(0,0,0,.22);border-radius:10px;padding:8px 12px}
+.hb-news__fine{margin:12px 4px 0;font-size:12.5px;line-height:1.45;color:#ffd9e7}
+.hb-news .hb-news__fine a{color:#fff;text-decoration:underline}
+.hb-news__ok{background:#fff;color:#111;border-radius:20px;padding:20px 22px}
+.hb-news__ok p{margin:0 0 6px}
+.hb-news__okh{font:800 28px/1 var(--hb-disp);text-transform:uppercase}
+.hb-news__code{display:inline-flex;align-items:center;gap:14px;margin-top:8px;border:2px dashed var(--hb-pk);border-radius:14px;background:var(--hb-pk-soft);padding:12px 16px;font:800 30px/1 var(--hb-disp);letter-spacing:.08em;color:var(--hb-pk);cursor:pointer}
+.hb-news__code span{font:700 12px/1 var(--hb-sans);letter-spacing:.12em;text-transform:uppercase;color:#111}
+.hb-vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(min-width:900px){.hb-news{grid-template-columns:1.1fr 1fr;align-items:end;gap:48px}}
+@media(max-width:480px){.hb-news__row{flex-direction:column;border-radius:20px}.hb-news__row button{width:100%}}
+</style>
+<script>
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-hb-copy]');
+  if (!b) return;
+  navigator.clipboard && navigator.clipboard.writeText(b.dataset.hbCopy).then(() => { const s = b.querySelector('span'); s && (s.textContent = 'Copied'); });
+});
+if (location.hash === '#hb-news-form' || location.search.indexOf('customer_posted=true') > -1) { const n = document.getElementById('hb-news'); n && n.scrollIntoView({ block: 'center' }); }
+</script>
 {% schema %}
 {"name": "HB · Footer", "settings": []}
 {% endschema %}

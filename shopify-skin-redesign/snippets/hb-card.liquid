@@ -46,12 +46,13 @@
     when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca'
       assign img = images['sk-cut-collagen-duo.png'] | default: p.featured_image
     when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument'
-      assign img = images['sk-cut-neck.png'] | default: p.featured_image
+      assign img = p.featured_image
+      assign editorial_url = 'https://cdn.shopify.com/s/files/1/0833/3485/6923/files/sevencrush-editorial-white-neck-massager.png?v=1793197127'
   endcase
 -%}
-<article class="hb-card">
+<article class="hb-card sc-studio-card">
   <a class="hb-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
-    {%- if img -%}{% render 'sk-img', img: img, sizes: '(min-width: 900px) 25vw, 50vw', alt: '', widths: '300,450,600,800' %}{%- endif -%}
+    {%- if editorial_url != blank -%}<img src="{{ editorial_url }}" alt="{{ name | escape }}" loading="lazy" width="800" height="800">{%- elsif img -%}{% render 'sk-img', img: img, sizes: '(min-width: 900px) 33vw, 50vw', alt: '', widths: '300,450,600,800' %}{%- endif -%}
     {%- if tag != '' -%}<span class="hb-card__tag">{{ tag }}</span>{%- endif -%}
   </a>
   <h3 class="hb-card__name"><a href="{{ p.url }}">{{ name }}</a></h3>
@@ -62,4 +63,4 @@
   {%- else -%}
     <a class="hb-pill hb-card__btn" href="{{ p.url }}">{% if v.available %}Choose{% else %}Sold out{% endif %}</a>
   {%- endif -%}
-</article>
+</article><style>.sc-studio-card .hb-card__media{background:radial-gradient(ellipse at 52% 37%,#fff 28%,#f6f3f1 76%,#ebe6e2 100%)!important;border-radius:18px!important;overflow:hidden!important;aspect-ratio:1/1.06!important;display:flex!important;align-items:center!important;justify-content:center!important;box-shadow:inset 0 1px 2px #fff,0 9px 28px #29211d0c!important}.sc-studio-card .hb-card__media img{width:100%!important;height:100%!important;object-fit:contain!important;padding:6%!important;filter:drop-shadow(0 14px 12px #21171326)!important}.sc-studio-card .hb-card__name{font-weight:900!important;letter-spacing:-.035em!important;text-transform:uppercase!important}.sc-studio-card .hb-card__btn{border-radius:999px!important;background:#eb2e8b!important;color:#fff!important}@media(max-width:700px){.sc-studio-card .hb-card__name{font-size:clamp(16px,3.5vw,23px)!important}}</style>

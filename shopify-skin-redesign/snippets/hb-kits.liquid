@@ -1,8 +1,11 @@
 {% doc %}
-  "Save with rituals" panel for the product landings. Each kit lists real variants priced
-  live from Shopify; the 20% shown is worked out the way checkout applies the automatic
-  "Ritual bundle · 20% off 2+" discount (per line, rounded down). Kits add every item in
-  one request; "Checkout" adds and goes straight to the Shopify checkout.
+  "Save with rituals" kit cards for the home and the product landings. Each kit lists real
+  variants priced live from Shopify; the 20% shown is worked out the way checkout applies the
+  automatic "Ritual bundle · 20% off 2+" discount (per line, rounded down). Kits add every item
+  in one request; "Check out now" adds and goes straight to the Shopify checkout.
+
+  Finish and pairing choices are swatch radios that drive a hidden select[data-slot], which is
+  what initKit() in sk.js listens to; the small script at the end keeps "You save" in step.
 
   @example
   {% render 'hb-kits' %}
@@ -32,28 +35,39 @@
     endcase
   endfor
   assign kits = 'complete,daily,collagen' | split: ','
+  assign i_lezo = images['sk-cut-lezo.png'] | image_url: width: 600
+  assign i_bk = images['sk-cut-booster-black.png'] | image_url: width: 400
+  assign i_pk = images['sk-cut-booster-pink.png'] | image_url: width: 400
+  assign i_bdp = images['sk-cut-collagen-duo.png'] | image_url: width: 500
+  assign i_bdb = images['sk-cut-ceranol-duo.png'] | image_url: width: 500
 -%}
-{%- capture o_lezo -%}{"name":"LEZO LED Mask","img":{{ images['sk-cut-lezo.png'] | image_url: width: 300 | json }},"items":[{"id":{{ v_lezo.id }},"price":{{ v_lezo.price }}}]}{%- endcapture -%}
-{%- capture o_bk -%}{"name":"Booster Pro · Black","img":{{ images['sk-cut-booster-black.png'] | image_url: width: 200 | json }},"items":[{"id":{{ v_bk.id }},"price":{{ v_bk.price }}}]}{%- endcapture -%}
-{%- capture o_pk -%}{"name":"Booster Pro · Pink","img":{{ images['sk-cut-booster-pink.png'] | image_url: width: 200 | json }},"items":[{"id":{{ v_pk.id }},"price":{{ v_pk.price }}}]}{%- endcapture -%}
-{%- capture o_bdp -%}{"name":"Pink Collagen pads + ampoule","img":{{ images['sk-cut-collagen-duo.png'] | image_url: width: 300 | json }},"items":[{"id":{{ v_pads_pink.id }},"price":{{ v_pads_pink.price }}},{"id":{{ v_amp_pink.id }},"price":{{ v_amp_pink.price }}}]}{%- endcapture -%}
-{%- capture o_bdb -%}{"name":"Blue Cera-Nol pads + ampoule","img":{{ images['sk-cut-ceranol-duo.png'] | image_url: width: 300 | json }},"items":[{"id":{{ v_pads_blue.id }},"price":{{ v_pads_blue.price }}},{"id":{{ v_amp_blue.id }},"price":{{ v_amp_blue.price }}}]}{%- endcapture -%}
-<section class="hb-kits" id="hb-kits" aria-labelledby="hb-kits-h">
-  <h2 class="hb-kits__h" id="hb-kits-h">Save with rituals</h2>
+{%- capture o_lezo -%}{"name":"LEZO LED Mask","img":{{ i_lezo | json }},"items":[{"id":{{ v_lezo.id }},"price":{{ v_lezo.price }}}]}{%- endcapture -%}
+{%- capture o_bk -%}{"name":"Booster Pro · Black","img":{{ i_bk | json }},"items":[{"id":{{ v_bk.id }},"price":{{ v_bk.price }}}]}{%- endcapture -%}
+{%- capture o_pk -%}{"name":"Booster Pro · Pink","img":{{ i_pk | json }},"items":[{"id":{{ v_pk.id }},"price":{{ v_pk.price }}}]}{%- endcapture -%}
+{%- capture o_bdp -%}{"name":"Pink Collagen pads + ampoule","img":{{ i_bdp | json }},"items":[{"id":{{ v_pads_pink.id }},"price":{{ v_pads_pink.price }}},{"id":{{ v_amp_pink.id }},"price":{{ v_amp_pink.price }}}]}{%- endcapture -%}
+{%- capture o_bdb -%}{"name":"Blue Cera-Nol pads + ampoule","img":{{ i_bdb | json }},"items":[{"id":{{ v_pads_blue.id }},"price":{{ v_pads_blue.price }}},{"id":{{ v_amp_blue.id }},"price":{{ v_amp_blue.price }}}]}{%- endcapture -%}
+<section class="rk" id="hb-kits" aria-labelledby="hb-kits-h">
+  <header class="rk__head">
+    <p class="rk__eyebrow">Three rituals · 20% off each</p>
+    <h2 class="rk__h" id="hb-kits-h">Save with rituals</h2>
+  </header>
   {%- for k in kits -%}
     {%- liquid
       case k
         when 'complete'
           assign k_name = 'The Complete Routine'
-          assign k_what = 'LEZO mask + Booster Pro wand + Biodance pads and ampoule. Everything, 20% off.'
+          assign k_flag = 'Most complete'
+          assign k_count = '4 items'
           assign k_vars = v_lezo.price | append: ',' | append: v_bk.price | append: ',' | append: v_pads_pink.price | append: ',' | append: v_amp_pink.price
         when 'daily'
           assign k_name = 'The Daily Ritual'
-          assign k_what = 'LEZO mask + Booster Pro wand.'
+          assign k_flag = 'Light duo'
+          assign k_count = '2 items'
           assign k_vars = v_lezo.price | append: ',' | append: v_bk.price
         when 'collagen'
           assign k_name = 'Light & Hydration'
-          assign k_what = 'LEZO mask + Biodance pads and ampoule.'
+          assign k_flag = 'Mask + collagen'
+          assign k_count = '3 items'
           assign k_vars = v_lezo.price | append: ',' | append: v_pads_pink.price | append: ',' | append: v_amp_pink.price
       endcase
       assign k_total = 0
@@ -66,49 +80,137 @@
         assign k_off = k_off | plus: line_off
       endfor
       assign k_final = k_total | minus: k_off
+      if k == 'complete'
+        assign bslot = 2
+      else
+        assign bslot = 1
+      endif
     -%}
     {%- capture k_json -%}{"name":{{ k_name | json }},"pct":20,"slots":[
       [{{ o_lezo }}]
       {%- if k == 'complete' or k == 'daily' -%},[{{ o_bk }},{{ o_pk }}]{%- endif -%}
       {%- if k == 'complete' or k == 'collagen' -%},[{{ o_bdp }},{{ o_bdb }}]{%- endif -%}
     ]}{%- endcapture -%}
-    <article class="hb-kit" data-hb-kit>
+    <article class="rk-card rk-card--{{ k }}" data-hb-kit>
       <script type="application/json" data-hb-kit-data>{{ k_json | strip_newlines }}</script>
-      <div class="hb-kit__img" aria-hidden="true">
-        {%- if k == 'complete' -%}
-          <img data-slot-img="0" src="{{ images['sk-cut-lezo.png'] | image_url: width: 300 }}" alt="" style="left:0;height:72%" loading="lazy">
-          <img data-slot-img="1" src="{{ images['sk-cut-booster-black.png'] | image_url: width: 200 }}" alt="" style="left:44%;height:100%;z-index:2" loading="lazy">
-          <img data-slot-img="2" src="{{ images['sk-cut-collagen-duo.png'] | image_url: width: 300 }}" alt="" style="right:0;height:44%;z-index:3" loading="lazy">
-        {%- elsif k == 'daily' -%}
-          <img data-slot-img="0" src="{{ images['sk-cut-lezo.png'] | image_url: width: 300 }}" alt="" style="left:0;height:78%" loading="lazy">
-          <img data-slot-img="1" src="{{ images['sk-cut-booster-black.png'] | image_url: width: 200 }}" alt="" style="right:4%;height:100%;z-index:2" loading="lazy">
-        {%- else -%}
-          <img data-slot-img="0" src="{{ images['sk-cut-lezo.png'] | image_url: width: 300 }}" alt="" style="left:0;top:0;height:76%" loading="lazy">
-          <img data-slot-img="1" src="{{ images['sk-cut-collagen-duo.png'] | image_url: width: 300 }}" alt="" style="right:0;height:58%;z-index:2" loading="lazy">
-        {%- endif -%}
+      <div class="rk-card__stage" aria-hidden="true">
+        <span class="rk-card__flag">{{ k_flag }}</span>
+        <span class="rk-card__save" data-rk-save>Save {{ k_off | money }}</span>
+        <div class="rk-card__art">
+          {%- if k == 'complete' -%}
+            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="left:2%;bottom:6%;height:74%" loading="lazy">
+            <img data-slot-img="1" src="{{ i_bk }}" alt="" style="left:47%;bottom:2%;height:98%;z-index:2" loading="lazy">
+            <img data-slot-img="2" src="{{ i_bdp }}" alt="" style="right:0;bottom:0;height:46%;z-index:3" loading="lazy">
+          {%- elsif k == 'daily' -%}
+            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="left:6%;bottom:4%;height:82%" loading="lazy">
+            <img data-slot-img="1" src="{{ i_bk }}" alt="" style="right:10%;bottom:0;height:100%;z-index:2" loading="lazy">
+          {%- else -%}
+            <img data-slot-img="0" src="{{ i_lezo }}" alt="" style="left:4%;bottom:10%;height:82%" loading="lazy">
+            <img data-slot-img="1" src="{{ i_bdp }}" alt="" style="right:0;bottom:0;height:60%;z-index:2" loading="lazy">
+          {%- endif -%}
+        </div>
       </div>
-      <div>
-        <h3 class="hb-kit__name">{{ k_name }}</h3>
-        <p class="hb-kit__what">{{ k_what }}</p>
-        <div class="hb-kit__price"><s data-hb-kit-was>{{ k_total | money }}</s><b data-hb-kit-now>{{ k_final | money }}</b><span class="hb-save">Save 20%</span></div>
-        <div class="hb-kit__sel">
-          {%- if k == 'complete' or k == 'daily' -%}
-            <label class="hb-vh" for="hb-k-{{ k }}-1">Booster Pro finish</label>
-            <select id="hb-k-{{ k }}-1" data-slot="1"><option value="0">Booster Pro · Black</option><option value="1">Booster Pro · Pink</option></select>
-          {%- endif -%}
-          {%- if k == 'complete' or k == 'collagen' -%}
-            {%- if k == 'complete' -%}{%- assign bslot = 2 -%}{%- else -%}{%- assign bslot = 1 -%}{%- endif -%}
-            <label class="hb-vh" for="hb-k-{{ k }}-{{ bslot }}">Biodance pairing</label>
-            <select id="hb-k-{{ k }}-{{ bslot }}" data-slot="{{ bslot }}"><option value="0">Biodance · Pink Collagen</option><option value="1">Biodance · Blue Cera-Nol</option></select>
-          {%- endif -%}
+      <div class="rk-card__body">
+        <p class="rk-card__n">0{{ forloop.index }} · {{ k_count }}</p>
+        <h3 class="rk-card__name">{{ k_name }}</h3>
+        <ul class="rk-card__inc">
+          <li>LEZO LED Mask</li>
+          {%- if k == 'complete' or k == 'daily' -%}<li>Booster Pro wand</li>{%- endif -%}
+          {%- if k == 'complete' or k == 'collagen' -%}<li>Biodance gel pads + ampoule</li>{%- endif -%}
+        </ul>
+        {%- if k == 'complete' or k == 'daily' -%}
+          <fieldset class="rk-opt" data-rk-for="hb-k-{{ k }}-1">
+            <legend>Wand finish</legend>
+            <label><input type="radio" name="rk-{{ k }}-1" value="0" checked><i style="--c:#161616"></i>Black</label>
+            <label><input type="radio" name="rk-{{ k }}-1" value="1"><i style="--c:#f4c3cf"></i>Pink</label>
+          </fieldset>
+          <select id="hb-k-{{ k }}-1" data-slot="1" hidden tabindex="-1" aria-hidden="true"><option value="0">Booster Pro · Black</option><option value="1">Booster Pro · Pink</option></select>
+        {%- endif -%}
+        {%- if k == 'complete' or k == 'collagen' -%}
+          <fieldset class="rk-opt" data-rk-for="hb-k-{{ k }}-{{ bslot }}">
+            <legend>Biodance</legend>
+            <label><input type="radio" name="rk-{{ k }}-{{ bslot }}" value="0" checked><i style="--c:#f2a9bd"></i>Pink Collagen</label>
+            <label><input type="radio" name="rk-{{ k }}-{{ bslot }}" value="1"><i style="--c:#93bde8"></i>Blue Cera-Nol</label>
+          </fieldset>
+          <select id="hb-k-{{ k }}-{{ bslot }}" data-slot="{{ bslot }}" hidden tabindex="-1" aria-hidden="true"><option value="0">Biodance · Pink Collagen</option><option value="1">Biodance · Blue Cera-Nol</option></select>
+        {%- endif -%}
+        <div class="rk-card__price">
+          <b data-hb-kit-now>{{ k_final | money }}</b>
+          <s data-hb-kit-was>{{ k_total | money }}</s>
+          <span>20% off</span>
         </div>
-        <div class="hb-kit__btns">
-          <button type="button" class="hb-pill" data-hb-kit-add>Add kit</button>
-          <button type="button" class="hb-pill hb-pill--pk" data-hb-kit-buy>Checkout <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-        </div>
-        <p class="hb-kit__msg" data-hb-kit-msg role="status"></p>
+        <button type="button" class="rk-card__add" data-hb-kit-add>Add ritual to bag</button>
+        <button type="button" class="rk-card__buy" data-hb-kit-buy>Or check out now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+        <p class="rk-card__msg" data-hb-kit-msg role="status"></p>
       </div>
     </article>
   {%- endfor -%}
-  <p class="hb-note" style="margin:14px 4px 0">20% comes off automatically at checkout on any 2 or more of the LEZO mask, Booster Pro and Biodance pads or ampoules. It doesn’t stack with other codes; checkout keeps the single offer that saves you more.</p>
+  <p class="rk__note">20% comes off automatically at checkout on any 2 or more of the LEZO mask, Booster Pro and Biodance pads or ampoules. It doesn’t stack with other codes; checkout keeps the single offer that saves you more.</p>
 </section>
+<style>
+.rk{scroll-margin-top:84px;margin:26px 0;font-family:var(--hb-sans);color:var(--hb-ink)}
+.rk__head{display:flex;flex-direction:column;gap:6px;margin:0 0 18px}
+.rk__eyebrow{margin:0;font:800 15px/1 var(--hb-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--hb-pk)}
+.rk__h{margin:0;font:800 clamp(38px,6vw,54px)/.92 var(--hb-disp);text-transform:uppercase;letter-spacing:-.005em}
+.rk-card{display:grid;background:#fff;border-radius:24px;overflow:hidden;margin-top:16px;box-shadow:0 1px 0 rgba(0,0,0,.03),0 18px 40px -22px rgba(120,40,70,.28)}
+.rk-card__stage{position:relative;overflow:hidden;aspect-ratio:16/10;background:radial-gradient(70% 80% at 55% 40%,#fff 0%,#fbf1f4 55%,#f5dfe7 100%)}
+.rk-card__stage:after{content:"";position:absolute;left:12%;right:12%;bottom:9%;height:14px;border-radius:50%;background:rgba(120,40,70,.14);filter:blur(10px)}
+.rk-card__art{position:absolute;inset:12% 9% 10%;z-index:1;pointer-events:none}
+.rk-card__art img{position:absolute;object-fit:contain;max-width:none;width:auto;filter:drop-shadow(0 14px 12px rgba(90,30,50,.2)) drop-shadow(0 3px 3px rgba(90,30,50,.14));transition:opacity .25s}
+.rk-card__flag{position:absolute;left:16px;top:16px;z-index:3;background:var(--hb-ink);color:#fff;border-radius:999px;padding:7px 12px 6px;font:800 14px/1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase}
+.rk-card__save{position:absolute;right:14px;top:14px;z-index:3;display:grid;place-items:center;width:84px;height:84px;border-radius:50%;background:var(--hb-pk);color:#fff;text-align:center;font:800 19px/.95 var(--hb-disp);text-transform:uppercase;padding:10px;transform:rotate(8deg);box-shadow:0 10px 22px -8px rgba(216,69,127,.6)}
+.rk-card__body{padding:20px 20px 18px}
+.rk-card__n{margin:0 0 6px;font:700 13px/1 var(--hb-sans);letter-spacing:.14em;text-transform:uppercase;color:var(--hb-grey)}
+.rk-card__name{margin:0;font:800 clamp(32px,5vw,40px)/.92 var(--hb-disp);text-transform:uppercase}
+.rk-card__inc{list-style:none;margin:14px 0 4px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.rk-card__inc li{display:inline-flex;align-items:center;gap:6px;background:var(--hb-pk-soft);border-radius:999px;padding:6px 11px;font:600 13px/1.1 var(--hb-sans)}
+.rk-card__inc li:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--hb-pk)}
+.rk-opt{border:0;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.rk-opt legend{float:left;margin-right:4px;font:700 12px/1 var(--hb-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--hb-grey);padding:0;width:100%;margin-bottom:8px}
+.rk-opt label{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px 0 8px;border:1.5px solid var(--hb-line);border-radius:999px;font:600 14px/1 var(--hb-sans);cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.rk-opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.rk-opt i{width:24px;height:24px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.rk-opt label:has(input:checked){border-color:var(--hb-ink);box-shadow:inset 0 0 0 1px var(--hb-ink)}
+.rk-opt label:has(input:focus-visible){outline:2px solid var(--hb-pk);outline-offset:2px}
+.rk-card__price{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:18px 0 14px}
+.rk-card__price b{font:800 40px/1 var(--hb-disp);letter-spacing:-.01em}
+.rk-card__price s{font:600 17px/1 var(--hb-sans);color:#8b8b8b}
+.rk-card__price span{font:800 14px/1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase;color:var(--hb-pk)}
+.rk-card__add{display:flex;align-items:center;justify-content:center;width:100%;min-height:56px;border:0;border-radius:999px;background:var(--hb-pk);color:#fff;font:800 20px/1 var(--hb-disp);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .2s}
+.rk-card__add:hover{background:var(--hb-pk-dk)}
+.rk-card__add:active{transform:scale(.99)}
+.rk-card__buy{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:4px;border:0;background:none;color:var(--hb-ink);font:700 14px/1 var(--hb-sans);letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.rk-card__buy svg{width:16px;height:16px}
+.rk-card [disabled],.rk-card [aria-busy=true]{opacity:.55;cursor:not-allowed}
+.rk-card__msg{margin:6px 0 0;min-height:1em;font-size:13px;text-align:center}
+.rk-card__msg.is-err{color:#b3261e}
+.rk__note{margin:16px 4px 0;font-size:13px;line-height:1.45;color:var(--hb-grey)}
+@media(min-width:620px){
+  .rk-card__stage{aspect-ratio:16/8}
+  .rk-card__art{inset:12% 16% 10%}
+  .rk-card__body{padding:24px 28px 22px}
+}
+</style>
+<script>
+(() => {
+  const money = (t) => Number(String(t).replace(/[^0-9.]/g, '')) || 0;
+  document.querySelectorAll('.rk-card').forEach((card) => {
+    card.querySelectorAll('.rk-opt').forEach((fs) => {
+      const sel = document.getElementById(fs.dataset.rkFor);
+      fs.addEventListener('change', (e) => {
+        if (!sel || !e.target.checked) return;
+        sel.value = e.target.value;
+        sel.dispatchEvent(new Event('change'));
+      });
+    });
+    const now = card.querySelector('[data-hb-kit-now]'), was = card.querySelector('[data-hb-kit-was]'), save = card.querySelector('[data-rk-save]');
+    if (!now || !was || !save) return;
+    const paint = () => {
+      const d = money(was.textContent) - money(now.textContent);
+      const cur = now.textContent.trim().replace(/[0-9.,\s]+$/, '') || '$';
+      if (d > 0) save.textContent = 'Save ' + cur + d.toFixed(2);
+    };
+    new MutationObserver(paint).observe(now, { childList: true, characterData: true, subtree: true });
+  });
+})();
+</script>
