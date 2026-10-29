@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "sk-promo",
+      "settings": {
+        "promo": "lezo"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

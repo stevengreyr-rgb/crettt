@@ -1,0 +1,351 @@
+{% comment %}
+  Section contract.
+  Promo landing, one per offer under the home cover (templates/product.promo-*.json, reached
+  with ?view=promo-…). Hero photo shared with the home card through a view transition, the
+  offer with live prices and direct add to bag (sk.js [data-sk-add] opens the cart drawer),
+  the physics, what's inside, how to use, the fine print and a sticky buy bar on mobile.
+  Only offers checkout really applies: the mask's sale price, "Ritual bundle · 20% off 2+",
+  and the Biodance pads + matching ampoule BXGY.
+  @example
+  <!-- templates/product.promo-lezo.json → { "type": "sk-promo", "settings": { "promo": "lezo" } } -->
+{% endcomment %}
+{%- liquid
+  assign promo = section.settings.promo
+  assign mask = all_products['lezo-7-color-led-face-mask']
+  assign wand = all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
+  assign bd = all_products['korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca']
+  assign v_mask = mask.selected_or_first_available_variant
+  for v in wand.variants
+    if v.id == 50957033046235
+      assign v_bk = v
+    elsif v.id == 50957033013467
+      assign v_pk = v
+    endif
+  endfor
+  for v in bd.variants
+    case v.id
+      when 50956618858715
+        assign v_pads_pink = v
+      when 50956618891483
+        assign v_amp_pink = v
+      when 50956618629339
+        assign v_pads_blue = v
+      when 50956618825947
+        assign v_amp_blue = v
+    endcase
+  endfor
+  assign m20 = v_mask.price | times: 20 | divided_by: 100
+  case promo
+    when 'daily'
+      assign photo = 'sc-ed2-daily.png'
+      assign kicker = 'The Daily Ritual · 20% off the pair'
+      assign h = 'Mask + wand,'
+      assign em = '20% off the pair.'
+      assign lede = 'LEZO lights the whole face at once. Booster Pro goes where a mask can’t: under the eyes, along the jaw, the lines that need a closer pass. Two lights, one routine.'
+      assign opt_label = 'Wand finish'
+    when 'collagen'
+      assign photo = 'sc-ed2-biodance.png'
+      assign kicker = 'Biodance · the ampoule is on us'
+      assign h = 'The ampoule'
+      assign em = 'is on us.'
+      assign lede = 'Buy the Biodance gel toner pads and their matching ampoule comes free. Hydrogel pads to prep, ampoule to finish, water and collagen held right at the surface.'
+      assign opt_label = 'Formula'
+    else
+      assign photo = 'sc-ed2-lezo.png'
+      assign kicker = 'LEZO LED mask · sale price'
+      assign h = 'Red light,'
+      assign em = 'at home.'
+      assign lede = 'Six wavelengths on a full-face mask, from blue 470 nm to red 630 nm. Pick the color, lie back, keep your hands free.'
+      assign opt_label = ''
+  endcase
+-%}
+{%- capture opts -%}
+  {%- case promo -%}
+    {%- when 'daily' -%}
+      {%- for o in (1..2) -%}
+        {%- if o == 1 -%}{%- assign vw = v_bk -%}{%- assign lab = 'Black' -%}{%- assign dot = '#161616' -%}{%- else -%}{%- assign vw = v_pk -%}{%- assign lab = 'Pink' -%}{%- assign dot = '#f4c3cf' -%}{%- endif -%}
+        {%- assign was = v_mask.price | plus: vw.price -%}
+        {%- assign w20 = vw.price | times: 20 | divided_by: 100 -%}
+        {%- assign now = was | minus: m20 | minus: w20 -%}
+        <label><input type="radio" name="promo-opt" {% if o == 1 %}checked{% endif %} data-items='[{"id":{{ v_mask.id }},"quantity":1},{"id":{{ vw.id }},"quantity":1}]' data-now="{{ now | money }}" data-was="{{ was | money }}" data-save="{{ was | minus: now | money }}"><i style="--c:{{ dot }}"></i>{{ lab }}</label>
+      {%- endfor -%}
+    {%- when 'collagen' -%}
+      {%- for o in (1..2) -%}
+        {%- if o == 1 -%}{%- assign vp = v_pads_pink -%}{%- assign va = v_amp_pink -%}{%- assign lab = 'Pink Collagen' -%}{%- assign dot = '#f2a9bd' -%}{%- else -%}{%- assign vp = v_pads_blue -%}{%- assign va = v_amp_blue -%}{%- assign lab = 'Blue Cera-Nol' -%}{%- assign dot = '#93bde8' -%}{%- endif -%}
+        <label><input type="radio" name="promo-opt" {% if o == 1 %}checked{% endif %} data-items='[{"id":{{ vp.id }},"quantity":1},{"id":{{ va.id }},"quantity":1}]' data-now="{{ vp.price | money }}" data-was="{{ vp.price | plus: va.price | money }}" data-save="{{ va.price | money }}"><i style="--c:{{ dot }}"></i>{{ lab }}</label>
+      {%- endfor -%}
+  {%- endcase -%}
+{%- endcapture -%}
+{%- liquid
+  case promo
+    when 'daily'
+      assign was0 = v_mask.price | plus: v_bk.price
+      assign w20 = v_bk.price | times: 20 | divided_by: 100
+      assign now0 = was0 | minus: m20 | minus: w20
+      assign items0 = '[{"id":' | append: v_mask.id | append: ',"quantity":1},{"id":' | append: v_bk.id | append: ',"quantity":1}]'
+      assign save_note = 'applied at checkout'
+    when 'collagen'
+      assign now0 = v_pads_pink.price
+      assign was0 = v_pads_pink.price | plus: v_amp_pink.price
+      assign items0 = '[{"id":' | append: v_pads_pink.id | append: ',"quantity":1},{"id":' | append: v_amp_pink.id | append: ',"quantity":1}]'
+      assign save_note = 'ampoule free at checkout'
+    else
+      assign now0 = v_mask.price
+      assign was0 = v_mask.compare_at_price
+      assign items0 = '[{"id":' | append: v_mask.id | append: ',"quantity":1}]'
+      assign save_note = ''
+      if was0 > now0
+        assign pct = was0 | minus: now0 | times: 100 | divided_by: was0
+        assign save_note = pct | append: '% off'
+      endif
+  endcase
+  assign save0 = was0 | minus: now0
+-%}
+<div class="hb pr pr--{{ promo }}" data-promo>
+  <a class="pr__back" href="/#offers">← All offers</a>
+
+  <section class="pr-hero" aria-labelledby="pr-h">
+    <div class="pr-hero__ph" style="view-transition-name:promo-{{ promo }}">
+      {%- if images[photo] -%}{{ images[photo] | image_url: width: 2400 | image_tag: widths: '600,900,1200,1600,2048,2400', sizes: '100vw', alt: images[photo].alt, loading: 'eager', fetchpriority: 'high' }}{%- endif -%}
+    </div>
+    <div class="pr-hero__c">
+      <p class="pr__k pr-rv">{{ kicker }}</p>
+      <h1 class="pr__h pr-rv" id="pr-h">{{ h }}<br><em>{{ em }}</em></h1>
+      <p class="pr__lede pr-rv">{{ lede }}</p>
+    </div>
+  </section>
+
+  <section class="pr-offer" aria-label="The offer" data-pr-offer>
+    <div class="pr-offer__in pr-rv">
+      <div class="pr-price">
+        <b data-pr-now>{{ now0 | money }}</b>
+        {%- if was0 > now0 -%}<span><s data-pr-was>{{ was0 | money }}</s><i>{{ save_note }}</i></span>{%- endif -%}
+      </div>
+      {%- if save0 > 0 -%}<p class="pr-save">You save <b data-pr-save>{{ save0 | money }}</b></p>{%- endif -%}
+      {%- if opt_label != '' -%}
+        <fieldset class="pr-opt" data-pr-opts>
+          <legend>{{ opt_label }}</legend>
+          {{ opts }}
+        </fieldset>
+      {%- endif -%}
+      <button type="button" class="pr-btn" data-sk-add='{{ items0 }}' data-pr-add>Add to bag · <span data-pr-now2>{{ now0 | money }}</span></button>
+      <button type="button" class="pr-link" data-pr-buy>Buy now · secure checkout</button>
+      <ul class="pr-trust">
+        <li>Free US shipping, tracked</li>
+        <li>30 days to return unopened items</li>
+        <li>Card, PayPal or Shop Pay</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="pr-sec" aria-labelledby="pr-sci-h">
+    <p class="pr__k pr-rv">{% if promo == 'collagen' %}The science of hydration{% else %}The physics of light on skin{% endif %}</p>
+    <h2 class="pr__h2 pr-rv" id="pr-sci-h">{% if promo == 'collagen' %}Water, <em>held in place.</em>{% else %}Resonance, <em>explained.</em>{% endif %}</h2>
+    <ol class="pr-facts">
+      {%- if promo == 'collagen' -%}
+        <li class="pr-rv"><span>01 · Hydrogel</span><b>Water in a net</b><p>A hydrogel is water held inside a soft polymer network. The pad sits flat and wet against the skin, so the essence stays where you put it instead of evaporating.</p></li>
+        <li class="pr-rv"><span>02 · Barrier</span><b>~50% ceramides</b><p>Ceramides make up roughly half of the lipids in the stratum corneum, the outermost layer of skin. Cera-Nol is built around them.</p></li>
+        <li class="pr-rv"><span>03 · Order</span><b>Light, then water</b><p>Use LED first on clean, dry skin, then the pad and ampoule. Light goes on a bare surface; hydration seals the routine.</p></li>
+      {%- else -%}
+        <li class="pr-rv"><span>01 · Photon</span><b>E = hc/λ</b><p>Each color is a different packet of energy. Red at 630 nm carries 1.97 eV per photon; blue at 470 nm, 2.64 eV.</p></li>
+        <li class="pr-rv"><span>02 · Resonance</span><b>Match → absorb</b><p>A molecule takes in a photon only when its energy matches a jump the molecule can make. That match is why the color you choose matters.</p></li>
+        <li class="pr-rv"><span>03 · Depth</span><b>470 → 630 nm</b><p>Short wavelengths scatter near the surface; longer ones travel further. Blue stays in the upper layers, red goes deeper.</p></li>
+      {%- endif -%}
+    </ol>
+  </section>
+
+  <section class="pr-sec pr-sec--soft" aria-labelledby="pr-in-h">
+    <p class="pr__k pr-rv">What’s inside</p>
+    <h2 class="pr__h2 pr-rv" id="pr-in-h">{% case promo %}{% when 'daily' %}Two lights, <em>one routine.</em>{% when 'collagen' %}Pads + ampoule, <em>one price.</em>{% else %}One mask, <em>six colors.</em>{% endcase %}</h2>
+    <div class="pr-items">
+      {%- if promo != 'collagen' -%}
+        <a class="pr-item pr-rv" href="{{ mask.url }}"><span class="pr-item__img">{{ images['sk-cut-lezo.png'] | image_url: width: 700 | image_tag: widths: '350,500,700', sizes: '(min-width: 900px) 30vw, 70vw', alt: 'LEZO LED mask', loading: 'lazy' }}</span><b>LEZO LED mask</b><small>Six colors · 470 to 630 nm · adjustable strap</small></a>
+      {%- endif -%}
+      {%- if promo == 'daily' -%}
+        <a class="pr-item pr-rv" href="{{ wand.url }}"><span class="pr-item__img">{{ images['sk-cut-booster-black.png'] | image_url: width: 600 | image_tag: widths: '300,450,600', sizes: '(min-width: 900px) 30vw, 70vw', alt: 'Booster Pro LED wand', loading: 'lazy' }}</span><b>Booster Pro wand</b><small>Handheld LED · black or pink · USB rechargeable</small></a>
+      {%- endif -%}
+      {%- if promo == 'collagen' -%}
+        <a class="pr-item pr-rv" href="{{ bd.url }}"><span class="pr-item__img">{{ images['sk-cut-collagen-duo.png'] | image_url: width: 700 | image_tag: widths: '350,500,700', sizes: '(min-width: 900px) 30vw, 70vw', alt: 'Biodance Collagen gel toner pads and ampoule', loading: 'lazy' }}</span><b>Gel toner pads + ampoule</b><small>The ampoule comes free with its matching pads</small></a>
+      {%- endif -%}
+    </div>
+  </section>
+
+  <section class="pr-sec" aria-labelledby="pr-how-h">
+    <p class="pr__k pr-rv">How to use</p>
+    <h2 class="pr__h2 pr-rv" id="pr-how-h">Three steps, <em>every evening.</em></h2>
+    <ol class="pr-steps">
+      {%- if promo == 'collagen' -%}
+        <li class="pr-rv"><b>01</b><p>Cleanse and pat skin dry.</p></li>
+        <li class="pr-rv"><b>02</b><p>Lay a gel pad on each area and leave it while you get ready.</p></li>
+        <li class="pr-rv"><b>03</b><p>Press a few drops of ampoule in to finish.</p></li>
+      {%- else -%}
+        <li class="pr-rv"><b>01</b><p>Charge fully, then start on clean, dry skin.</p></li>
+        <li class="pr-rv"><b>02</b><p>Pick a color.{% if promo == 'daily' %} Mask for the whole face, wand for the details.{% endif %}</p></li>
+        <li class="pr-rv"><b>03</b><p>Keep to the session time and eye protection in your manual.</p></li>
+      {%- endif -%}
+    </ol>
+  </section>
+
+  <section class="pr-sec pr-fine" aria-label="Offer details">
+    <p class="pr-rv">{%- case promo -%}
+      {%- when 'daily' -%}20% comes off each item automatically at checkout on any 2 or more of the LEZO mask, Booster Pro and Biodance pads or ampoules. It doesn’t stack with other codes; checkout keeps the single offer that saves you more.
+      {%- when 'collagen' -%}The matching ampoule is free at checkout when its gel toner pads are in the bag (pink with pink, blue with blue). It doesn’t combine with other discounts; checkout keeps the single offer that saves you more.
+      {%- else -%}The sale price is the live store price. Add the Booster Pro or Biodance and 20% comes off both at checkout.
+    {%- endcase %} Cosmetic products; individual results vary.</p>
+    {%- if promo == 'lezo' -%}<a class="pr-cross pr-rv" href="{{ wand.url }}?view=promo-daily">Pair it with Booster Pro · 20% off both →</a>{%- endif -%}
+    {%- if promo == 'daily' -%}<a class="pr-cross pr-rv" href="{{ bd.url }}?view=promo-collagen">Add hydration · the ampoule is on us →</a>{%- endif -%}
+    {%- if promo == 'collagen' -%}<a class="pr-cross pr-rv" href="{{ mask.url }}?view=promo-lezo">Start with light · LEZO {{ v_mask.price | money }} →</a>{%- endif -%}
+  </section>
+
+  <div class="pr-bar" data-pr-bar aria-hidden="true">
+    <span><b data-pr-now3>{{ now0 | money }}</b>{% if was0 > now0 %} <s data-pr-was2>{{ was0 | money }}</s>{% endif %}</span>
+    <button type="button" class="pr-btn" data-sk-add='{{ items0 }}' data-pr-add tabindex="-1">Add to bag</button>
+  </div>
+</div>
+<style>
+.pr{--pr-ac:#b8336a;--pr-ed:"Instrument Serif","Times New Roman",serif;--pr-ease:cubic-bezier(.16,1,.3,1);background:#fff;color:#1a1012;padding-bottom:90px}
+.pr--lezo{--pr-ac:#c2413a}
+.pr__back{position:absolute;z-index:5;left:16px;top:14px;display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#1a1012;text-decoration:none;font:800 13px/1 var(--hb-disp);letter-spacing:.12em;text-transform:uppercase}
+.pr{position:relative}
+.pr__k{margin:0 0 12px;font:800 13px/1.2 var(--hb-disp);letter-spacing:.2em;text-transform:uppercase;color:var(--pr-ac)}
+.pr__h{margin:0;font:800 clamp(52px,8vw,112px)/.86 var(--hb-disp);text-transform:uppercase;letter-spacing:-.01em}
+.pr__h em,.pr__h2 em{font:italic 400 .86em/.95 var(--pr-ed);text-transform:none;color:var(--pr-ac)}
+.pr__h em{display:inline-block;margin-top:6px}
+.pr__lede{margin:18px 0 0;max-width:46ch;font-size:clamp(16px,1.4vw,19px);line-height:1.5;color:#4a3a3e}
+.pr__h2{margin:0 0 26px;font:800 clamp(36px,5vw,64px)/.9 var(--hb-disp);text-transform:uppercase;letter-spacing:-.01em}
+.pr-hero{position:relative}
+.pr-hero__ph{position:relative;aspect-ratio:4/5;overflow:hidden;background:#f3e3e7}
+.pr-hero__ph img{width:100%;height:100%;object-fit:cover;object-position:30% center;display:block;animation:pr-zoom 1.6s var(--pr-ease) both}
+.pr--daily .pr-hero__ph img{object-position:78% center}
+.pr--collagen .pr-hero__ph img{object-position:40% center}
+.pr-hero__c{position:relative;z-index:2;margin:-56px 12px 0;padding:28px 22px 26px;border-radius:26px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 24px 60px -30px rgba(120,40,70,.45)}
+.pr-offer{padding:18px 12px 0}
+.pr-offer__in{padding:24px 22px;border-radius:26px;background:linear-gradient(180deg,#fff, #fbf1f4);border:1px solid #f2dbe3}
+.pr-price{display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px 14px}
+.pr-price b{font:800 clamp(56px,7vw,88px)/.8 var(--hb-disp);letter-spacing:-.02em}
+.pr-price span{display:flex;flex-direction:column;gap:6px;padding-bottom:4px}
+.pr-price s{font:600 16px/1 var(--hb-sans);color:#8b8b8b}
+.pr-price i{font:italic 400 20px/1 var(--pr-ed);color:var(--pr-ac)}
+.pr-save{justify-self:start;margin:14px 0 0;display:inline-block;padding:7px 12px;border-radius:999px;background:#fde8ef;color:var(--pr-ac);font:800 14px/1 var(--hb-disp);letter-spacing:.08em;text-transform:uppercase}
+.pr-opt{border:0;margin:20px 0 0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pr-opt legend{float:left;line-height:44px;margin:0 8px 0 0;padding:0;font:800 13px/44px var(--hb-disp);letter-spacing:.16em;text-transform:uppercase;color:var(--hb-grey)}
+.pr-opt label{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px 0 8px;border:1.5px solid #e7e0e2;border-radius:999px;background:#fff;font:600 14px/1 var(--hb-sans);cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .2s var(--pr-ease)}
+.pr-opt label:active{transform:scale(.97)}
+.pr-opt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.pr-opt i{width:26px;height:26px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.pr-opt label:has(input:checked){border-color:#1a1012;box-shadow:inset 0 0 0 1px #1a1012}
+.pr-opt label:has(input:focus-visible){outline:2px solid var(--pr-ac);outline-offset:2px}
+.pr-btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:.35em;width:100%;min-height:58px;margin-top:22px;border:0;border-radius:999px;background:var(--hb-pk);color:#fff;font:800 20px/1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .25s var(--pr-ease),background .2s,box-shadow .25s;box-shadow:0 16px 30px -16px rgba(216,69,127,.8)}
+.pr-btn:hover{background:var(--hb-pk-dk)}
+.pr-btn:active{transform:scale(.97)}
+.pr-btn:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s var(--pr-ease)}
+.pr-btn:hover:after,.pr-btn:focus-visible:after{transform:translateX(120%)}
+.pr-btn[aria-busy=true]{opacity:.7}
+.pr-link{display:block;width:100%;margin-top:10px;min-height:44px;border:0;background:none;color:#1a1012;font:800 14px/1 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase;text-decoration:underline;text-underline-offset:5px;cursor:pointer}
+.pr-trust{list-style:none;margin:16px 0 0;padding:16px 0 0;border-top:1px solid #f0dfe5;display:grid;gap:8px;font-size:14px;color:#4a3a3e}
+.pr-trust li:before{content:"✓";margin-right:8px;color:var(--pr-ac);font-weight:700}
+.pr-sec{padding:clamp(56px,8vw,96px) 20px 0;max-width:1200px;margin:0 auto}
+.pr-sec--soft{background:none}
+.pr-facts{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.pr-facts li{padding:22px;border-radius:22px;background:#fbf3f5;border:1px solid #f4e3e9}
+.pr-facts span{display:block;font:800 12px/1 var(--hb-disp);letter-spacing:.2em;text-transform:uppercase;color:var(--pr-ac)}
+.pr-facts b{display:block;margin:12px 0 10px;font:800 clamp(28px,3vw,36px)/.95 var(--hb-disp)}
+.pr-facts p{margin:0;font-size:15px;line-height:1.5;color:#4a3a3e}
+.pr-items{display:grid;gap:14px}
+.pr-item{display:block;padding:18px 18px 20px;border-radius:24px;background:radial-gradient(ellipse at 52% 37%,#fff 28%,#f6f3f1 76%,#ebe6e2 100%);text-decoration:none;color:inherit;transition:transform .35s var(--pr-ease),box-shadow .35s;box-shadow:0 18px 40px -28px rgba(33,23,19,.35)}
+.pr-item:active{transform:scale(.98)}
+.pr-item__img{display:block;aspect-ratio:5/4}
+.pr-item__img img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 16px 14px rgba(33,23,19,.2));transition:transform .8s var(--pr-ease)}
+.pr-item:hover .pr-item__img img{transform:translateY(-3%) scale(1.02)}
+.pr-item b{display:block;margin-top:12px;font:800 24px/1 var(--hb-disp);text-transform:uppercase}
+.pr-item small{display:block;margin-top:6px;font-size:14px;color:var(--hb-grey)}
+.pr-steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:s}
+.pr-steps li{display:grid;grid-template-columns:56px 1fr;align-items:center;gap:14px;padding:16px 18px;border-radius:20px;border:1px solid #f0e3e8}
+.pr-steps b{font:800 34px/1 var(--hb-disp);color:var(--pr-ac)}
+.pr-steps p{margin:0;font-size:16px;line-height:1.4}
+.pr-fine p{margin:0;max-width:70ch;font-size:13px;line-height:1.55;color:#7a666b}
+.pr-cross{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;padding:20px 22px;border-radius:22px;background:#1a1012;color:#fff;text-decoration:none;font:800 18px/1.1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase;transition:transform .3s var(--pr-ease)}
+.pr-cross{background:#fbe9ef;color:#1a1012}
+.pr-cross:active{transform:scale(.98)}
+.pr-bar{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:40;display:flex;align-items:center;gap:12px;padding:8px 8px 8px 18px;border-radius:999px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 18px 40px -18px rgba(60,20,35,.45);transform:translateY(140%);transition:transform .5s var(--pr-ease)}
+.pr-bar.is-on{transform:none}
+.pr-bar span{flex:none;display:flex;align-items:baseline;gap:8px}
+.pr-bar b{font:800 26px/1 var(--hb-disp)}
+.pr-bar s{font-size:13px;color:#8b8b8b}
+.pr-bar .pr-btn{margin:0;min-height:50px;font-size:17px;box-shadow:none}
+.pr-rv{opacity:0;transform:translateY(18px);transition:opacity .9s var(--pr-ease),transform .9s var(--pr-ease)}
+.pr-rv.is-in{opacity:1;transform:none}
+@keyframes pr-zoom{from{transform:scale(1.06)}to{transform:none}}
+@media(min-width:900px){
+  .pr{padding-bottom:40px}
+  .pr__back{left:28px;top:24px}
+  .pr-hero__ph{aspect-ratio:21/9}
+  .pr-hero__ph img{object-position:center 30%}
+  .pr-hero__c{position:absolute;left:auto;right:5%;top:50%;transform:translateY(-50%);width:min(520px,40%);margin:0}
+  .pr--daily .pr-hero__c{right:auto;left:5%}
+  .pr-offer{max-width:1200px;margin:-40px auto 0;padding:0 20px;position:relative;z-index:3}
+  .pr-offer__in{display:grid;grid-template-columns:1.1fr 1fr;gap:10px 40px;align-items:center;padding:34px 40px}
+  .pr-offer__in>.pr-price,.pr-offer__in>.pr-save{grid-column:1}
+  .pr-offer__in>.pr-opt,.pr-offer__in>.pr-btn,.pr-offer__in>.pr-link,.pr-offer__in>.pr-trust{grid-column:2}
+  .pr-offer__in>.pr-price{grid-row:1/span 2}
+  .pr-facts{grid-template-columns:repeat(3,1fr);gap:16px}
+  .pr-items{grid-template-columns:repeat(auto-fit,minmax(280px,420px))}
+  .pr-steps{grid-template-columns:repeat(3,1fr)}
+  .pr-bar{display:none}
+}
+@media(prefers-reduced-motion:reduce){.pr-rv{opacity:1;transform:none;transition:none}.pr-hero__ph img{animation:none}.pr-bar,.pr-btn,.pr-item{transition:none}}
+</style>
+<script>
+(() => {
+  const root = document.querySelector('[data-promo]');
+  if (!root) return;
+  const $ = (s) => root.querySelector(s), $$ = (s) => [...root.querySelectorAll(s)];
+  // Reveal on scroll
+  const rv = $$('.pr-rv');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    rv.forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+  } else rv.forEach((el) => el.classList.add('is-in'));
+  // Options update price and the items both buttons add
+  const opts = $('[data-pr-opts]');
+  const paint = (inp) => {
+    $$('[data-pr-add]').forEach((b) => { b.dataset.skAdd = inp.dataset.items; });
+    ['[data-pr-now]', '[data-pr-now2]', '[data-pr-now3]'].forEach((s) => { const el = $(s); el && (el.textContent = inp.dataset.now); });
+    ['[data-pr-was]', '[data-pr-was2]'].forEach((s) => { const el = $(s); el && (el.textContent = inp.dataset.was); });
+    const sv = $('[data-pr-save]'); sv && (sv.textContent = inp.dataset.save);
+  };
+  opts && opts.addEventListener('change', (e) => { if (e.target.checked) paint(e.target); });
+  // Buy now: add the same items and go straight to checkout
+  const buy = $('[data-pr-buy]');
+  buy && buy.addEventListener('click', async () => {
+    const items = JSON.parse($('[data-pr-add]').dataset.skAdd);
+    buy.setAttribute('aria-busy', 'true');
+    try {
+      const r = await fetch(((window.Shopify && Shopify.routes && Shopify.routes.root) || '/') + 'cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items }) });
+      if (!r.ok) throw new Error('add');
+      location.href = '/checkout';
+    } catch { buy.removeAttribute('aria-busy'); buy.textContent = 'Try again'; }
+  });
+  // Sticky bar once the offer panel has scrolled away
+  const bar = $('[data-pr-bar]'), offer = $('[data-pr-offer]');
+  if (bar && offer && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => {
+      const on = !e.isIntersecting && e.boundingClientRect.top < 0;
+      bar.classList.toggle('is-on', on); bar.setAttribute('aria-hidden', String(!on));
+      bar.querySelector('button').tabIndex = on ? 0 : -1;
+    }).observe(offer);
+  }
+})();
+</script>
+{% schema %}
+{
+  "name": "SK · Promo landing",
+  "settings": [
+    {"type": "select", "id": "promo", "label": "Promo", "default": "lezo", "options": [
+      {"value": "lezo", "label": "LEZO sale price"},
+      {"value": "daily", "label": "The Daily Ritual · 20% off"},
+      {"value": "collagen", "label": "Biodance · ampoule free"}
+    ]}
+  ]
+}
+{% endschema %}

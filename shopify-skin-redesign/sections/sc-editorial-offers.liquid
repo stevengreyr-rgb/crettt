@@ -37,9 +37,9 @@
   assign g_total = v_pads.price | plus: v_amp.price
   assign ph_sizes = '(min-width: 900px) 50vw, 100vw'
 -%}
-<section class="sc-ed" aria-label="Offers">
-  <a class="sc-ed__b sc-ed__b--lezo" href="{{ mask.url }}">
-    {{ images['sc-ed2-lezo.png'] | image_url: width: 2048 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600,2048', sizes: '100vw', alt: '', loading: 'eager', fetchpriority: 'high' }}
+<section class="sc-ed" id="offers" aria-label="Offers" data-sc-ed>
+  <a class="sc-ed__b sc-ed__b--lezo" href="{{ mask.url }}?view=promo-lezo">
+    {{ images['sc-ed2-lezo.png'] | image_url: width: 2048 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600,2048', sizes: '100vw', alt: '', loading: 'eager', fetchpriority: 'high', style: 'view-transition-name:promo-lezo' }}
     <div class="sc-ed__c">
       <p class="sc-ed__k">LEZO LED mask</p>
       <h2 class="sc-ed__h">Red light,<br><em>at home.</em></h2>
@@ -47,8 +47,8 @@
       <span class="sc-ed__cta">Shop the mask</span>
     </div>
   </a>
-  <a class="sc-ed__b sc-ed__b--daily" href="#hb-kits">
-    {{ images['sc-ed2-daily.png'] | image_url: width: 1600 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600', sizes: ph_sizes, alt: '', loading: 'lazy' }}
+  <a class="sc-ed__b sc-ed__b--daily" href="{{ wand.url }}?view=promo-daily">
+    {{ images['sc-ed2-daily.png'] | image_url: width: 1600 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600', sizes: ph_sizes, alt: '', loading: 'lazy', style: 'view-transition-name:promo-daily' }}
     <div class="sc-ed__c">
       <p class="sc-ed__k">The Daily Ritual</p>
       <h2 class="sc-ed__h">Mask + wand,<br><em>20% off the pair.</em></h2>
@@ -56,8 +56,8 @@
       <span class="sc-ed__cta">Build the ritual</span>
     </div>
   </a>
-  <a class="sc-ed__b sc-ed__b--gel" href="{{ bd.url }}?variant={{ v_pads.id }}">
-    {{ images['sc-ed2-biodance.png'] | image_url: width: 1600 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600', sizes: ph_sizes, alt: '', loading: 'lazy' }}
+  <a class="sc-ed__b sc-ed__b--gel" href="{{ bd.url }}?view=promo-collagen">
+    {{ images['sc-ed2-biodance.png'] | image_url: width: 1600 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600', sizes: ph_sizes, alt: '', loading: 'lazy', style: 'view-transition-name:promo-collagen' }}
     <div class="sc-ed__c">
       <p class="sc-ed__k">Biodance Collagen</p>
       <h2 class="sc-ed__h">The ampoule<br><em>is on us.</em></h2>
@@ -128,7 +128,29 @@
   .sc-ed__b--lezo .sc-ed__o span{flex-direction:row;align-items:baseline;gap:1.6cqi}
   }
 @media(prefers-reduced-motion:reduce){.sc-ed__ph{transition:none}}
+.sc-ed__b{-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s,opacity .9s cubic-bezier(.16,1,.3,1);box-shadow:0 22px 48px -32px rgba(120,40,70,.45)}
+.sc-ed__b:after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.38) 50%,transparent 65%);transform:translateX(-110%);transition:transform .9s cubic-bezier(.16,1,.3,1)}
+.sc-ed__b:active{transform:scale(.975);box-shadow:0 12px 28px -22px rgba(120,40,70,.5)}
+.sc-ed__b:active:after,.sc-ed__b.is-tap:after{transform:translateX(110%)}
+.sc-ed__cta:after{transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.sc-ed__b:hover .sc-ed__cta:after,.sc-ed__b:focus-visible .sc-ed__cta:after{transform:translateX(5px)}
+.sc-ed__b:focus-visible{outline:3px solid #d8457f;outline-offset:3px}
+@media(hover:hover){.sc-ed__b:hover,.sc-ed.is-js .sc-ed__b.is-in:hover{transform:translateY(-3px);box-shadow:0 30px 60px -32px rgba(120,40,70,.55)}.sc-ed__b:hover:after{transform:translateX(110%)}}
+.sc-ed.is-js .sc-ed__b{opacity:0;transform:translateY(26px)}
+.sc-ed.is-js .sc-ed__b.is-in{opacity:1;transform:none}
+.sc-ed.is-js .sc-ed__b.is-in:active{transform:scale(.975)}
+@media(prefers-reduced-motion:reduce){.sc-ed__b,.sc-ed__b:after{transition:none}.sc-ed.is-js .sc-ed__b{opacity:1;transform:none}}
 </style>
+<script>
+(() => {
+  const s = document.querySelector('[data-sc-ed]');
+  if (!s || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  s.classList.add('is-js');
+  const cards = [...s.querySelectorAll('.sc-ed__b')];
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -6% 0px' });
+  cards.forEach((c, i) => { c.style.transitionDelay = i * 90 + 'ms'; io.observe(c); c.addEventListener('touchstart', () => c.classList.add('is-tap'), { passive: true }); c.addEventListener('transitionend', () => { c.style.transitionDelay = ''; }, { once: true }); });
+})();
+</script>
 {% schema %}
 {"name":"SC editorial offers","settings":[],"presets":[{"name":"SC editorial offers"}]}
 {% endschema %}
