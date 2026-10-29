@@ -10,6 +10,8 @@
   Galleries are curated in the theme only: `gal_pick` lists media positions to show, with
   `gal_alts` in the same order, and `var_files` swaps a variant's slide for a clean cutout while
   keeping its data-media-id so variant selection still scrolls to it. Product media is untouched.
+  LEZO: two hero shots, then the six detail shots in Settings › Files (lezo-det-*.webp: shell,
+  strap, inside off, LEDs in red, inside in blue, evening in green), reused in "Up close".
   @example
   {% section 'sk-product' %}
 {% endcomment %}
@@ -27,21 +29,21 @@
   assign gal_alts = ''
   assign var_files = ''
   assign file_alts = ''
+  assign gal_max = 7
   case p.handle
     when 'lezo-7-color-led-face-mask'
       assign k = 'lezo'
       assign badge = 'New'
       assign name = 'LEZO LED Mask'
-      assign desc = 'Six wavelengths, from blue 470 nm to red 630 nm, on a full-face mask with an adjustable strap. Pick the color, lie back, keep your hands free.'
-      assign gal_files = ''
-      assign gal_pick = '1,2,3,5'
-      assign file_alts = ''
-      assign gal_alts = 'LEZO LED mask, front view, with the red light on|LEZO LED mask resting on linen, side view|Close-up of the LEZO head strap where it meets the shell|Inside of the LEZO mask, LEDs lit red'
+      assign desc = 'The LED mask you’ll keep using, because you don’t have to hold it. Strap it on, pick one of six colors, lie back. Forehead to chin in one session, hands free.'
+      assign gal_files = 'lezo-det-inside.webp,lezo-det-leds-red.webp,lezo-det-blue.webp,lezo-det-green.webp,lezo-det-eye.webp,lezo-det-strap.webp'
+      assign file_alts = 'Inside the LEZO mask with the lights off: the LED grid across forehead, cheeks, nose and chin|Macro of the LEZO LEDs lit red, one bead in each molded cell|Inside of the LEZO mask lit blue|LEZO mask on linen in the evening, green light glowing through the openings|LEZO close-up: the polished rim of the eye opening and the bridge of the nose|LEZO strap close-up: woven elastic through the temple housing, with the slide adjuster'
+      assign gal_max = 8
     when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
       assign k = 'booster'
       assign badge = 'New'
       assign name = 'Booster Pro Wand'
-      assign desc = 'A handheld LED wand for slow, deliberate minutes at the vanity. USB rechargeable, with selectable light colors.'
+      assign desc = 'For the spots a mask passes over: under the eyes, the smile lines, along the jaw. A teardrop head you hold like a pen, a display that shows your setting, USB charging.'
       assign opt_label = 'Finish'
       assign gal_mode = 'variants'
       assign gal_files = 'sc-v3-cover.png,sp-ugc-booster.png'
@@ -50,14 +52,14 @@
       assign k = 'bd'
       assign badge = 'Free ampoule'
       assign name = 'Biodance Collagen Pads & Ampoules'
-      assign desc = 'Two steps built around moisture: a gel toner pad, then the matching ampoule. Choose pink or blue. With the pads, the ampoule is free.'
+      assign desc = 'The step after light. A cool gel pad that stays where you lay it, then a few drops of the matching ampoule. Pink for collagen, blue for ceramides. Buy the pads and the ampoule is free.'
       assign opt_label = 'Step'
       assign gal_mode = 'variants'
       assign gal_files = 'pd-collagen-duo.png,pd-ceranol-duo.png,sc-v3-ampoule-pink.png'
     when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument'
       assign k = 'neck'
       assign name = 'Face & Neck Massager'
-      assign desc = 'Seven LED colors, seven modes and three vibration levels on a curved head shaped to wrap the neck.'
+      assign desc = 'Most routines stop at the jaw. This one starts there: a head curved 160° to stay on the neck, seven LED colors, seven modes and three vibration levels.'
       assign gal_pick = '1,5,6,7'
       assign gal_alts = 'Face & Neck Massager in white, front view with the mode display and buttons|Three steps: take it out, long-press to power on, then choose a mode and level|Face & Neck Massager in its box with the USB-C cable and manual|Face & Neck Massager out of the box, front view'
   endcase
@@ -76,7 +78,11 @@
     <div class="sk-gal" id="hb-gallery" style="scroll-margin-top:84px">
       <div class="sk-gal__track" data-sk-gal-track tabindex="0" aria-label="{{ name | escape }} images">
         {%- assign n = 0 -%}
-        {%- if gal_mode == 'variants' -%}
+        {%- if k == 'lezo' -%}
+<figure class="sk-gal__slide"><img src="https://cdn.shopify.com/s/files/1/0833/3485/6923/files/sc-mask-gallery-front-final.png?v=1793314173&width=1400" width="1024" height="1024" alt="LEZO mask — front view on travertine" fetchpriority="high"></figure>
+<figure class="sk-gal__slide"><img src="https://cdn.shopify.com/s/files/1/0833/3485/6923/files/sc-mask-gallery-detail-final.png?v=1793314198&width=1400" width="1024" height="1024" alt="LEZO mask — shell, eye opening and woven strap detail" loading="lazy"></figure>
+          {%- assign n = 2 -%}
+        {%- elsif gal_mode == 'variants' -%}
           {%- for v in p.variants -%}
             {%- if v.featured_media -%}
               {%- liquid
@@ -120,10 +126,10 @@
           {%- endfor -%}
         {%- endif -%}
         {%- for f in files -%}
-          {%- if images[f] and n < 7 -%}
+          {%- if images[f] and n < gal_max -%}
             {%- assign n = n | plus: 1 -%}
             {%- assign f_alt = f_alts[forloop.index0] | default: images[f].alt -%}
-            <figure class="sk-gal__slide">{% render 'sk-img', img: images[f], sizes: '(min-width: 1000px) 27vw, 100vw', alt: f_alt %}</figure>
+            <figure class="sk-gal__slide">{% render 'sk-img', img: images[f], sizes: '(min-width: 1000px) 55vw, 100vw', alt: f_alt %}</figure>
           {%- endif -%}
         {%- endfor -%}
       </div>
@@ -148,8 +154,6 @@
       <form action="{{ routes.cart_add_url }}" method="post" data-sk-form>
         {%- if p.variants.size == 1 -%}
           <input type="hidden" name="id" value="{{ cur.id }}">
-          {%- if k == 'lezo' -%}
-          {%- endif -%}
         {%- else -%}
           <fieldset class="hb-opt">
             <legend class="hb-vh">{{ opt_label }}</legend>
@@ -216,7 +220,7 @@
       </form>
 
       <ul class="hb-rows" style="margin-top:14px">
-        <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></span><span><b>Estimated delivery:</b> <span data-hb-delivery data-min="11" data-max="16">11–16 business days</span></span></li>
+        <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></span><span><b>Estimated delivery:</b> <span>5–12 days</span></span></li>
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7Z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg></span><span><b>Free shipping</b> on every US order, tracked</span></li>
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/></svg></span><span>Card, PayPal or Shop Pay at a secure Shopify checkout</span></li>
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 8h10a6 6 0 0 1 0 12H8M5 8l5-5M5 8l5 5"/></svg></span><span><b>30 days</b> to return unopened, unused items</span></li>
@@ -225,7 +229,7 @@
 
       <div class="hb-vip">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8Z"/></svg>
-        <span>{% if k == 'neck' or k == 'other' %}Building a routine? The <b>mask, wand and Biodance</b> are 20% off when you buy two or more.{% else %}Pair it with the {% if k == 'lezo' %}<b>Booster Pro or Biodance</b>{% elsif k == 'booster' %}<b>LEZO mask or Biodance</b>{% else %}<b>LEZO mask or Booster Pro</b>{% endif %} and <b>20% comes off both</b> at checkout.{% endif %}</span>
+        <span>{% if k == 'neck' or k == 'other' %}Building a routine? The <b>mask, wand and Biodance</b> are 20% off when you buy two or more.{% elsif k == 'lezo' %}Mask first, then the <b>Booster Pro</b> for the details or <b>Biodance</b> to finish. Add either and <b>20% comes off both</b> at checkout.{% elsif k == 'booster' %}It works best after the <b>LEZO mask</b>, or before <b>Biodance</b>. Add either and <b>20% comes off both</b> at checkout.{% else %}Finish a <b>LEZO</b> or <b>Booster Pro</b> session with it. Add either and <b>20% comes off both</b> at checkout.{% endif %}</span>
       </div>
 
       {%- unless k == 'other' -%}{% render 'hb-kits' %}{%- endunless -%}
@@ -236,19 +240,19 @@
           <div class="hb-acc__b">
             {%- case k -%}
               {%- when 'lezo' -%}
-                <p>LEZO is the step you don’t have to hold. Each color is a different photon energy, and skin only absorbs the light it resonates with, so the color you pick is the choice that matters. The white shell covers the whole face, with openings at the eyes and mouth, and the strap keeps it in place while you lie back.</p>
-                <ul><li><b>Six light colors:</b> red, green, blue, yellow, purple and cyan.</li><li><b>Wavelengths</b> listed by the maker: red 630 nm, yellow 590 nm, green 520 nm, blue 470 nm.</li><li><b>Photon energy</b> from 1.97 eV (red) to 2.64 eV (blue). Shorter waves stay near the surface; red travels deeper.</li><li><b>Adjustable head strap</b> for a hands-free session.</li><li><b>At home,</b> on your schedule. No appointment.</li></ul>
+                <p>The honest reason most LED tools end up in a drawer: holding one to your face for a whole session gets old fast. LEZO removes that part. It straps on, covers you from forehead to chin, and lets you lie back with a book or your phone. That’s what turns it into an evening habit.</p>
+                <ul><li><b>Six colors</b> on one mask: red, green, blue, yellow, purple and cyan. Red is where most people start.</li><li><b>LEDs set in their own cells</b> across the forehead, cheeks, nose, chin and around the mouth, so the light sits close to the skin.</li><li><b>Open at the eyes, nostrils and mouth.</b> You breathe and talk normally with it on.</li><li><b>Woven elastic strap</b> with a slide adjuster. Set it once and it holds when you lie back.</li><li><b>Wavelengths</b> listed by the maker: red 630 nm, yellow 590 nm, green 520 nm, blue 470 nm.</li></ul>
                 <p><em>For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Individual results vary.</em></p>
               {%- when 'booster' -%}
-                <p>A small device with a considered shape. It sits comfortably in the hand as you move it across the face, and its minimal silhouette belongs on the vanity, not in a drawer.</p>
-                <ul><li><b>Selectable light colors</b> at the tip.</li><li><b>Digital display</b> that shows the current setting.</li><li><b>USB rechargeable</b> with the supplied charging setup.</li><li><b>Two finishes:</b> soft pink or black.</li></ul>
+                <p>A mask covers the face in one pass. The Booster Pro is for the close work afterwards: the areas you actually look at in the mirror. The teardrop head fits the hollow under the eye and the curve beside the nose, and the display shows which setting you’re on, so there’s no guessing.</p>
+                <ul><li><b>Selectable light colors</b> at the head.</li><li><b>Digital display</b> with the current setting.</li><li><b>USB rechargeable</b>, no batteries to buy.</li><li><b>Pen-sized,</b> in soft pink or black. It lives on the vanity, which is why it gets used.</li></ul>
                 <p><em>A cosmetic beauty device. Don’t expect medical or clinical treatment results. Results vary.</em></p>
               {%- when 'bd' -%}
-                <p>Two steps, one habit. Smooth on a gel toner pad for a fresh, hydrated feel, then finish with the ampoule: a lightweight last step for supple-looking skin.</p>
-                <ul><li><b>Pink:</b> Collagen Gel Toner Pads + Collagen Ampoule.</li><li><b>Blue:</b> Cera-Nol Gel Toner Pads + Hydro Cera-Nol Ampoule.</li><li><b>The ampoule is free</b> when you add the matching pads: one free ampoule per pads, taken off at checkout.</li></ul>
+                <p>Hydrogel pads don’t behave like cotton toner pads. They’re thick, cool and slippery, and they stay flat where you lay them: on the cheeks while you brush your teeth, on the forehead while the kettle boils. Peel, press the leftover essence in, then finish with a few drops of the matching ampoule.</p>
+                <ul><li><b>Pink:</b> Collagen Gel Toner Pads + Collagen Ampoule.</li><li><b>Blue:</b> Cera-Nol Gel Toner Pads + Hydro Cera-Nol Ampoule, built around ceramides, for skin that feels tight or dry.</li><li><b>The ampoule is free</b> with its matching pads: one free ampoule per pads, taken off at checkout.</li></ul>
               {%- when 'neck' -%}
-                <p>The head curves 160° so it follows the line of the neck instead of sliding over it. Choose one of seven LED colors and seven modes, then set the vibration to one of three levels.</p>
-                <ul><li><b>7 LED colors, 7 modes</b> and 3 vibration levels.</li><li><b>Curved head</b> with a 160° wrap that follows the neck.</li><li><b>Rechargeable:</b> about 3 hours to charge, 1–2 hours of use.</li><li><b>Compact:</b> 13.9 × 8.8 × 3.8 cm (5.5 × 3.5 × 1.5 in), easy to pack.</li></ul>
+                <p>Flat tools skate over the neck. This head curves 160°, so it follows the line from collarbone to jaw and keeps contact as you glide upward. Long-press to switch on, M for the mode, short presses for the vibration. After one evening you’ll do it without looking.</p>
+                <ul><li><b>7 LED colors, 7 modes</b> and 3 vibration levels.</li><li><b>Curved head</b> with a 160° wrap that follows the neck.</li><li><b>Rechargeable:</b> about 3 hours to charge, 1–2 hours of use.</li><li><b>Compact:</b> 13.9 × 8.8 × 3.8 cm (5.5 × 3.5 × 1.5 in). It fits in a wash bag.</li></ul>
               {%- else -%}
                 {{ p.description }}
             {%- endcase -%}
@@ -259,10 +263,10 @@
           <summary>How to use</summary>
           <div class="hb-acc__b">
             {%- case k -%}
-              {%- when 'lezo' -%}<ol><li>Charge the mask fully before the first session.</li><li>Start with clean, dry skin.</li><li>Fit the strap so the shell sits evenly.</li><li>Pick a color and keep to the session time in your manual, with the eye protection it describes.</li><li>Clean it as the manual says and store it dry.</li></ol>
-              {%- when 'booster' -%}<ol><li>Charge with the supplied USB setup.</li><li>Press and hold the power button for 2 seconds to switch it on. Short presses change the setting.</li><li>Glide slowly across the face. Around the eyes, follow the manual exactly.</li><li>Keep it away from water unless the instructions allow contact.</li></ol>
-              {%- when 'bd' -%}<ol><li>Cleanse. Patch-test before your first use.</li><li>Smooth a gel pad over the skin.</li><li>Apply the matching ampoule as your last moisturizing step.</li><li>Stop if irritation occurs, and follow the label.</li></ol>
-              {%- when 'neck' -%}<ol><li>Charge for about 3 hours with the USB-C cable.</li><li>Press and hold the power button to switch it on. Short presses on the power button change the vibration level; the M button changes the mode.</li><li>Hold the handle and glide the curved head along the neck and jawline.</li></ol>
+              {%- when 'lezo' -%}<ol><li>Charge it fully the day it arrives, so your first session isn’t cut short.</li><li>Cleanse and pat dry. Serums and creams go on after the session, not before.</li><li>Set the strap once: snug enough that the shell doesn’t slide when you lie back, never tight.</li><li>One color per session. Keep to the session time and the eye protection in your manual.</li><li>Clean the inside as the manual says and store it dry, face up.</li></ol><p>Consistency beats long sessions. Pick a fixed slot, after cleansing and before bed, and keep it.</p>
+              {%- when 'booster' -%}<ol><li>Charge with the supplied USB setup.</li><li>Press and hold the power button for 2 seconds to switch it on. Short presses change the setting.</li><li>Glide slowly, don’t scrub, and pause a moment on the spots you care about. Around the eyes, follow the manual exactly.</li><li>Keep it away from water unless the instructions allow contact.</li></ol>
+              {%- when 'bd' -%}<ol><li>Cleanse. Patch-test before your first use.</li><li>Lay a gel pad on each area and leave it while you get ready.</li><li>Warm three or four drops of the matching ampoule between your fingertips and press them in. Don’t rub.</li><li>At night it’s your last step; in the morning, SPF goes on top. Stop if irritation occurs.</li></ol>
+              {%- when 'neck' -%}<ol><li>Charge for about 3 hours with the USB-C cable.</li><li>Press and hold the power button to switch it on. Short presses on the power button change the vibration level; the M button changes the mode.</li><li>Hold the handle and glide the curved head upward, from the base of the neck to the jawline.</li></ol>
             {%- endcase -%}
           </div>
         </details>
@@ -270,8 +274,8 @@
           <summary>{% if k == 'bd' %}Ingredients{% else %}Details &amp; specs{% endif %}</summary>
           <div class="hb-acc__b">
             {%- case k -%}
-              {%- when 'lezo' -%}<dl><div><dt>Type</dt><dd>Full-face LED mask</dd></div><div><dt>Light colors</dt><dd>6: red, green, blue, yellow, purple, cyan</dd></div><div><dt>Wavelengths</dt><dd>470, 520, 590, 630 nm</dd></div><div><dt>Shell</dt><dd>White, eye and mouth openings</dd></div><div><dt>Fit</dt><dd>Adjustable head strap</dd></div></dl>
-              {%- when 'booster' -%}<dl><div><dt>Format</dt><dd>Handheld wand</dd></div><div><dt>Light</dt><dd>Multiple selectable colors</dd></div><div><dt>Display</dt><dd>Digital, shows the current setting</dd></div><div><dt>Power</dt><dd>USB rechargeable, press-and-hold on/off</dd></div><div><dt>Finishes</dt><dd>Pink, Black</dd></div></dl>
+              {%- when 'lezo' -%}<dl><div><dt>Type</dt><dd>Full-face LED mask</dd></div><div><dt>Light colors</dt><dd>6: red, green, blue, yellow, purple, cyan</dd></div><div><dt>Wavelengths</dt><dd>470, 520, 590, 630 nm</dd></div><div><dt>Shell</dt><dd>Gloss white, open at eyes, nostrils and mouth</dd></div><div><dt>Fit</dt><dd>Woven elastic strap, slide adjuster</dd></div></dl>
+              {%- when 'booster' -%}<dl><div><dt>Format</dt><dd>Handheld wand, teardrop head</dd></div><div><dt>Light</dt><dd>Multiple selectable colors</dd></div><div><dt>Display</dt><dd>Digital, shows the current setting</dd></div><div><dt>Power</dt><dd>USB rechargeable, press-and-hold on/off</dd></div><div><dt>Finishes</dt><dd>Pink, Black</dd></div></dl>
               {%- when 'bd' -%}<p>The full ingredient list is printed on each jar and bottle, so you can check it before your first use. Skin tolerance varies: patch-test first.</p>
               {%- when 'neck' -%}<dl><div><dt>Material</dt><dd>ABS, electroplated finish</dd></div><div><dt>Battery</dt><dd>400 mAh polymer lithium</dd></div><div><dt>Charge / use</dt><dd>3 h / 1–2 h</dd></div><div><dt>Input</dt><dd>5 V 1 A, 3 W rated</dd></div><div><dt>Size</dt><dd>13.9 × 8.8 × 3.8 cm</dd></div><div><dt>In the box</dt><dd>Device, USB-C cable, manual</dd></div></dl>
             {%- endcase -%}
@@ -280,7 +284,7 @@
         {%- endunless -%}
         <details>
           <summary>Shipping &amp; returns</summary>
-          <div class="hb-acc__b"><p>Orders ship in 1–3 business days and arrive 7–14 business days later, with tracking emailed the day they leave. US shipping is free. You have 30 days from delivery to return unopened, unused items in their original packaging; if something arrives damaged or wrong, send us one photo within 48 hours.</p></div>
+          <div class="hb-acc__b"><p>Delivery takes 5–12 days, with tracking sent by email. US shipping is free. You have 30 days from delivery to return unopened, unused items in their original packaging; if something arrives damaged or wrong, send us one photo within 48 hours and we sort it out.</p></div>
         </details>
         {%- unless k == 'other' or k == 'neck' -%}
         <details>
@@ -291,9 +295,6 @@
       </div>
 
       {%- case k -%}
-        {%- when 'lezo' -%}
-          {% render 'hb-poster', art: 'lezo', url: '#hb-kits' %}
-          {% render 'hb-poster', art: 'complete', url: '#hb-kits' %}
         {%- when 'booster' -%}
           {% render 'hb-poster', art: 'daily', url: '#hb-kits' %}
         {%- when 'bd' -%}
@@ -307,11 +308,11 @@
 {%- if k == 'lezo' -%}
 <section class="hb-story" id="hb-colors" aria-labelledby="hb-colors-h" style="scroll-margin-top:84px">
   <div class="hb-wrap hb-story__grid hb-ledx" data-sk-led>
-    <figure class="sk-led__visual" style="--sk-glow:#e0463f" data-sk-led-visual>{% render 'sk-img', img: images['lezo-detail-2026.webp'], sizes: '(min-width: 900px) 45vw, 100vw', alt: 'Inside of the LEZO mask with the LEDs lit' %}</figure>
+    <figure class="sk-led__visual" style="--sk-glow:#e0463f" data-sk-led-visual>{% render 'sk-img', img: images['sc-refined-red-oct29.png'], sizes: '(min-width: 900px) 45vw, 100vw', alt: 'LEZO white mask in red light' %}</figure>
     <div>
       <span class="hb-new" style="margin-top:0">Explore</span>
-      <h2 id="hb-colors-h">Six wavelengths. One mask.</h2>
-      <p>Each color is a different photon energy: E = hc/λ. Red 630 nm carries 1.97 eV, yellow 590 nm 2.10 eV, green 520 nm 2.38 eV, blue 470 nm 2.64 eV. Tap a color to see the wavelength behind it.</p>
+      <h2 id="hb-colors-h">Six colors. One mask.</h2>
+      <p>Start with red: it’s the most researched color in at-home LED and the one most people stay with. Blue stays near the surface, green and yellow sit in between, purple and cyan mix two channels. Tap a color to see the wavelength behind it.</p>
       <div class="hb-ledx__modes" role="group" aria-label="LEZO light modes">
         {%- assign modes = 'Red|#e0463f|630,Green|#3acb68|520,Blue|#3975f2|470,Yellow|#f0c13e|590,Purple|#a25ada|630+470,Cyan|#26c5ce|470+520' | split: ',' -%}
         {%- for m in modes -%}
@@ -331,39 +332,64 @@
     </div>
   </div>
 </section>
+
+<section class="hb-story hb-close" aria-labelledby="hb-close-h">
+  <div class="hb-wrap">
+    <span class="hb-new" style="margin-top:0">Up close</span>
+    <h2 id="hb-close-h">What you’re putting on your face.</h2>
+    <div class="hb-close__grid">
+      {%- assign close = 'lezo-det-inside.webp|The inside, lights off|Every LED sits in its own molded cell, from the forehead to the chin and around the mouth. Nothing for the skin to catch on.~lezo-det-leds-red.webp|Red, up close|One bead per cell, so the light lands evenly instead of in hot spots.~lezo-det-blue.webp|Blue|Same grid, a different wavelength. Switch colors from one evening to the next.~lezo-det-green.webp|Green, in the evening|The light stays inside the shell. Your room stays dim and calm.~lezo-det-eye.webp|The openings|A polished, rounded rim at the eyes and nostrils. You can blink, breathe and talk normally.~lezo-det-strap.webp|The strap|Woven elastic through the temple housings, with a slide adjuster. Set it once.' | split: '~' -%}
+      {%- for c in close -%}
+        {%- assign cp = c | split: '|' -%}
+        {%- if images[cp[0]] -%}
+        <figure class="hb-close__it">
+          <div class="hb-close__ph">{% render 'sk-img', img: images[cp[0]], sizes: '(min-width: 900px) 30vw, 50vw', alt: images[cp[0]].alt %}</div>
+          <figcaption><b>{{ cp[1] }}</b>{{ cp[2] }}</figcaption>
+        </figure>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+    <p style="margin-top:22px"><a class="hb-link" href="#hb-kits">Add the Booster Pro or Biodance and save 20% on both</a></p>
+  </div>
+</section>
+<style>
+.hb-close h2{max-width:16ch}
+.hb-close__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+@media(min-width:900px){.hb-close__grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}}
+.hb-story .hb-close__it{margin:0;border-radius:0;aspect-ratio:auto;background:none;overflow:visible}
+.hb-close__ph{border-radius:16px;overflow:hidden;aspect-ratio:1;background:#f6efed}
+.hb-story .hb-close__ph img{width:100%;height:100%;object-fit:cover;display:block}
+.hb-close figcaption{margin-top:10px;font-size:14px;line-height:1.45;color:var(--hb-grey)}
+.hb-close figcaption b{display:block;margin-bottom:2px;color:var(--hb-ink,#1a1012);font-size:15px}
+</style>
 {%- endif -%}
 
-{%- if k != 'other' -%}
+{%- if k != 'other' and k != 'lezo' -%}
 {%- liquid
   assign s_alt = nil
   assign s_fit = ''
   assign s_tag = 'In use'
   case k
-    when 'lezo'
-      assign s_img = images['sc-v3-mask-lounge.png']
-      assign s_alt = 'Woman relaxing in a robe while wearing the LEZO mask, lit blue'
-      assign s_h = 'Lie back. The strap holds it.'
-      assign s_p = 'A session can happen on the sofa, in bed or with a book open. Choose a color, start it, and let your hands do something else.'
     when 'booster'
       assign s_img = images['sc-booster-cover.jpg']
-      assign s_h = 'Make room for your ritual.'
-      assign s_p = 'The Booster Pro is built for unhurried minutes: a compact wand you move slowly across the face with the light you chose switched on.'
+      assign s_h = 'Two minutes, closer.'
+      assign s_p = 'Use it after the mask, while your face is still bare. Glide slowly from the inner corner of the eye outwards, then along the smile lines and the jaw. Two unhurried minutes on the spots you notice in the mirror.'
     when 'bd'
       assign s_img = images['sc-v3-ampoule-blue.png']
       assign s_h = 'Press in. Let it settle.'
-      assign s_p = 'After the pad, the ampoule goes on cleansed skin as the last moisturizing step. Lightweight, quick, easy to repeat every evening.'
+      assign s_p = 'After the pad, warm a few drops of ampoule between your fingertips and press them over the cheeks, forehead and neck. It’s the last step at night: quick enough to do every evening, which is the point.'
     when 'neck'
       assign s_img = p.media[2].preview_image
       assign s_alt = 'The curved 160° head of the Face & Neck Massager'
       assign s_fit = ' class="is-product"'
       assign s_tag = 'Design'
       assign s_h = 'Shaped for the neck.'
-      assign s_p = 'The head curves 160°, so it sits along the neck and jawline instead of skimming across them. Glide upward with the light on and the vibration at the level you chose.'
+      assign s_p = 'The head curves 160°, so it sits along the neck and jawline instead of skimming across them. Glide upward with the light on and the vibration at the level you chose. The neck is where most routines stop; this is where yours keeps going.'
   endcase
 -%}
 <section class="hb-story" aria-labelledby="hb-story-h">
   <div class="hb-wrap hb-story__grid">
-    <figure{{ s_fit }}>{% render 'sk-img', img: s_img, sizes: '(min-width: 900px) 45vw, 100vw', alt: s_alt %}</figure>
+    <figure {{ s_fit }}>{% render 'sk-img', img: s_img, sizes: '(min-width: 900px) 45vw, 100vw', alt: s_alt %}</figure>
     <div>
       <span class="hb-new" style="margin-top:0">{{ s_tag }}</span>
       <h2 id="hb-story-h">{{ s_h }}</h2>

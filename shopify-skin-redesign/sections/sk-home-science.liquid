@@ -20,21 +20,13 @@
         <b class="sci__d">E = hc/λ</b>
         <p>Light travels in packets of energy, and the wavelength sets how much each one carries. Red at 630 nm: 1.97 eV per photon. Blue at 470 nm: 2.64 eV. Shorter wave, more energy.</p>
       </li>
+      
       <li class="sci__c">
-        <span class="sci__n">02 · Resonance</span>
-        <b class="sci__d">Match → absorb</b>
-        <p>A molecule takes in a photon only when its energy matches a jump the molecule can make. On resonance, light is absorbed. Off resonance, it scatters or passes through. That match is why the color you choose matters.</p>
-      </li>
-      <li class="sci__c">
-        <span class="sci__n">03 · Depth</span>
+        <span class="sci__n">02 · Depth</span>
         <b class="sci__d">470 → 630 nm</b>
         <p>Skin scatters short wavelengths close to the surface; longer ones travel further before they are absorbed. Blue stays in the upper layers. Red goes deeper.</p>
       </li>
-      <li class="sci__c">
-        <span class="sci__n">04 · Cell</span>
-        <b class="sci__d">Cytochrome c oxidase</b>
-        <p>In red-light research, the best-studied absorber is cytochrome c oxidase, an enzyme inside the mitochondria of living cells. It is a big part of why red is the most researched color in at-home LED.</p>
-      </li>
+      
     </ol>
     <div class="sci__foot">
       <a class="sci__cta" href="/products/lezo-7-color-led-face-mask#hb-colors">Explore the six wavelengths</a>
@@ -61,16 +53,16 @@
 .sci__cta:after{content:"→";font-family:var(--hb-sans);font-weight:500}
 .sci__fine{margin:0;max-width:70ch;font-size:12.5px;line-height:1.5;color:#7a666b}
 @media(min-width:700px){.sci__grid{grid-template-columns:1fr 1fr}}
-@media(min-width:1100px){.sci__grid{grid-template-columns:repeat(4,1fr);gap:16px}}
+@media(min-width:1100px){.sci__grid{grid-template-columns:repeat(2,1fr);gap:16px}}
 </style>
 {% schema %}
 {
   "name": "HB · The science",
   "settings": [
     {"type": "text", "id": "kicker", "label": "Kicker", "default": "The physics of light on skin"},
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Resonance,"},
-    {"type": "text", "id": "heading_em", "label": "Heading (italic line)", "default": "explained."},
-    {"type": "textarea", "id": "text", "label": "Intro", "default": "Every color of light is a different amount of energy. Skin only takes in the light it resonates with. Here is the short version of the physics behind every LEZO session."}
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Why the color"},
+    {"type": "text", "id": "heading_em", "label": "Heading (italic line)", "default": "matters."},
+    {"type": "textarea", "id": "text", "label": "Intro", "default": "You don’t need a physics degree to use an LED mask, but knowing why the color matters helps you pick the right one. Here is the short version."}
   ],
   "presets": [{"name": "HB · The science"}]
 }

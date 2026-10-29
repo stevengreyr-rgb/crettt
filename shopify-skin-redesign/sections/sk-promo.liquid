@@ -41,21 +41,21 @@
       assign kicker = 'The Daily Ritual · 20% off the pair'
       assign h = 'Mask + wand,'
       assign em = '20% off the pair.'
-      assign lede = 'LEZO lights the whole face at once. Booster Pro goes where a mask can’t: under the eyes, along the jaw, the lines that need a closer pass. Two lights, one routine.'
+      assign lede = 'LEZO covers the whole face in one session. Booster Pro does the close work afterwards: under the eyes, the smile lines, along the jaw. Mask first, wand second, and 20% comes off both at checkout.'
       assign opt_label = 'Wand finish'
     when 'collagen'
       assign photo = 'sc-ed2-biodance.png'
       assign kicker = 'Biodance · the ampoule is on us'
       assign h = 'The ampoule'
       assign em = 'is on us.'
-      assign lede = 'Buy the Biodance gel toner pads and their matching ampoule comes free. Hydrogel pads to prep, ampoule to finish, water and collagen held right at the surface.'
+      assign lede = 'Buy the Biodance gel toner pads and the matching ampoule is free. Cool hydrogel pads that stay where you lay them, then a few drops pressed in to finish. The two steps belong together anyway.'
       assign opt_label = 'Formula'
     else
       assign photo = 'sc-ed2-lezo.png'
       assign kicker = 'LEZO LED mask · sale price'
       assign h = 'Red light,'
       assign em = 'at home.'
-      assign lede = 'Six wavelengths on a full-face mask, from blue 470 nm to red 630 nm. Pick the color, lie back, keep your hands free.'
+      assign lede = 'The LED mask you’ll keep using, because you don’t have to hold it. It straps on, covers forehead to chin and leaves your hands free. Six colors, from blue 470 nm to red 630 nm.'
       assign opt_label = ''
   endcase
 -%}
@@ -177,11 +177,11 @@
       {%- if promo == 'collagen' -%}
         <li class="pr-rv"><b>01</b><p>Cleanse and pat skin dry.</p></li>
         <li class="pr-rv"><b>02</b><p>Lay a gel pad on each area and leave it while you get ready.</p></li>
-        <li class="pr-rv"><b>03</b><p>Press a few drops of ampoule in to finish.</p></li>
+        <li class="pr-rv"><b>03</b><p>Warm a few drops of ampoule between your fingertips and press them in. Don’t rub.</p></li>
       {%- else -%}
-        <li class="pr-rv"><b>01</b><p>Charge fully, then start on clean, dry skin.</p></li>
+        <li class="pr-rv"><b>01</b><p>Charge it fully, then start on clean, dry skin. Serums go on after.</p></li>
         <li class="pr-rv"><b>02</b><p>Pick a color.{% if promo == 'daily' %} Mask for the whole face, wand for the details.{% endif %}</p></li>
-        <li class="pr-rv"><b>03</b><p>Keep to the session time and eye protection in your manual.</p></li>
+        <li class="pr-rv"><b>03</b><p>Lie back. Keep to the session time and eye protection in your manual, at the same time every evening.</p></li>
       {%- endif -%}
     </ol>
   </section>
