@@ -93,7 +93,8 @@
     ]}{%- endcapture -%}
     <article class="rk-card rk-card--{{ k }}" data-hb-kit>
       <script type="application/json" data-hb-kit-data>{{ k_json | strip_newlines }}</script>
-      <div class="rk-card__stage" aria-hidden="true">
+      {%- case k -%}{%- when 'complete' -%}{%- assign k_sci = 'hb-sci-complete.png' -%}{%- when 'daily' -%}{%- assign k_sci = 'hb-sci-daily.png' -%}{%- else -%}{%- assign k_sci = 'hb-sci-collagen.png' -%}{%- endcase -%}
+      <div class="rk-card__stage{% if k == 'daily' %} rk-card__stage--dark{% endif %}" aria-hidden="true"{% if images[k_sci] %} style="--rk-sci:url('{{ images[k_sci] | image_url: width: 1400 }}')"{% endif %}>
         <span class="rk-card__flag">{{ k_flag }}</span>
         <span class="rk-card__save" data-rk-save>Save {{ k_off | money }}</span>
         <div class="rk-card__art">
@@ -153,10 +154,13 @@
 .rk__eyebrow{margin:0;font:800 15px/1 var(--hb-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--hb-pk)}
 .rk__h{margin:0;font:800 clamp(38px,6vw,54px)/.92 var(--hb-disp);text-transform:uppercase;letter-spacing:-.005em}
 .rk-card{display:grid;background:#fff;border-radius:24px;overflow:hidden;margin-top:16px;box-shadow:0 1px 0 rgba(0,0,0,.03),0 18px 40px -22px rgba(120,40,70,.28)}
-.rk-card__stage{position:relative;overflow:hidden;aspect-ratio:16/10;background:radial-gradient(70% 80% at 55% 40%,#fff 0%,#fbf1f4 55%,#f5dfe7 100%)}
+.rk-card__stage{position:relative;overflow:hidden;aspect-ratio:16/10;background:var(--rk-sci,none) 70% 50%/cover no-repeat,radial-gradient(70% 80% at 55% 40%,#fff 0%,#fbf1f4 55%,#f5dfe7 100%)}
+.rk-card__stage--dark{background-color:#1a0608}
+.rk-card__stage--dark .rk-card__flag{background:#fff;color:var(--hb-ink)}
+.rk-card__stage--dark .rk-card__art img{filter:drop-shadow(0 0 18px rgba(255,40,60,.35)) drop-shadow(0 14px 12px rgba(0,0,0,.55))}
 .rk-card__stage:after{content:"";position:absolute;left:12%;right:12%;bottom:9%;height:14px;border-radius:50%;background:rgba(120,40,70,.14);filter:blur(10px)}
 .rk-card__art{position:absolute;inset:12% 9% 10%;z-index:1;pointer-events:none}
-.rk-card__art img{position:absolute;object-fit:contain;max-width:none;width:auto;filter:drop-shadow(0 14px 12px rgba(90,30,50,.2)) drop-shadow(0 3px 3px rgba(90,30,50,.14));transition:opacity .25s}
+.rk-card__art img{position:absolute;object-fit:contain;max-width:none;width:auto;filter:drop-shadow(0 0 16px rgba(255,255,255,.75)) drop-shadow(0 14px 12px rgba(90,30,50,.22)) drop-shadow(0 3px 3px rgba(90,30,50,.14));transition:opacity .25s}
 .rk-card__flag{position:absolute;left:16px;top:16px;z-index:3;background:var(--hb-ink);color:#fff;border-radius:999px;padding:7px 12px 6px;font:800 14px/1 var(--hb-disp);letter-spacing:.06em;text-transform:uppercase}
 .rk-card__save{position:absolute;right:14px;top:14px;z-index:3;display:grid;place-items:center;width:84px;height:84px;border-radius:50%;background:var(--hb-pk);color:#fff;text-align:center;font:800 19px/.95 var(--hb-disp);text-transform:uppercase;padding:10px;transform:rotate(8deg);box-shadow:0 10px 22px -8px rgba(216,69,127,.6)}
 .rk-card__body{padding:20px 20px 18px}

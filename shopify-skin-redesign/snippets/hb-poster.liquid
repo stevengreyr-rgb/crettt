@@ -1,38 +1,148 @@
 {% doc %}
-  Blush promo poster (pill, heavy brown title, condensed subline, product cutouts).
-  Only use it for offers that are live in the store.
+  Editorial offer banner, in the same system as the home "sc-editorial-offers" banners: a
+  science micrograph (Settings › Files, hb-sci-*.png), the real product cutouts and the offer
+  set in live text. Copy and prices are owned here per art, so every page says the same thing;
+  only offers checkout really applies are used:
+  - lezo: the mask's sale price (compare-at price)
+  - daily / complete: "Ritual bundle · 20% off 2+", 20% per line, rounded down like checkout
+  - collagen / ceranol: buy the gel toner pads, the matching ampoule is free (BXGY)
+  Any other art (e.g. the archived neck massager) renders nothing.
 
-  @param {string} pill - small label, e.g. "Complimentary gift"
-  @param {string} title - headline; use <br> for the line break
-  @param {string} sub - one or two short lines; use <br> for the break
-  @param {string} art - cutout set: lezo, daily, complete, collagen, ceranol, neck
-  @param {string} [url] - where the poster links to
+  @param {string} art - lezo, daily, complete, collagen or ceranol
+  @param {string} [url] - where the banner links to
 
   @example
-  {% render 'hb-poster', pill: 'Bundle · Save 20%', title: 'The Daily<br>Ritual', sub: 'LEZO mask + Booster Pro', art: 'daily', url: '#hb-kits' %}
+  {% render 'hb-poster', art: 'complete', url: '#hb-kits' %}
 {% enddoc %}
 {%- liquid
-  assign c_lezo = images['sk-cut-lezo.png'] | image_url: width: 500
-  assign c_bk = images['sk-cut-booster-black.png'] | image_url: width: 300
-  assign c_pk = images['sk-cut-booster-pink.png'] | image_url: width: 300
-  assign c_col = images['sk-cut-collagen-duo.png'] | image_url: width: 500
-  assign c_cer = images['sk-cut-ceranol-duo.png'] | image_url: width: 500
-  assign c_neck = images['sk-cut-neck.png'] | image_url: width: 400
+  assign mask = all_products['lezo-7-color-led-face-mask']
+  assign wand = all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
+  assign bd = all_products['korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca']
+  assign v_mask = mask.selected_or_first_available_variant
+  for v in wand.variants
+    if v.id == 50957033046235
+      assign v_bk = v
+    elsif v.id == 50957033013467
+      assign v_pk = v
+    endif
+  endfor
+  for v in bd.variants
+    case v.id
+      when 50956618858715
+        assign v_pads_pink = v
+      when 50956618891483
+        assign v_amp_pink = v
+      when 50956618629339
+        assign v_pads_blue = v
+      when 50956618825947
+        assign v_amp_blue = v
+    endcase
+  endfor
+  assign off20_mask = v_mask.price | times: 20 | divided_by: 100
+  assign show = true
+  case art
+    when 'lezo'
+      assign tone = 'dark'
+      assign kicker = 'LEZO LED mask'
+      assign h = 'Six colors,'
+      assign em = 'one mask.'
+      assign price = v_mask.price
+      assign was = v_mask.compare_at_price
+      assign note = ''
+      if was > price
+        assign pct = was | minus: price | times: 100 | divided_by: was
+        assign note = pct | append: '% off'
+      endif
+      assign cta = 'Shop the mask'
+      assign link = url | default: mask.url
+    when 'daily'
+      assign tone = 'dark'
+      assign kicker = 'The Daily Ritual'
+      assign h = 'Mask + wand,'
+      assign em = '20% off the pair.'
+      assign was = v_mask.price | plus: v_bk.price
+      assign o2 = v_bk.price | times: 20 | divided_by: 100
+      assign price = was | minus: off20_mask | minus: o2
+      assign note = 'applied at checkout'
+      assign cta = 'Build the ritual'
+      assign link = url | default: '#hb-kits'
+    when 'complete'
+      assign tone = 'light'
+      assign kicker = 'The Complete Routine'
+      assign h = 'Every step,'
+      assign em = '20% off each.'
+      assign was = v_mask.price | plus: v_bk.price | plus: v_pads_pink.price | plus: v_amp_pink.price
+      assign o2 = v_bk.price | times: 20 | divided_by: 100
+      assign o3 = v_pads_pink.price | times: 20 | divided_by: 100
+      assign o4 = v_amp_pink.price | times: 20 | divided_by: 100
+      assign price = was | minus: off20_mask | minus: o2 | minus: o3 | minus: o4
+      assign note = 'mask, wand, pads + ampoule'
+      assign cta = 'Build the routine'
+      assign link = url | default: '#hb-kits'
+    when 'collagen'
+      assign tone = 'light'
+      assign kicker = 'Biodance Collagen'
+      assign h = 'The ampoule'
+      assign em = 'is on us.'
+      assign price = v_pads_pink.price
+      assign was = v_pads_pink.price | plus: v_amp_pink.price
+      assign note = 'free with the pink pads'
+      assign cta = 'Shop the pads'
+      assign link = url | default: bd.url
+    when 'ceranol'
+      assign tone = 'light'
+      assign kicker = 'Biodance Cera-Nol'
+      assign h = 'Barrier care,'
+      assign em = 'ampoule free.'
+      assign price = v_pads_blue.price
+      assign was = v_pads_blue.price | plus: v_amp_blue.price
+      assign note = 'free with the blue pads'
+      assign cta = 'Shop the pads'
+      assign link = url | default: bd.url
+    else
+      assign show = false
+  endcase
+  assign photo = 'hb-sci-' | append: art | append: '.png'
 -%}
-<a class="hb-poster" href="{{ url | default: '#hb-kits' }}">
-  <div class="hb-poster__c">
-    <span class="hb-poster__pill">{{ pill }}</span>
-    <p class="hb-poster__t">{{ title }}</p>
-    <p class="hb-poster__s">{{ sub }}</p>
+{%- if show -%}
+<a class="hbp hbp--{{ art }} hbp--{{ tone }}" href="{{ link }}">
+  {%- if images[photo] -%}{{ images[photo] | image_url: width: 1600 | image_tag: class: 'hbp__ph', widths: '600,900,1200,1600', sizes: '(min-width: 1000px) 50vw, 100vw', alt: '', loading: 'lazy' }}{%- endif -%}
+  {%- case art -%}
+    {%- when 'lezo' -%}<img class="hbp__p" src="{{ images['sk-cut-lezo.png'] | image_url: width: 500 }}" alt="" loading="lazy" style="right:5%;bottom:6%;width:34%">
+    {%- when 'daily' -%}<img class="hbp__p" src="{{ images['sk-cut-lezo.png'] | image_url: width: 500 }}" alt="" loading="lazy" style="right:19%;bottom:7%;width:30%"><img class="hbp__p" src="{{ images['sk-cut-booster-black.png'] | image_url: width: 300 }}" alt="" loading="lazy" style="right:5%;bottom:6%;width:13%;z-index:2">
+    {%- when 'complete' -%}<img class="hbp__p" src="{{ images['sk-cut-lezo.png'] | image_url: width: 500 }}" alt="" loading="lazy" style="right:29%;bottom:9%;width:24%"><img class="hbp__p" src="{{ images['sk-cut-booster-black.png'] | image_url: width: 300 }}" alt="" loading="lazy" style="right:18%;bottom:6%;width:12%;z-index:2"><img class="hbp__p" src="{{ images['sk-cut-collagen-duo.png'] | image_url: width: 500 }}" alt="" loading="lazy" style="right:1%;bottom:5%;width:22%;z-index:3">
+    {%- when 'collagen' -%}<img class="hbp__p" src="{{ images['sk-cut-collagen-duo.png'] | image_url: width: 700 }}" alt="" loading="lazy" style="right:3%;bottom:6%;width:44%">
+    {%- when 'ceranol' -%}<img class="hbp__p" src="{{ images['sk-cut-ceranol-duo.png'] | image_url: width: 700 }}" alt="" loading="lazy" style="right:3%;bottom:4%;width:42%">
+  {%- endcase -%}
+  <div class="hbp__c">
+    <p class="hbp__k">{{ kicker }}</p>
+    <p class="hbp__h">{{ h }}<br><em>{{ em }}</em></p>
+    <p class="hbp__o"><b>{{ price | money }}</b>{% if was > price %}<span><s>{{ was | money }}</s>{% if note != '' %}<i>{{ note }}</i>{% endif %}</span>{% endif %}</p>
+    <span class="hbp__cta">{{ cta }}</span>
   </div>
-  <div class="hb-poster__art" aria-hidden="true">
-    {%- case art -%}
-      {%- when 'lezo' -%}<img src="{{ c_lezo }}" alt="" loading="lazy" style="right:6%;height:100%">
-      {%- when 'daily' -%}<img src="{{ c_lezo }}" alt="" loading="lazy" style="left:0;height:80%"><img src="{{ c_bk }}" alt="" loading="lazy" style="right:4%;height:100%">
-      {%- when 'complete' -%}<img src="{{ c_lezo }}" alt="" loading="lazy" style="left:0;height:72%;bottom:4px"><img src="{{ c_pk }}" alt="" loading="lazy" style="left:46%;height:100%;z-index:2"><img src="{{ c_col }}" alt="" loading="lazy" style="right:0;height:44%;z-index:3">
-      {%- when 'collagen' -%}<img src="{{ c_col }}" alt="" loading="lazy" style="right:2%;height:88%">
-      {%- when 'ceranol' -%}<img src="{{ c_cer }}" alt="" loading="lazy" style="right:4%;height:100%">
-      {%- when 'neck' -%}<img src="{{ c_neck }}" alt="" loading="lazy" style="right:14%;height:100%">
-    {%- endcase -%}
-  </div>
+  <span class="hbp__cap">Illustrative micrograph</span>
 </a>
+<style>
+.hbp{position:relative;display:block;overflow:hidden;border-radius:22px;aspect-ratio:16/9;container-type:inline-size;margin:18px 0 0;text-decoration:none;isolation:isolate;background:#f6dfe6;color:#1a1012;--hbp-ac:#b8336a;--hbp-ed:"Instrument Serif","Times New Roman",serif}
+.hbp--dark{background:#1a0608;color:#fff;--hbp-ac:#ff8f9f}
+.hbp--ceranol{background:#e8f0f6;--hbp-ac:#2f6fa8}
+.hbp--lezo{--hbp-ac:#ff8f7a}
+.hbp__ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform 1.2s cubic-bezier(.16,1,.3,1)}
+.hbp:hover .hbp__ph{transform:scale(1.025)}
+.hbp__p{position:absolute;z-index:1;height:auto;max-width:none;pointer-events:none;filter:drop-shadow(0 0 2.2cqi rgba(255,255,255,.75)) drop-shadow(0 1.6cqi 1.4cqi rgba(40,15,25,.32))}
+.hbp--dark .hbp__p{filter:drop-shadow(0 0 2.4cqi rgba(255,40,60,.35)) drop-shadow(0 1.8cqi 1.6cqi rgba(0,0,0,.55))}
+.hbp__c{position:absolute;left:5.5%;top:50%;transform:translateY(-50%);width:46%;z-index:2}
+.hbp__k{margin:0 0 1.6cqi;font:800 2.1cqi/1 "Barlow Condensed","Anton","Arial Narrow",sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--hbp-ac)}
+.hbp__h{margin:0;font:800 7.2cqi/.86 "Barlow Condensed","Anton","Arial Narrow",sans-serif;text-transform:uppercase;letter-spacing:-.01em}
+.hbp__h em{display:inline-block;margin-top:.6cqi;font:italic 400 6cqi/.95 var(--hbp-ed);text-transform:none;color:var(--hbp-ac)}
+.hbp__o{display:flex;flex-wrap:wrap;align-items:flex-end;gap:1cqi 1.8cqi;margin:2.8cqi 0 0}
+.hbp__o b{font:800 9cqi/.8 "Barlow Condensed","Anton","Arial Narrow",sans-serif;letter-spacing:-.02em}
+.hbp__o span{display:flex;flex-direction:column;gap:.7cqi;padding-bottom:.3cqi}
+.hbp__o s{font:600 2.4cqi/1 "Archivo","Inter",system-ui,sans-serif;opacity:.7}
+.hbp__o i{font:italic 400 3cqi/1 var(--hbp-ed);color:var(--hbp-ac)}
+.hbp__cta{display:inline-flex;align-items:center;gap:1cqi;margin-top:2.8cqi;padding-bottom:.5cqi;border-bottom:.25cqi solid currentColor;font:800 2.3cqi/1 "Barlow Condensed","Anton","Arial Narrow",sans-serif;letter-spacing:.16em;text-transform:uppercase}
+.hbp__cta:after{content:"→";font-family:"Archivo","Inter",sans-serif;font-weight:500}
+.hbp__cap{position:absolute;left:5.5%;bottom:4.5%;z-index:2;font:600 1.5cqi/1 "Archivo","Inter",sans-serif;letter-spacing:.14em;text-transform:uppercase;opacity:.55}
+@media(prefers-reduced-motion:reduce){.hbp__ph{transition:none}}
+</style>
+{%- endif -%}

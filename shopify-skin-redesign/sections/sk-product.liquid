@@ -292,20 +292,13 @@
 
       {%- case k -%}
         {%- when 'lezo' -%}
-          {%- if cur.compare_at_price > cur.price -%}
-            {%- capture ps -%}Six light colors, hands-free.<br>Now {{ cur.price | money }}, was {{ cur.compare_at_price | money }}{%- endcapture -%}
-            {%- capture pp -%}Save {{ cur.compare_at_price | minus: cur.price | money }}{%- endcapture -%}
-            {% render 'hb-poster', pill: pp, title: 'LEZO<br>LED Mask', sub: ps, art: 'lezo', url: '#hb-kits' %}
-          {%- endif -%}
-          {% render 'hb-poster', pill: 'Ritual · Save 20%', title: 'The<br>Complete<br>Routine', sub: 'Mask, wand, pads and ampoule.<br>20% off everything', art: 'complete', url: '#hb-kits' %}
+          {% render 'hb-poster', art: 'lezo', url: '#hb-kits' %}
+          {% render 'hb-poster', art: 'complete', url: '#hb-kits' %}
         {%- when 'booster' -%}
-          {% render 'hb-poster', pill: 'Ritual · Save 20%', title: 'The Daily<br>Ritual', sub: 'LEZO mask + Booster Pro.<br>20% off, applied at checkout', art: 'daily', url: '#hb-kits' %}
+          {% render 'hb-poster', art: 'daily', url: '#hb-kits' %}
         {%- when 'bd' -%}
-          {% render 'hb-poster', pill: 'Complimentary gift', title: 'Collagen<br>Ampoule', sub: 'Free with the pink<br>Collagen Gel Toner Pads', art: 'collagen', url: '#hb-gallery' %}
-          {% render 'hb-poster', pill: 'Complimentary gift', title: 'Cera-Nol<br>Ampoule', sub: 'Free with the blue<br>Cera-Nol Gel Toner Pads', art: 'ceranol', url: '#hb-gallery' %}
-        {%- when 'neck' -%}
-          {%- capture ps -%}7 colors · 7 modes · 3 levels.<br>{{ cur.price | money }}, shipped free{%- endcapture -%}
-          {% render 'hb-poster', pill: 'Free US shipping', title: 'Face &amp; Neck<br>Massager', sub: ps, art: 'neck', url: '#hb-gallery' %}
+          {% render 'hb-poster', art: 'collagen', url: '#hb-gallery' %}
+          {% render 'hb-poster', art: 'ceranol', url: '#hb-gallery' %}
       {%- endcase -%}
     </div>
   </div>
