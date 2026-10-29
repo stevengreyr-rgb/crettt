@@ -1,7 +1,7 @@
 {% comment %}
   Section contract.
   Home: rituals. The kits panel (live prices, 20% worked out the way checkout applies the
-  automatic discount) with the posters for the live offers.
+  automatic discount) with editorial banners for the live offers (snippets/hb-poster).
   @example
   <!-- templates/index.json → "sk_bundles" -->
 {% endcomment %}
@@ -13,12 +13,13 @@
         <h2 class="hb-sec__h hb-sec__h--l" id="hb-rit-h">{{ section.settings.heading | escape }}</h2>
         <p class="hb-sec__lede hb-sec__lede--l">{{ section.settings.text | escape }}</p>
       </div>
-      {% render 'hb-poster', pill: 'Ritual · Save 20%', title: 'The<br>Complete<br>Routine', sub: 'Mask, wand, pads and ampoule.<br>20% off everything', art: 'complete', url: '#hb-kits' %}
-      {% render 'hb-poster', pill: 'Complimentary gift', title: 'Collagen<br>Ampoule', sub: 'Free with any Biodance<br>gel toner pads', art: 'collagen', url: '/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca' %}
+      {% render 'hb-poster', art: 'complete', url: '#hb-kits' %}
+      {% render 'hb-poster', art: 'collagen' %}
     </div>
     <div>{% render 'hb-kits' %}</div>
   </div>
 </section>
+<style>@media(min-width:1000px){#sk-bundles .hb-rituals>div:first-child{position:sticky;top:96px}}</style>
 {% schema %}
 {
   "name": "HB · Rituals",
