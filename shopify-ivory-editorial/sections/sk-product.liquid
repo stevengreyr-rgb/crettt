@@ -10,8 +10,8 @@
   Galleries are curated in the theme only: `gal_pick` lists media positions to show, with
   `gal_alts` in the same order, and `var_files` swaps a variant's slide for a clean cutout while
   keeping its data-media-id so variant selection still scrolls to it. Product media is untouched.
-  LEZO: studio shots only (Settings › Files): travertine plinth first, then the white studio
-  set, the close-up and the model portrait. Shown cropped to fill (.is-studio).
+  LEZO: studio product shots only, no model photos (Settings › Files): travertine plinth first,
+  then the white studio set, the shell close-up, the LED macro and the strap. Cropped to fill (.is-studio).
   @example
   {% section 'sk-product' %}
 {% endcomment %}
@@ -36,8 +36,8 @@
       assign badge = 'New'
       assign name = 'LEZO LED Mask'
       assign desc = 'The LED mask you’ll keep using, because you don’t have to hold it. Strap it on, pick one of six colors, lie back. Forehead to chin in one session, hands free.'
-      assign gal_files = 'sc-white-editorial-mask-oct29.png,sc-mask-gallery-detail-final.png,sc-mask-reference-hero-final.png'
-      assign file_alts = 'LEZO LED mask lit red on a white studio set|LEZO close-up: gloss shell, red-lit eye opening and woven strap|Model holding the LEZO mask, lit red, beside her face'
+      assign gal_files = 'sc-white-editorial-mask-oct29.png,sc-mask-gallery-detail-final.png,lezo-det-leds-red.webp,lezo-det-strap.webp'
+      assign file_alts = 'LEZO LED mask lit red on a white studio set|LEZO close-up: gloss shell, red-lit eye opening and woven strap|Macro of the LEZO LEDs lit red, one bead in each molded cell|LEZO strap close-up: woven elastic through the temple housing, with the slide adjuster'
       assign gal_max = 6
     when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
       assign k = 'booster'
