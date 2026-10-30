@@ -1,0 +1,156 @@
+{% comment %}
+  Section contract.
+  Home, under the landing: the three editorial offer creatives from the previous cover (photo +
+  live copy), then "Before you choose" questions. Every price is read from Shopify, and each offer
+  is one that checkout really applies:
+  1. LEZO mask at its sale price (variant compare-at price).
+  2. The Daily Ritual: LEZO + Booster Pro, 20% off each line ("Ritual bundle · 20% off 2+").
+  3. Biodance pink Collagen pads with the Collagen Ampoule free ("Collagen duo" BXGY).
+  One studio photo per creative, products shot into the scene (Settings › Files, sc-refined-*-oct29.png).
+  @example
+  <!-- templates/index.json → "editorial" -->
+{% endcomment %}
+{%- liquid
+  assign mask = all_products['lezo-7-color-led-face-mask']
+  assign wand = all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
+  assign bd = all_products['korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca']
+  assign v_mask = mask.selected_or_first_available_variant
+  for v in wand.variants
+    if v.id == 50957033046235
+      assign v_bk = v
+    endif
+  endfor
+  for v in bd.variants
+    if v.id == 50956618858715
+      assign v_pads = v
+    elsif v.id == 50956618891483
+      assign v_amp = v
+    endif
+  endfor
+  assign mask_off = 0
+  if v_mask.compare_at_price > v_mask.price
+    assign mask_off = v_mask.compare_at_price | minus: v_mask.price | times: 100 | divided_by: v_mask.compare_at_price
+  endif
+  assign d_total = v_mask.price | plus: v_bk.price
+  assign d_off = v_mask.price | times: 20 | divided_by: 100
+  assign d_off2 = v_bk.price | times: 20 | divided_by: 100
+  assign d_final = d_total | minus: d_off | minus: d_off2
+  assign g_total = v_pads.price | plus: v_amp.price
+  assign ph_sizes = '(min-width: 900px) 50vw, 100vw'
+-%}
+<section class="sc-ed" id="offers" aria-label="{{ 'ivory.offers' | t }}" data-sc-ed>
+  <a class="sc-ed__b sc-ed__b--lezo" href="{{ mask.url }}#hb-kits">
+    {{ images['sc-refined-red-oct29.png'] | image_url: width: 2048 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600,2048', sizes: '100vw', alt: 'Model in red light beside the LEZO mask on a marble plinth', loading: 'lazy' }}
+    <div class="sc-ed__c">
+      <p class="sc-ed__k">LEZO LED mask</p>
+      <h2 class="sc-ed__h">Red light,<br><em>at home.</em></h2>
+      <p class="sc-ed__o"><b>{{ v_mask.price | money }}</b>{% if mask_off > 0 %}<span><s>{{ v_mask.compare_at_price | money }}</s><i>{{ mask_off }}% off</i></span>{% endif %}</p>
+      <span class="sc-ed__cta">Shop the mask</span>
+    </div>
+  </a>
+  <a class="sc-ed__b sc-ed__b--daily" href="{{ wand.url }}#hb-kits">
+    {{ images['sc-refined-daily-oct29.png'] | image_url: width: 1600 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600', sizes: ph_sizes, alt: 'LEZO mask and Booster Pro wand on a blush set, model touching her cheeks', loading: 'lazy' }}
+    <div class="sc-ed__c">
+      <p class="sc-ed__k">The Daily Ritual</p>
+      <h2 class="sc-ed__h">Mask + wand,<br><em>20% off the pair.</em></h2>
+      <p class="sc-ed__o"><b>{{ d_final | money }}</b><span><s>{{ d_total | money }}</s><i>applied at checkout</i></span></p>
+      <span class="sc-ed__cta">Build the ritual</span>
+    </div>
+  </a>
+  <a class="sc-ed__b sc-ed__b--gel" href="{{ bd.url }}?variant=50956618858715#hb-kits">
+    {{ images['sc-refined-gel-oct29.png'] | image_url: width: 1600 | image_tag: class: 'sc-ed__ph', widths: '600,900,1200,1600', sizes: ph_sizes, alt: 'Model with a pink gel pad beside Biodance Collagen pads and ampoule', loading: 'lazy' }}
+    <div class="sc-ed__c">
+      <p class="sc-ed__k">Biodance Collagen</p>
+      <h2 class="sc-ed__h">The ampoule<br><em>is on us.</em></h2>
+      <p class="sc-ed__o"><b>{{ v_pads.price | money }}</b><span><s>{{ g_total | money }}</s><i>pads + free ampoule</i></span></p>
+      <span class="sc-ed__cta">Shop the pads</span>
+    </div>
+  </a>
+</section>
+<section class="iv-faq hb-wrap" aria-labelledby="iv-faq-h"><h2 id="iv-faq-h">{{ 'ivory.questions' | t }}</h2>
+{% for n in (1..3) %}{% assign q = 'ivory.q' | append: n %}{% assign a = 'ivory.a' | append: n %}<details><summary>{{ q | t }}</summary><p>{{ a | t }}</p></details>{% endfor %}
+<a class="iv-faq__cta" href="#hb-kits">{{ 'ivory.select' | t }} ↑</a>
+</section>
+<style>
+.sc-ed{--hb-ed:"Instrument Serif","Times New Roman",serif;display:grid;gap:12px;max-width:1440px;margin:0 auto;padding:40px 16px 12px;border-top:1px solid #e4e1da}
+.sc-ed__b{position:relative;display:block;overflow:hidden;border-radius:22px;aspect-ratio:16/9;container-type:inline-size;text-decoration:none;isolation:isolate}
+.sc-ed__ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform 1.2s cubic-bezier(.16,1,.3,1)}
+.sc-ed__b:hover .sc-ed__ph{transform:scale(1.025)}
+.sc-ed__c{position:absolute;z-index:2}
+.sc-ed__k{margin:0 0 1.4cqi;font:800 1.55cqi/1 var(--hb-disp);letter-spacing:.22em;text-transform:uppercase}
+.sc-ed__h{margin:0;font:800 7.4cqi/.86 var(--hb-disp);text-transform:uppercase;letter-spacing:-.01em}
+.sc-ed__h em{display:inline-block;margin-top:.5cqi;font:italic 400 6.2cqi/.95 var(--hb-ed);text-transform:none;letter-spacing:-.01em}
+.sc-ed__o{display:flex;align-items:flex-end;gap:1.6cqi;margin:2.6cqi 0 0}
+.sc-ed__o b{font:800 9.6cqi/.8 var(--hb-disp);letter-spacing:-.02em}
+.sc-ed__o span{display:flex;flex-direction:column;gap:.6cqi;padding-bottom:.4cqi}
+.sc-ed__o s{font:600 1.9cqi/1 var(--hb-sans);opacity:.7}
+.sc-ed__o i{font:italic 400 2.6cqi/1 var(--hb-ed)}
+.sc-ed__cta{display:inline-flex;align-items:center;gap:1cqi;margin-top:2.6cqi;padding-bottom:.5cqi;border-bottom:.22cqi solid currentColor;font:800 1.7cqi/1 var(--hb-disp);letter-spacing:.16em;text-transform:uppercase}
+.sc-ed__cta:after{content:"→";font-family:var(--hb-sans);font-weight:500}
+
+/* 1 · LEZO in red light */
+.sc-ed__b--lezo{background:#220505;color:#fff}
+.sc-ed__b--lezo .sc-ed__ph{object-position:left center}
+.sc-ed__b--lezo .sc-ed__k{color:#f9c6bc}
+.sc-ed__b--lezo .sc-ed__h em,.sc-ed__b--lezo .sc-ed__o i{color:#f9c6bc}
+
+/* 2 · The Daily Ritual on blush */
+.sc-ed__b--daily{background:#f6dfe6;color:#1a1012}
+.sc-ed__b--daily .sc-ed__c{left:5.5%}
+.sc-ed__b--daily .sc-ed__o{margin-top:1.6cqi}.sc-ed__b--daily .sc-ed__o b{font-size:6.6cqi}
+.sc-ed__b--daily .sc-ed__k{color:#b8336a}
+.sc-ed__b--daily .sc-ed__h em,.sc-ed__b--daily .sc-ed__o i{color:#b8336a}
+
+/* 3 · Biodance gel */
+.sc-ed__b--gel{background:#f7e9ee;color:#17191a}
+.sc-ed__b--gel .sc-ed__ph{object-position:left center}
+.sc-ed__b--gel .sc-ed__o{margin-top:1.4cqi}.sc-ed__b--gel .sc-ed__o b{font-size:6.4cqi}.sc-ed__b--gel .sc-ed__cta{margin-top:1.4cqi}
+.sc-ed__b--gel .sc-ed__k{color:#c04a77}
+.sc-ed__b--gel .sc-ed__h em,.sc-ed__b--gel .sc-ed__o i{color:#c04a77}
+
+@media(min-width:900px){
+  .sc-ed{grid-template-columns:1fr 1fr;gap:14px;padding:50px 14px 14px}
+  .sc-ed__b--lezo{grid-column:1/-1}
+  .sc-ed__b--lezo .sc-ed__ph{object-position:center}
+  .sc-ed__b--lezo .sc-ed__k,.sc-ed__b--lezo .sc-ed__cta{font-size:1.3cqi}
+  .sc-ed__b--lezo .sc-ed__o s{font-size:1.6cqi}.sc-ed__b--lezo .sc-ed__o i{font-size:2.2cqi}
+}
+@media(max-width:899px){
+  .sc-ed__k{font-size:2.5cqi;letter-spacing:.16em}
+  .sc-ed__o s{font-size:3cqi}.sc-ed__o i{font-size:3.4cqi}
+  .sc-ed__cta{font-size:2.7cqi}
+  .sc-ed__b--lezo .sc-ed__o{flex-wrap:wrap;row-gap:1.2cqi}
+  .sc-ed__b--lezo .sc-ed__o span{flex-direction:row;align-items:baseline;gap:1.6cqi}
+}
+.sc-ed__b--lezo .sc-ed__c{left:54%;top:6%;width:41%}
+.sc-ed__b--lezo .sc-ed__h{font-size:5.5cqi}.sc-ed__b--lezo .sc-ed__h em{font-size:4.8cqi}
+.sc-ed__b--lezo .sc-ed__o{margin-top:1.5cqi}.sc-ed__b--lezo .sc-ed__o b{font-size:6.4cqi}
+.sc-ed__b--lezo .sc-ed__cta{margin-top:1.4cqi}
+.sc-ed__b--daily .sc-ed__c{top:5%;width:48%}.sc-ed__b--daily .sc-ed__h{font-size:4.8cqi}.sc-ed__b--daily .sc-ed__h em{font-size:4cqi}
+.sc-ed__b--daily .sc-ed__o b{font-size:5.8cqi}.sc-ed__b--daily .sc-ed__cta{margin-top:1cqi}
+.sc-ed__b--gel .sc-ed__c{left:56%;top:5%;width:41%}.sc-ed__b--gel .sc-ed__h{font-size:4.8cqi}.sc-ed__b--gel .sc-ed__h em{font-size:4.2cqi}
+.sc-ed__b--gel .sc-ed__o b{font-size:6cqi}.sc-ed__b--gel .sc-ed__o span{flex-direction:column;gap:.5cqi}.sc-ed__b--gel .sc-ed__o i{font-size:2.7cqi}
+
+.sc-ed__b{-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s,opacity .9s cubic-bezier(.16,1,.3,1);box-shadow:0 22px 48px -32px rgba(51,44,38,.45)}
+.sc-ed__b:after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.38) 50%,transparent 65%);transform:translateX(-110%);transition:transform .9s cubic-bezier(.16,1,.3,1)}
+.sc-ed__b:active{transform:scale(.975)}
+.sc-ed__b:active:after,.sc-ed__b.is-tap:after{transform:translateX(110%)}
+.sc-ed__cta:after{transition:transform .4s cubic-bezier(.16,1,.3,1)}
+.sc-ed__b:hover .sc-ed__cta:after,.sc-ed__b:focus-visible .sc-ed__cta:after{transform:translateX(5px)}
+.sc-ed__b:focus-visible{outline:3px solid #95825e;outline-offset:3px}
+@media(hover:hover){.sc-ed__b:hover,.sc-ed.is-js .sc-ed__b.is-in:hover{transform:translateY(-3px)}.sc-ed__b:hover:after{transform:translateX(110%)}}
+.sc-ed.is-js .sc-ed__b{opacity:0;transform:translateY(16px)}
+.sc-ed.is-js .sc-ed__b.is-in{opacity:1;transform:none}
+.sc-ed.is-js .sc-ed__b.is-in:active{transform:scale(.975)}
+@media(prefers-reduced-motion:reduce){.sc-ed__ph,.sc-ed__b,.sc-ed__b:after{transition:none}.sc-ed.is-js .sc-ed__b{opacity:1;transform:none}}
+</style>
+<script>
+(() => {
+  const s = document.querySelector('[data-sc-ed]');
+  if (!s || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  s.classList.add('is-js');
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px 80px 0px' });
+  s.querySelectorAll('.sc-ed__b').forEach((c, i) => { c.style.transitionDelay = i * 40 + 'ms'; io.observe(c); c.addEventListener('touchstart', () => c.classList.add('is-tap'), { passive: true }); c.addEventListener('transitionend', () => { c.style.transitionDelay = ''; }, { once: true }); });
+})();
+</script>
+{% schema %}{"name":"Editorial product stories","settings":[],"presets":[{"name":"Editorial product stories"}]}{% endschema %}

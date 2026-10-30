@@ -11,3 +11,8 @@ Preview: `https://sevencrush.com/?preview_theme_id=168390000859`
 | `assets/ivory.js` | Keeps the opened card in view; tapping a card's photo opens it full screen (`<dialog>`, closes with ×, Esc or a tap). |
 | `assets/ivory.css` | Styles for the card photo, "What's inside", the full-screen view and the light-color chips. |
 | `sections/sk-product.liquid` | The LEZO "Six colors. One mask." explorer section is removed. Under the description, LEZO now lists only its six light colors as chips (red, green, blue, yellow, purple, cyan). |
+| `sections/sc-editorial-offers.liquid` | Under the landing: the three creatives from the previous cover (`sc-refined-red/daily/gel-oct29.png`) with live prices, then "Before you choose". |
+
+LEZO photos are studio shots only: travertine plinth (`sc-mask-gallery-front-final.png`) first in
+the gallery and on the "Single product" card, then the white studio set, the close-up and the model
+portrait.
