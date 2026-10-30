@@ -1,6 +1,6 @@
 {% comment %}
   Section contract.
-  Product landing for every product. The four SEVENCRUSH skincare products get their own
+  Product landing for every product (the home renders it for the Booster Pro). The four SEVENCRUSH skincare products get their own
   editorial copy, swatches and the ritual picker (LEZO also lists its six light colors); any other product falls
   back to its own title, media and description. Buy box uses a native /cart/add form
   (works without JS); sk.js adds the drawer, variant sync, delivery dates and sticky bag.
@@ -16,7 +16,7 @@
   {% section 'sk-product' %}
 {% endcomment %}
 {%- liquid
-  assign p = product | default: all_products['lezo-7-color-led-face-mask']
+  assign p = product | default: all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
   assign cur = p.selected_or_first_available_variant
   assign k = 'other'
   assign badge = ''
@@ -74,8 +74,8 @@
 </script>
 
 <nav class="iv-productnav hb-wrap" aria-label="{{ 'ivory.choose_product' | t }}">
-<a {% if k == 'lezo' %}aria-current="page"{% endif %} href="{{ routes.root_url }}">LEZO LED Mask</a>
-<a {% if k == 'booster' %}aria-current="page"{% endif %} href="/products/new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool">Booster Pro</a>
+<a {% if k == 'booster' %}aria-current="page"{% endif %} href="{{ routes.root_url }}">Booster Pro</a>
+<a {% if k == 'lezo' %}aria-current="page"{% endif %} href="/products/lezo-7-color-led-face-mask">LEZO LED Mask</a>
 <a {% if k == 'bd' %}aria-current="page"{% endif %} href="/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca">Biodance</a>
 </nav>
 <div class="hb-wrap">
@@ -153,12 +153,13 @@
       <h1 class="hb-title">{{ name }}</h1>
       <p class="hb-desc">{{ desc }}</p>
       {%- if k == 'lezo' -%}
-      <div class="iv-lights" id="hb-light-colors">
-        <p class="iv-lights__h">6 light colors on one mask</p>
-        <ul>
-          {%- assign lights = 'Red|#e0463f,Green|#3acb68,Blue|#3975f2,Yellow|#f0c13e,Purple|#a25ada,Cyan|#26c5ce' | split: ',' -%}
-          {%- for l in lights -%}{%- assign lp = l | split: '|' -%}<li><i style="--c:{{ lp[1] }}" aria-hidden="true"></i>{{ lp[0] }}</li>{%- endfor -%}
-        </ul>
+      <div class="iv-lights" id="hb-light-colors" data-iv-lights>
+        <p class="iv-lights__h">6 light colors on one mask <span>· tap a color</span></p>
+        <div class="iv-lights__row" role="group" aria-label="LEZO light colors">
+          {%- assign lights = 'Red|#e0463f|630 nm. The most studied color in at-home LED, used in routines for firmer, smoother-looking skin.~Green|#3acb68|520 nm. Used in routines aimed at a more even-looking tone.~Blue|#3975f2|470 nm. Stays near the surface. Used in routines for oily, blemish-prone skin.~Yellow|#f0c13e|590 nm. Used in routines to calm the look of redness and bring back glow.~Purple|#a25ada|Red + blue in one session: the depth of red with the surface focus of blue.~Cyan|#26c5ce|Blue + green in one session, for oily skin with uneven-looking tone.' | split: '~' -%}
+          {%- for l in lights -%}{%- assign lp = l | split: '|' -%}<button type="button" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}" data-tip="{{ lp[2] | escape }}"><i style="--c:{{ lp[1] }}" aria-hidden="true"></i>{{ lp[0] }}</button>{%- endfor -%}
+        </div>
+        <p class="iv-lights__t" data-iv-lights-tip aria-live="polite"><b>Red</b> 630 nm. The most studied color in at-home LED, used in routines for firmer, smoother-looking skin.</p>
       </div>
       {%- endif -%}
 
@@ -239,7 +240,7 @@
         <button type="submit" name="return_to" value="/checkout" class="hb-pill hb-buynow" data-sk-buynow {% unless cur.available %}disabled{% endunless %}>Buy it now · Checkout</button>
         <p class="hb-msg" data-sk-msg role="status"></p>
       </form>
-{% unless k == 'other' %}{% render 'hb-kits' %}{% endunless %}
+{% unless k == 'other' %}{% render 'hb-kits', p: p %}{% endunless %}
 
       <ul class="hb-rows" style="margin-top:14px">
         <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></span><span><b>Estimated delivery:</b> <span>5–12 days</span></span></li>

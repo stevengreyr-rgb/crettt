@@ -16,3 +16,7 @@ Preview: `https://sevencrush.com/?preview_theme_id=168390000859`
 LEZO photos are studio shots only: travertine plinth (`sc-mask-gallery-front-final.png`) first in
 the gallery and on the "Single product" card, then the white studio set, the close-up and the model
 portrait.
+
+The home opens on the Booster Pro landing; product bar and menu read Booster Pro · LEZO ·
+Biodance (`snippets/hb-header.liquid`). LEZO's light-color chips are tappable: one short line
+under them says what each color is used for (cosmetic wording, no treatment claims).

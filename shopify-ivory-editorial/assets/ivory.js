@@ -62,6 +62,21 @@
     button.addEventListener('click', () => selected()?.querySelector('[data-hb-kit-add]').click());
     paint();
   });
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  // LEZO light colors: tap a chip to read what that color is used for, in one short line.
+  const lights = () => document.querySelectorAll('[data-iv-lights]').forEach(box => {
+    if (box.dataset.ivReady) return;
+    box.dataset.ivReady = 'true';
+    const tip = box.querySelector('[data-iv-lights-tip]');
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button[data-tip]');
+      if (!b) return;
+      box.querySelectorAll('button[data-tip]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      tip.innerHTML = '';
+      const name = document.createElement('b');
+      name.textContent = b.textContent.trim();
+      tip.append(name, ' ' + b.dataset.tip);
+    });
+  });
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { init(); lights(); }); else { init(); lights(); }
   document.addEventListener('shopify:section:load',init);
 })();

@@ -10,8 +10,10 @@
   ([data-iv-zoom] → dialog[data-iv-zoom-dialog], handled in ivory.js). The one "Add to cart"
   button adds the selected card through initKit() in sk.js.
 
+  @param {product} [p] - The landing's product for the "Single product" card (defaults to the page product, then LEZO)
+
   @example
-  {% render 'hb-kits' %}
+  {% render 'hb-kits', p: product %}
 {% enddoc %}
 {%- liquid
   assign lezo = all_products['lezo-7-color-led-face-mask']
@@ -50,7 +52,7 @@
 {%- capture o_bdp -%}{"name":"Pink Collagen pads + ampoule","img":{{ i_bdp | json }},"items":[{"id":{{ v_pads_pink.id }},"price":{{ v_pads_pink.price }},"available":{{ v_pads_pink.available | json }}},{"id":{{ v_amp_pink.id }},"price":{{ v_amp_pink.price }},"available":{{ v_amp_pink.available | json }}}]}{%- endcapture -%}
 {%- capture o_bdb -%}{"name":"Blue Cera-Nol pads + ampoule","img":{{ i_bdb | json }},"items":[{"id":{{ v_pads_blue.id }},"price":{{ v_pads_blue.price }},"available":{{ v_pads_blue.available | json }}},{"id":{{ v_amp_blue.id }},"price":{{ v_amp_blue.price }},"available":{{ v_amp_blue.available | json }}}]}{%- endcapture -%}
 {%- liquid
-  assign solo = product | default: lezo
+  assign solo = p | default: product | default: lezo
   assign solo_v = solo.selected_or_first_available_variant
   case solo.id
     when booster.id
