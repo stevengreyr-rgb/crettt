@@ -1,0 +1,181 @@
+{% doc %}
+  "Select your ritual" picker for the home and the product landings: one radio card per offer
+  (the product on its own, the Biodance free-ampoule pair on that page, and the three rituals).
+  Each kit lists real variants priced live from Shopify; the 20% shown is worked out the way
+  checkout applies the automatic "Ritual bundle · 20% off 2+" discount (per line, rounded down).
+
+  Selecting a card opens it: the saved photo of everything in that offer (Settings › Files,
+  sc-white-*-final.png for the rituals), the finish and skincare choices, and a line-by-line list
+  of what's inside with each item's price. Tapping the photo opens it full screen
+  ([data-iv-zoom] → dialog[data-iv-zoom-dialog], handled in ivory.js). The one "Add to cart"
+  button adds the selected card through initKit() in sk.js.
+
+  @example
+  {% render 'hb-kits' %}
+{% enddoc %}
+{%- liquid
+  assign lezo = all_products['lezo-7-color-led-face-mask']
+  assign booster = all_products['new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool']
+  assign bd = all_products['korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca']
+  assign v_lezo = lezo.selected_or_first_available_variant
+  for v in booster.variants
+    if v.id == 50957033046235
+      assign v_bk = v
+    elsif v.id == 50957033013467
+      assign v_pk = v
+    endif
+  endfor
+  for v in bd.variants
+    case v.id
+      when 50956618858715
+        assign v_pads_pink = v
+      when 50956618891483
+        assign v_amp_pink = v
+      when 50956618629339
+        assign v_pads_blue = v
+      when 50956618825947
+        assign v_amp_blue = v
+    endcase
+  endfor
+  assign kits = 'daily,collagen,complete' | split: ','
+  assign i_lezo = images['sk-cut-lezo.png'] | image_url: width: 600
+  assign i_bk = images['sk-cut-booster-black.png'] | image_url: width: 400
+  assign i_pk = images['sk-cut-booster-pink.png'] | image_url: width: 400
+  assign i_bdp = images['sk-cut-collagen-duo.png'] | image_url: width: 500
+  assign i_bdb = images['sk-cut-ceranol-duo.png'] | image_url: width: 500
+-%}
+{%- capture o_lezo -%}{"name":"LEZO LED Mask","img":{{ i_lezo | json }},"items":[{"id":{{ v_lezo.id }},"price":{{ v_lezo.price }},"available":{{ v_lezo.available | json }}}]}{%- endcapture -%}
+{%- capture o_bk -%}{"name":"Booster Pro · Black","img":{{ i_bk | json }},"items":[{"id":{{ v_bk.id }},"price":{{ v_bk.price }},"available":{{ v_bk.available | json }}}]}{%- endcapture -%}
+{%- capture o_pk -%}{"name":"Booster Pro · Pink","img":{{ i_pk | json }},"items":[{"id":{{ v_pk.id }},"price":{{ v_pk.price }},"available":{{ v_pk.available | json }}}]}{%- endcapture -%}
+{%- capture o_bdp -%}{"name":"Pink Collagen pads + ampoule","img":{{ i_bdp | json }},"items":[{"id":{{ v_pads_pink.id }},"price":{{ v_pads_pink.price }},"available":{{ v_pads_pink.available | json }}},{"id":{{ v_amp_pink.id }},"price":{{ v_amp_pink.price }},"available":{{ v_amp_pink.available | json }}}]}{%- endcapture -%}
+{%- capture o_bdb -%}{"name":"Blue Cera-Nol pads + ampoule","img":{{ i_bdb | json }},"items":[{"id":{{ v_pads_blue.id }},"price":{{ v_pads_blue.price }},"available":{{ v_pads_blue.available | json }}},{"id":{{ v_amp_blue.id }},"price":{{ v_amp_blue.price }},"available":{{ v_amp_blue.available | json }}}]}{%- endcapture -%}
+{%- liquid
+  assign solo = product | default: lezo
+  assign solo_v = solo.selected_or_first_available_variant
+  case solo.id
+    when booster.id
+      assign solo_img = images['sc-white-wand-oct30.png']
+    when bd.id
+      assign solo_img = images['sc-white-collagen-oct30.png']
+    when lezo.id
+      assign solo_img = images['sc-white-mask-oct30.png']
+  endcase
+  assign solo_img = solo_img | default: solo.featured_image
+-%}
+<section class="iv-choices" id="hb-kits" aria-labelledby="hb-kits-h" data-iv-choices>
+<h2 id="hb-kits-h">{{ 'ivory.select' | t }}</h2>
+<article class="iv-choice is-selected" data-hb-kit data-iv-card>
+<script type="application/json" data-hb-kit-data>{"name":{{ solo.title | json }},"pct":0,"slots":[[{% for sv in solo.variants %}{"name":{{ sv.title | json }},"items":[{"id":{{ sv.id }},"price":{{ sv.price }},"compare":{{ sv.compare_at_price | default: 0 }},"available":{{ sv.available | json }}}]}{% unless forloop.last %},{% endunless %}{% endfor %}]]}</script>
+<label class="iv-choice__main">
+<input type="radio" name="iv-ritual" value="single" checked data-iv-radio>
+<span class="iv-choice__copy"><strong>{{ 'ivory.single' | t }}</strong><span class="iv-saving" data-iv-saving></span><span class="iv-choice__what">1 × {% render 'hb-name', p: solo %}</span></span>
+<span class="iv-choice__price"><b data-hb-kit-now>{{ solo_v.price | money }}</b><s data-hb-kit-was>{{ solo_v.compare_at_price | default: solo_v.price | money }}</s></span>
+</label>
+<div class="iv-choice__details">
+{%- if solo_img -%}
+<button type="button" class="iv-choice__photo" data-iv-zoom="{{ solo_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ solo.title | escape }}" aria-label="Tap to see it all: {{ 'ivory.single' | t }}">{{ solo_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
+{%- endif -%}
+{% if solo.variants.size > 1 %}<label for="iv-single">{{ 'ivory.option' | t }}</label><select id="iv-single" data-slot="0">{% for sv in solo.variants %}<option value="{{ forloop.index0 }}" {% if sv.id == solo_v.id %}selected{% endif %} {% unless sv.available %}disabled{% endunless %}>{{ sv.title | capitalize }} — {{ sv.price | money }}{% unless sv.available %} · {{ 'ivory.sold_out' | t }}{% endunless %}</option>{% endfor %}</select>{% endif %}
+</div>
+<div class="iv-choice__shipping">+ {{ 'ivory.shipping' | t }}</div>
+<button type="button" hidden data-hb-kit-add>{{ 'ivory.add' | t }}</button><button type="button" hidden data-hb-kit-buy>{{ 'ivory.checkout' | t }}</button><p data-hb-kit-msg role="status"></p>
+</article>
+{% if solo.id == bd.id %}
+{%- assign g_img = images['sk-cut-collagen-duo.png'] | default: solo_img -%}
+<article class="iv-choice" data-hb-kit data-iv-card>
+<script type="application/json" data-hb-kit-data>{"name":"Biodance pads + free ampoule","pct":0,"gift":true,"slots":[[{{ o_bdp }},{{ o_bdb }}]]}</script>
+<label class="iv-choice__main"><input type="radio" name="iv-ritual" value="gift" data-iv-radio><span class="iv-choice__copy"><strong>{{ 'ivory.gift' | t }}</strong><span class="iv-saving" data-iv-saving></span><span class="iv-choice__what">{{ 'ivory.gift_detail' | t }}</span></span><span class="iv-choice__price"><b data-hb-kit-now>{{ v_pads_pink.price | money }}</b><s data-hb-kit-was>{{ v_pads_pink.price | plus: v_amp_pink.price | money }}</s></span></label>
+<div class="iv-choice__details">
+{%- if g_img -%}
+<button type="button" class="iv-choice__photo" data-iv-zoom="{{ g_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ 'ivory.gift' | t | escape }}" aria-label="Tap to see it all: {{ 'ivory.gift' | t }}">{{ g_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
+{%- endif -%}
+<label for="iv-gift">{{ 'ivory.skincare' | t }}</label><select id="iv-gift" data-slot="0"><option value="0">{{ 'ivory.pink_duo' | t }}</option><option value="1">{{ 'ivory.blue_duo' | t }}</option></select>
+<p class="iv-inside__h">What’s inside</p>
+<ul class="iv-inside">
+<li><span>1 × Biodance Gel Toner Pads</span><b>{{ v_pads_pink.price | money }}</b></li>
+<li><span>1 × Biodance matching ampoule</span><b><s>{{ v_amp_pink.price | money }}</s> FREE</b></li>
+</ul>
+</div>
+<div class="iv-choice__shipping">+ {{ 'ivory.shipping' | t }}</div>
+<button type="button" hidden data-hb-kit-add>{{ 'ivory.add' | t }}</button><button type="button" hidden data-hb-kit-buy>{{ 'ivory.checkout' | t }}</button><p data-hb-kit-msg role="status"></p>
+</article>
+{% endif %}
+  {%- for k in kits -%}
+    {%- liquid
+      case k
+        when 'complete'
+          assign k_name = 'The Complete Routine'
+          assign k_vars = v_lezo.price | append: ',' | append: v_bk.price | append: ',' | append: v_pads_pink.price | append: ',' | append: v_amp_pink.price
+          assign k_img = images['sc-white-complete-final.png']
+          assign k_what = 'LEZO Mask + Booster Pro Wand + Biodance pads & ampoule'
+          assign k_count = 4
+        when 'daily'
+          assign k_name = 'The Daily Ritual'
+          assign k_vars = v_lezo.price | append: ',' | append: v_bk.price
+          assign k_img = images['sc-white-daily-final.png']
+          assign k_what = 'LEZO Mask + Booster Pro Wand'
+          assign k_count = 2
+        when 'collagen'
+          assign k_name = 'Light & Hydration'
+          assign k_vars = v_lezo.price | append: ',' | append: v_pads_pink.price | append: ',' | append: v_amp_pink.price
+          assign k_img = images['sc-white-collagen-final.png']
+          assign k_what = 'LEZO Mask + Biodance pads & ampoule'
+          assign k_count = 3
+      endcase
+      assign k_total = 0
+      assign k_off = 0
+      assign k_prices = k_vars | split: ','
+      for pr in k_prices
+        assign pi = pr | plus: 0
+        assign k_total = k_total | plus: pi
+        assign line_off = pi | times: 20 | divided_by: 100
+        assign k_off = k_off | plus: line_off
+      endfor
+      assign k_final = k_total | minus: k_off
+      if k == 'complete'
+        assign bslot = 2
+      else
+        assign bslot = 1
+      endif
+    -%}
+    {%- capture k_json -%}{"name":{{ k_name | json }},"pct":20,"slots":[
+      [{{ o_lezo }}]
+      {%- if k == 'complete' or k == 'daily' -%},[{{ o_bk }},{{ o_pk }}]{%- endif -%}
+      {%- if k == 'complete' or k == 'collagen' -%},[{{ o_bdp }},{{ o_bdb }}]{%- endif -%}
+    ]}{%- endcapture -%}
+<article class="iv-choice" data-hb-kit data-iv-card>
+<script type="application/json" data-hb-kit-data>{{ k_json | strip_newlines }}</script>
+{% if k == 'complete' %}<span class="iv-choice__flag">Best value</span>{% endif %}
+<label class="iv-choice__main">
+<input type="radio" name="iv-ritual" value="{{ k }}" data-iv-radio>
+<span class="iv-choice__copy"><strong>{{ k_name | escape }}</strong><span class="iv-saving" data-iv-saving>{{ 'ivory.save' | t }} {{ k_off | money }}</span><span class="iv-choice__what">{{ k_what }}</span></span>
+<span class="iv-choice__price"><b data-hb-kit-now>{{ k_final | money }}</b><s data-hb-kit-was>{{ k_total | money }}</s></span>
+</label>
+<div class="iv-choice__details">
+{%- if k_img -%}
+<button type="button" class="iv-choice__photo" data-iv-zoom="{{ k_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ k_name | escape }}: {{ k_what | escape }}" aria-label="Tap to see it all: {{ k_name | escape }}">{{ k_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__count" aria-hidden="true">{{ k_count }} items</span><span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
+{%- endif -%}
+{% if k == 'complete' or k == 'daily' %}<label for="iv-{{ k }}-wand">{{ 'ivory.wand_finish' | t }}</label><select id="iv-{{ k }}-wand" data-slot="1"><option value="0">{{ 'ivory.black' | t }}</option><option value="1">{{ 'ivory.pink' | t }}</option></select>{% endif %}
+{% if k == 'complete' or k == 'collagen' %}<label for="iv-{{ k }}-care">{{ 'ivory.skincare' | t }}</label><select id="iv-{{ k }}-care" data-slot="{{ bslot }}"><option value="0">{{ 'ivory.pink_duo' | t }}</option><option value="1">{{ 'ivory.blue_duo' | t }}</option></select>{% endif %}
+<p class="iv-inside__h">What’s inside</p>
+<ul class="iv-inside">
+<li><span>1 × LEZO LED Mask</span><b>{{ v_lezo.price | money }}</b></li>
+{%- if k == 'daily' or k == 'complete' -%}<li><span>1 × Booster Pro Wand</span><b>{{ v_bk.price | money }}</b></li>{%- endif -%}
+{%- if k == 'collagen' or k == 'complete' -%}<li><span>1 × Biodance Gel Toner Pads</span><b>{{ v_pads_pink.price | money }}</b></li><li><span>1 × Biodance matching ampoule</span><b>{{ v_amp_pink.price | money }}</b></li>{%- endif -%}
+<li class="iv-inside__off"><span>Ritual saving · 20% off each item</span><b>−{{ k_off | money }}</b></li>
+<li class="iv-inside__total"><span>You pay</span><b>{{ k_final | money }}</b></li>
+</ul>
+</div>
+<div class="iv-choice__shipping">+ {{ 'ivory.shipping' | t }}</div>
+<button type="button" hidden data-hb-kit-add>{{ 'ivory.add' | t }}</button><button type="button" hidden data-hb-kit-buy>{{ 'ivory.checkout' | t }}</button><p data-hb-kit-msg role="status"></p>
+</article>
+{% endfor %}
+<button type="button" class="iv-add" data-iv-add><span>{{ 'ivory.add' | t }}</span><span class="iv-add__prices"><s data-iv-was></s><b data-iv-now></b></span></button>
+<p class="iv-checknote">{{ 'ivory.note' | t }}</p>
+<noscript><style>.hb-buy:has(.iv-choices) [data-sk-form]{display:block}</style><p>{{ 'ivory.nojs' | t }}</p></noscript>
+<dialog class="iv-zoom" data-iv-zoom-dialog aria-label="Tap to see it all">
+<form method="dialog"><button class="iv-zoom__x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></form>
+<img alt="" data-iv-zoom-img>
+<p class="iv-zoom__cap" data-iv-zoom-cap></p>
+</dialog>
+</section>

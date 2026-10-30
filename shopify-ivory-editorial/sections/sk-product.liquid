@@ -1,0 +1,377 @@
+{% comment %}
+  Section contract.
+  Product landing for every product. The four SEVENCRUSH skincare products get their own
+  editorial copy, swatches and the ritual picker (LEZO also lists its six light colors); any other product falls
+  back to its own title, media and description. Buy box uses a native /cart/add form
+  (works without JS); sk.js adds the drawer, variant sync, delivery dates and sticky bag.
+  Copy restates the product descriptions only; the original description is kept verbatim
+  under "As listed by the maker" (except the neck massager, whose description is a raw supplier
+  import with unverified claims and hot-linked images; its specs are restated below instead).
+  Galleries are curated in the theme only: `gal_pick` lists media positions to show, with
+  `gal_alts` in the same order, and `var_files` swaps a variant's slide for a clean cutout while
+  keeping its data-media-id so variant selection still scrolls to it. Product media is untouched.
+  LEZO: only the six detail shots in Settings › Files (lezo-det-*.webp: shell,
+  strap, inside off, LEDs in red, inside in blue, evening in green), reused in "Up close".
+  @example
+  {% section 'sk-product' %}
+{% endcomment %}
+{%- liquid
+  assign p = product | default: all_products['lezo-7-color-led-face-mask']
+  assign cur = p.selected_or_first_available_variant
+  assign k = 'other'
+  assign badge = ''
+  assign name = p.title
+  assign desc = p.description | replace: '</p>', ' </p>' | replace: '<br>', ' ' | strip_html | strip_newlines | truncatewords: 26
+  assign opt_label = p.options.first | default: 'Option'
+  assign gal_files = ''
+  assign gal_mode = 'all'
+  assign gal_pick = ''
+  assign gal_alts = ''
+  assign var_files = ''
+  assign file_alts = ''
+  assign gal_max = 7
+  case p.handle
+    when 'lezo-7-color-led-face-mask'
+      assign k = 'lezo'
+      assign badge = 'New'
+      assign name = 'LEZO LED Mask'
+      assign desc = 'The LED mask you’ll keep using, because you don’t have to hold it. Strap it on, pick one of six colors, lie back. Forehead to chin in one session, hands free.'
+      assign gal_files = 'sk-cut-lezo.png'
+      assign file_alts = 'LEZO LED mask on white'
+      assign gal_max = 6
+    when 'new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool'
+      assign k = 'booster'
+      assign badge = 'New'
+      assign name = 'Booster Pro Wand'
+      assign desc = 'For the spots a mask passes over: under the eyes, the smile lines, along the jaw. A teardrop head you hold like a pen, a display that shows your setting, USB charging.'
+      assign opt_label = 'Finish'
+      assign gal_mode = 'variants'
+      assign gal_files = ''
+      assign var_files = 'pink:sc-booster-pink.jpg,black:sc-booster-black.jpg'
+    when 'korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca'
+      assign k = 'bd'
+      assign badge = 'Free ampoule'
+      assign name = 'Biodance Collagen Pads & Ampoules'
+      assign desc = 'The step after light. A cool gel pad that stays where you lay it, then a few drops of the matching ampoule. Pink for collagen, blue for ceramides. Buy the pads and the ampoule is free.'
+      assign opt_label = 'Step'
+      assign gal_mode = 'variants'
+      assign gal_files = 'sk-cut-collagen-duo.png,sk-cut-ceranol-duo.png'
+    when 'home-use-led-face-neck-massager-7-colors-light-therapy-7-modes-3-levels-vibration-face-lifting-anti-wrinkle-beauty-instrument'
+      assign k = 'neck'
+      assign name = 'Face & Neck Massager'
+      assign desc = 'Most routines stop at the jaw. This one starts there: a head curved 160° to stay on the neck, seven LED colors, seven modes and three vibration levels.'
+      assign gal_pick = '1,5,6,7'
+      assign gal_alts = 'Face & Neck Massager in white, front view with the mode display and buttons|Three steps: take it out, long-press to power on, then choose a mode and level|Face & Neck Massager in its box with the USB-C cable and manual|Face & Neck Massager out of the box, front view'
+  endcase
+  assign files = gal_files | split: ','
+  assign picks = gal_pick | split: ','
+  assign pick_alts = gal_alts | split: '|'
+  assign f_alts = file_alts | split: '|'
+-%}
+<div class="hb" data-sk-pdp>
+<script type="application/json" data-sk-variants>
+  [{%- for v in p.variants -%}{"id":{{ v.id }},"price":{{ v.price }},"compare":{{ v.compare_at_price | default: 0 }},"available":{{ v.available | json }},"media":{{ v.featured_media.id | default: 0 }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
+</script>
+
+<nav class="iv-productnav hb-wrap" aria-label="{{ 'ivory.choose_product' | t }}">
+<a {% if k == 'lezo' %}aria-current="page"{% endif %} href="{{ routes.root_url }}">LEZO LED Mask</a>
+<a {% if k == 'booster' %}aria-current="page"{% endif %} href="/products/new-booster-pro-led-facial-light-therapy-7-colors-eye-beauty-wand-red-light-eye-massager-for-skincare-blue-rejuvenation-tool">Booster Pro</a>
+<a {% if k == 'bd' %}aria-current="page"{% endif %} href="/products/korean-collagen-ampoule-serum-moisturizing-brightening-face-mask-gel-toner-cotton-pads-firming-gentle-and-non-irritating-skin-ca">Biodance</a>
+</nav>
+<div class="hb-wrap">
+  <div class="hb-top">
+    <div class="sk-gal" id="hb-gallery" style="scroll-margin-top:84px">
+      <div class="sk-gal__track" data-sk-gal-track tabindex="0" aria-label="{{ name | escape }} images">
+        {%- assign n = 0 -%}
+{% liquid
+  assign iv_photo = 'sc-white-mask-oct30.png'
+  if k == 'booster'
+    assign iv_photo = 'sc-white-wand-oct30.png'
+  elsif k == 'bd'
+    assign iv_photo = 'sc-white-collagen-oct30.png'
+  endif
+%}
+{% unless k == 'other' or k == 'neck' %}<figure class="sk-gal__slide iv-product-image">{{ images[iv_photo] | image_url: width: 1600 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600,900,1200,1600', sizes: '(min-width: 1000px) 50vw, 100vw', alt: name }}</figure>{% endunless %}
+        {%- if k == 'lezo' -%}
+          {%- comment -%} LEZO: only the six detail shots, from gal_files below {%- endcomment -%}
+        {%- elsif gal_mode == 'variants' -%}
+          {%- for v in p.variants -%}
+            {%- if v.featured_media -%}
+              {%- liquid
+                assign n = n | plus: 1
+                assign v_img = v.featured_media.preview_image
+                assign v_key = v.title | downcase | append: ':'
+                assign var_list = var_files | split: ','
+                for vf in var_list
+                  if vf contains v_key
+                    assign v_file = vf | remove_first: v_key
+                    if images[v_file]
+                      assign v_img = images[v_file]
+                    endif
+                  endif
+                endfor
+              -%}
+              {%- capture v_alt -%}{% if var_files != '' %}{{ name }} in {{ v.title | downcase }}{% else %}{{ name }} · {{ v.title | capitalize }}{% endif %}{%- endcapture -%}
+              <figure class="sk-gal__slide is-product" data-media-id="{{ v.featured_media.id }}">{% render 'sk-img', img: v_img, sizes: '(min-width: 1000px) 55vw, 100vw', alt: v_alt, eager: forloop.first %}</figure>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if var_files != '' and cur.featured_media -%}
+            {%- assign n = n | plus: 1 -%}
+            {%- capture v_alt -%}{{ name }} light settings: green, blue, yellow and purple at the tip{%- endcapture -%}
+            <figure class="sk-gal__slide is-product">{% render 'sk-img', img: cur.featured_media.preview_image, sizes: '(min-width: 1000px) 27vw, 100vw', alt: v_alt %}</figure>
+          {%- endif -%}
+        {%- elsif picks.size > 0 -%}
+          {%- for pos in picks -%}
+            {%- assign i = pos | plus: 0 | minus: 1 -%}
+            {%- assign m = p.media[i] -%}
+            {%- if m -%}
+              {%- assign n = n | plus: 1 -%}
+              {%- assign m_alt = pick_alts[forloop.index0] | default: m.alt | default: name -%}
+              <figure class="sk-gal__slide{% if k == 'neck' %} is-product{% endif %}" data-media-id="{{ m.id }}">{% render 'sk-img', img: m.preview_image, sizes: '(min-width: 1000px) 55vw, 100vw', alt: m_alt, eager: forloop.first %}</figure>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- for m in p.media limit: 7 -%}
+            {%- assign n = n | plus: 1 -%}
+            {%- assign m_alt = m.alt | default: name -%}
+            <figure class="sk-gal__slide{% if k == 'neck' or k == 'other' %} is-product{% endif %}" data-media-id="{{ m.id }}">{% render 'sk-img', img: m.preview_image, sizes: '(min-width: 1000px) 55vw, 100vw', alt: m_alt, eager: forloop.first %}</figure>
+          {%- endfor -%}
+        {%- endif -%}
+        {%- for f in files -%}
+          {%- if images[f] and n < gal_max -%}
+            {%- assign n = n | plus: 1 -%}
+            {%- assign f_alt = f_alts[forloop.index0] | default: images[f].alt -%}
+            <figure class="sk-gal__slide">{% render 'sk-img', img: images[f], sizes: '(min-width: 1000px) 55vw, 100vw', alt: f_alt, eager: forloop.first %}</figure>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <div class="sk-gal__dots" data-sk-gal-dots aria-label="Choose image"></div>
+    </div>
+
+    <div class="hb-buy">
+      {%- if badge != '' -%}<span class="hb-new">{{ badge }}</span>{%- else -%}<div style="height:18px"></div>{%- endif -%}
+      <h1 class="hb-title">{{ name }}</h1>
+      <p class="hb-desc">{{ desc }}</p>
+      {%- if k == 'lezo' -%}
+      <div class="iv-lights" id="hb-light-colors">
+        <p class="iv-lights__h">6 light colors on one mask</p>
+        <ul>
+          {%- assign lights = 'Red|#e0463f,Green|#3acb68,Blue|#3975f2,Yellow|#f0c13e,Purple|#a25ada,Cyan|#26c5ce' | split: ',' -%}
+          {%- for l in lights -%}{%- assign lp = l | split: '|' -%}<li><i style="--c:{{ lp[1] }}" aria-hidden="true"></i>{{ lp[0] }}</li>{%- endfor -%}
+        </ul>
+      </div>
+      {%- endif -%}
+
+      <div class="hb-price" data-sk-price>
+        <span class="hb-price__now" data-sk-price-now>{{ cur.price | money }}</span>
+        {%- if cur.compare_at_price > cur.price -%}
+          <s data-sk-price-was>{{ cur.compare_at_price | money }}</s><span class="hb-save" data-sk-price-off>Save {{ cur.compare_at_price | minus: cur.price | money }}</span>
+        {%- else -%}
+          <s data-sk-price-was hidden></s><span class="hb-save" data-sk-price-off hidden></span>
+        {%- endif -%}
+      </div>
+      <p class="hb-stock{% unless cur.available %} is-out{% endunless %}" data-sk-stock><i aria-hidden="true"></i><span>{% if cur.available %}In stock, ships in 1–3 business days{% else %}Sold out{% endif %}</span></p>
+
+      <form action="{{ routes.cart_add_url }}" method="post" data-sk-form>
+        {%- if p.variants.size == 1 -%}
+          <input type="hidden" name="id" value="{{ cur.id }}">
+        {%- else -%}
+          <fieldset class="hb-opt">
+            <legend class="hb-vh">{{ opt_label }}</legend>
+            <div class="hb-opt__row"><span class="hb-opt__lab" aria-hidden="true">{{ opt_label }} <span data-sk-vlabel></span></span><a class="hb-link" href="#hb-gallery">See all images</a></div>
+            <div class="hb-select">
+              <i class="hb-select__sw" data-hb-select-sw aria-hidden="true"></i>
+              <span class="hb-select__t" aria-hidden="true"><small>Select {{ opt_label | downcase }}</small><b data-hb-select-label></b></span>
+              <label class="hb-vh" for="hb-sel-{{ p.id }}">{{ opt_label }}</label>
+              <select id="hb-sel-{{ p.id }}" data-hb-select></select>
+            </div>
+            <div class="hb-swatches">
+              {%- for v in p.variants -%}
+                {%- liquid
+                  assign vt = v.title | capitalize
+                  assign dot = '#e9e3df'
+                  assign vtag = ''
+                  case v.id
+                    when 50956618858715
+                      assign vt = 'Collagen pads · pink'
+                      assign dot = '#f2c5cf'
+                      assign vtag = 'Pads'
+                    when 50956618891483
+                      assign vt = 'Collagen ampoule · pink'
+                      assign dot = '#f6d9df'
+                      assign vtag = 'Ampoule'
+                    when 50956618629339
+                      assign vt = 'Cera-Nol pads · blue'
+                      assign dot = '#9fb4e6'
+                      assign vtag = 'Pads'
+                    when 50956618825947
+                      assign vt = 'Hydro Cera-Nol ampoule · blue'
+                      assign dot = '#c7d4f1'
+                      assign vtag = 'Ampoule'
+                    when 50957033013467
+                      assign dot = '#f4cdd2'
+                    when 50957033046235
+                      assign vt = 'Black'
+                      assign dot = '#1b1b1b'
+                  endcase
+                -%}
+                <label class="hb-sw">
+                  <input type="radio" name="id" value="{{ v.id }}" data-label="{{ vt | escape }}" data-dot="{{ dot }}" aria-label="{{ vt | escape }}" {% if v.id == cur.id %}checked{% endif %} {% unless v.available %}disabled{% endunless %}>
+                  <span class="hb-sw__dot" style="--c:{{ dot }}"></span>
+                  <span class="hb-sw__tag" aria-hidden="true">{% if vtag != '' %}{{ vtag }}{% else %}{{ vt }}{% endif %}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endif -%}
+
+        {%- if k == 'bd' -%}
+          <button type="button" class="hb-pill hb-buynow" style="margin-bottom:10px" data-sk-pair>Add pads + free matching ampoule</button>
+        {%- endif -%}
+        <div class="hb-qtyrow">
+          <div class="hb-qty">
+            <button type="button" data-sk-qty="-1" aria-label="Decrease quantity">−</button>
+            <input type="number" name="quantity" value="1" min="1" max="20" inputmode="numeric" aria-label="Quantity" data-sk-qty-input>
+            <button type="button" data-sk-qty="1" aria-label="Increase quantity">+</button>
+          </div>
+          <button type="submit" class="hb-pill hb-pill--pk hb-atc" data-sk-atc {% unless cur.available %}disabled{% endunless %}>{% if cur.available %}Add to bag{% else %}Sold out{% endif %}</button>
+        </div>
+        <button type="submit" name="return_to" value="/checkout" class="hb-pill hb-buynow" data-sk-buynow {% unless cur.available %}disabled{% endunless %}>Buy it now · Checkout</button>
+        <p class="hb-msg" data-sk-msg role="status"></p>
+      </form>
+{% unless k == 'other' %}{% render 'hb-kits' %}{% endunless %}
+
+      <ul class="hb-rows" style="margin-top:14px">
+        <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 7h11v9H2zM13 10h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/></svg></span><span><b>Estimated delivery:</b> <span>5–12 days</span></span></li>
+        <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7Z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg></span><span><b>Free shipping</b> on every US order, tracked</span></li>
+        <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/></svg></span><span>Card, PayPal or Shop Pay at a secure Shopify checkout</span></li>
+        <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 8h10a6 6 0 0 1 0 12H8M5 8l5-5M5 8l5 5"/></svg></span><span><b>30 days</b> to return unopened, unused items</span></li>
+        <li><span class="hb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg></span><a class="hb-link" href="/policies/shipping-policy">Shipping info</a></li>
+      </ul>
+
+      <div class="hb-vip" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8Z"/></svg>
+        <span>{% if k == 'neck' or k == 'other' %}Building a routine? The <b>mask, wand and Biodance</b> are 20% off when you buy two or more.{% elsif k == 'lezo' %}Mask first, then the <b>Booster Pro</b> for the details or <b>Biodance</b> to finish. Add either and <b>20% comes off both</b> at checkout.{% elsif k == 'booster' %}It works best after the <b>LEZO mask</b>, or before <b>Biodance</b>. Add either and <b>20% comes off both</b> at checkout.{% else %}Finish a <b>LEZO</b> or <b>Booster Pro</b> session with it. Add either and <b>20% comes off both</b> at checkout.{% endif %}</span>
+      </div>
+
+      
+
+      <div class="hb-acc">
+        <details open>
+          <summary>Product info</summary>
+          <div class="hb-acc__b">
+            {%- case k -%}
+              {%- when 'lezo' -%}
+                <p>The honest reason most LED tools end up in a drawer: holding one to your face for a whole session gets old fast. LEZO removes that part. It straps on, covers you from forehead to chin, and lets you lie back with a book or your phone. That’s what turns it into an evening habit.</p>
+                <ul><li><b>Six colors</b> on one mask: red, green, blue, yellow, purple and cyan. Red is where most people start.</li><li><b>LEDs set in their own cells</b> across the forehead, cheeks, nose, chin and around the mouth, so the light sits close to the skin.</li><li><b>Open at the eyes, nostrils and mouth.</b> You breathe and talk normally with it on.</li><li><b>Woven elastic strap</b> with a slide adjuster. Set it once and it holds when you lie back.</li><li><b>Wavelengths</b> listed by the maker: red 630 nm, yellow 590 nm, green 520 nm, blue 470 nm.</li></ul>
+                <p><em>For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Individual results vary.</em></p>
+              {%- when 'booster' -%}
+                <p>A mask covers the face in one pass. The Booster Pro is for the close work afterwards: the areas you actually look at in the mirror. The teardrop head fits the hollow under the eye and the curve beside the nose, and the display shows which setting you’re on, so there’s no guessing.</p>
+                <ul><li><b>Selectable light colors</b> at the head.</li><li><b>Digital display</b> with the current setting.</li><li><b>USB rechargeable</b>, no batteries to buy.</li><li><b>Pen-sized,</b> in soft pink or black. It lives on the vanity, which is why it gets used.</li></ul>
+                <p><em>A cosmetic beauty device. Don’t expect medical or clinical treatment results. Results vary.</em></p>
+              {%- when 'bd' -%}
+                <p>Hydrogel pads don’t behave like cotton toner pads. They’re thick, cool and slippery, and they stay flat where you lay them: on the cheeks while you brush your teeth, on the forehead while the kettle boils. Peel, press the leftover essence in, then finish with a few drops of the matching ampoule.</p>
+                <ul><li><b>Pink:</b> Collagen Gel Toner Pads + Collagen Ampoule.</li><li><b>Blue:</b> Cera-Nol Gel Toner Pads + Hydro Cera-Nol Ampoule, built around ceramides, for skin that feels tight or dry.</li><li><b>The ampoule is free</b> with its matching pads: one free ampoule per pads, taken off at checkout.</li></ul>
+              {%- when 'neck' -%}
+                <p>Flat tools skate over the neck. This head curves 160°, so it follows the line from collarbone to jaw and keeps contact as you glide upward. Long-press to switch on, M for the mode, short presses for the vibration. After one evening you’ll do it without looking.</p>
+                <ul><li><b>7 LED colors, 7 modes</b> and 3 vibration levels.</li><li><b>Curved head</b> with a 160° wrap that follows the neck.</li><li><b>Rechargeable:</b> about 3 hours to charge, 1–2 hours of use.</li><li><b>Compact:</b> 13.9 × 8.8 × 3.8 cm (5.5 × 3.5 × 1.5 in). It fits in a wash bag.</li></ul>
+              {%- else -%}
+                {{ p.description }}
+            {%- endcase -%}
+          </div>
+        </details>
+        {%- unless k == 'other' -%}
+        <details>
+          <summary>How to use</summary>
+          <div class="hb-acc__b">
+            {%- case k -%}
+              {%- when 'lezo' -%}<ol><li>Charge it fully the day it arrives, so your first session isn’t cut short.</li><li>Cleanse and pat dry. Serums and creams go on after the session, not before.</li><li>Set the strap once: snug enough that the shell doesn’t slide when you lie back, never tight.</li><li>One color per session. Keep to the session time and the eye protection in your manual.</li><li>Clean the inside as the manual says and store it dry, face up.</li></ol><p>Consistency beats long sessions. Pick a fixed slot, after cleansing and before bed, and keep it.</p>
+              {%- when 'booster' -%}<ol><li>Charge with the supplied USB setup.</li><li>Press and hold the power button for 2 seconds to switch it on. Short presses change the setting.</li><li>Glide slowly, don’t scrub, and pause a moment on the spots you care about. Around the eyes, follow the manual exactly.</li><li>Keep it away from water unless the instructions allow contact.</li></ol>
+              {%- when 'bd' -%}<ol><li>Cleanse. Patch-test before your first use.</li><li>Lay a gel pad on each area and leave it while you get ready.</li><li>Warm three or four drops of the matching ampoule between your fingertips and press them in. Don’t rub.</li><li>At night it’s your last step; in the morning, SPF goes on top. Stop if irritation occurs.</li></ol>
+              {%- when 'neck' -%}<ol><li>Charge for about 3 hours with the USB-C cable.</li><li>Press and hold the power button to switch it on. Short presses on the power button change the vibration level; the M button changes the mode.</li><li>Hold the handle and glide the curved head upward, from the base of the neck to the jawline.</li></ol>
+            {%- endcase -%}
+          </div>
+        </details>
+        <details>
+          <summary>{% if k == 'bd' %}Ingredients{% else %}Details &amp; specs{% endif %}</summary>
+          <div class="hb-acc__b">
+            {%- case k -%}
+              {%- when 'lezo' -%}<dl><div><dt>Type</dt><dd>Full-face LED mask</dd></div><div><dt>Light colors</dt><dd>6: red, green, blue, yellow, purple, cyan</dd></div><div><dt>Wavelengths</dt><dd>470, 520, 590, 630 nm</dd></div><div><dt>Shell</dt><dd>Gloss white, open at eyes, nostrils and mouth</dd></div><div><dt>Fit</dt><dd>Woven elastic strap, slide adjuster</dd></div></dl>
+              {%- when 'booster' -%}<dl><div><dt>Format</dt><dd>Handheld wand, teardrop head</dd></div><div><dt>Light</dt><dd>Multiple selectable colors</dd></div><div><dt>Display</dt><dd>Digital, shows the current setting</dd></div><div><dt>Power</dt><dd>USB rechargeable, press-and-hold on/off</dd></div><div><dt>Finishes</dt><dd>Pink, Black</dd></div></dl>
+              {%- when 'bd' -%}<p>The full ingredient list is printed on each jar and bottle, so you can check it before your first use. Skin tolerance varies: patch-test first.</p>
+              {%- when 'neck' -%}<dl><div><dt>Material</dt><dd>ABS, electroplated finish</dd></div><div><dt>Battery</dt><dd>400 mAh polymer lithium</dd></div><div><dt>Charge / use</dt><dd>3 h / 1–2 h</dd></div><div><dt>Input</dt><dd>5 V 1 A, 3 W rated</dd></div><div><dt>Size</dt><dd>13.9 × 8.8 × 3.8 cm</dd></div><div><dt>In the box</dt><dd>Device, USB-C cable, manual</dd></div></dl>
+            {%- endcase -%}
+          </div>
+        </details>
+        {%- endunless -%}
+        <details>
+          <summary>Shipping &amp; returns</summary>
+          <div class="hb-acc__b"><p>Delivery takes 5–12 days, with tracking sent by email. US shipping is free. You have 30 days from delivery to return unopened, unused items in their original packaging; if something arrives damaged or wrong, send us one photo within 48 hours and we sort it out.</p></div>
+        </details>
+        {%- unless k == 'other' or k == 'neck' -%}
+        <details>
+          <summary>As listed by the maker</summary>
+          <div class="hb-acc__b">{{ p.description }}</div>
+        </details>
+        {%- endunless -%}
+      </div>
+
+      {%- case k -%}
+        {%- when 'booster' -%}
+          
+        {%- when 'bd' -%}
+          
+          
+      {%- endcase -%}
+    </div>
+  </div>
+</div>
+
+{%- if k != 'other' and k != 'lezo' -%}
+{%- liquid
+  assign s_alt = nil
+  assign s_fit = ''
+  assign s_tag = 'In use'
+  case k
+    when 'booster'
+      assign s_img = images['sc-white-wand-oct30.png']
+      assign s_h = 'Two minutes, closer.'
+      assign s_p = 'Use it after the mask, while your face is still bare. Glide slowly from the inner corner of the eye outwards, then along the smile lines and the jaw. Two unhurried minutes on the spots you notice in the mirror.'
+    when 'bd'
+      assign s_img = images['sk-cut-ceranol-duo.png']
+      assign s_h = 'Press in. Let it settle.'
+      assign s_p = 'After the pad, warm a few drops of ampoule between your fingertips and press them over the cheeks, forehead and neck. It’s the last step at night: quick enough to do every evening, which is the point.'
+    when 'neck'
+      assign s_img = p.media[2].preview_image
+      assign s_alt = 'The curved 160° head of the Face & Neck Massager'
+      assign s_fit = ' class="is-product"'
+      assign s_tag = 'Design'
+      assign s_h = 'Shaped for the neck.'
+      assign s_p = 'The head curves 160°, so it sits along the neck and jawline instead of skimming across them. Glide upward with the light on and the vibration at the level you chose. The neck is where most routines stop; this is where yours keeps going.'
+  endcase
+-%}
+<section class="hb-story" aria-labelledby="hb-story-h">
+  <div class="hb-wrap hb-story__grid">
+    <figure {{ s_fit }}>{% render 'sk-img', img: s_img, sizes: '(min-width: 900px) 45vw, 100vw', alt: s_alt %}</figure>
+    <div>
+      <span class="hb-new" style="margin-top:0">{{ s_tag }}</span>
+      <h2 id="hb-story-h">{{ s_h }}</h2>
+      <p>{{ s_p }}</p>
+      <p><a class="hb-link" href="#hb-kits">Build your ritual and save 20%</a></p>
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+<div class="hb-sticky" data-sk-sticky aria-hidden="true">
+  <button type="button" class="hb-pill hb-pill--pk hb-sticky__add" data-sk-sticky-btn tabindex="-1" {% unless cur.available %}disabled{% endunless %}>Add to bag · <span data-sk-sticky-price>{{ cur.price | money }}</span></button>
+  <div class="hb-sticky__qty" data-hb-sticky-qty>
+    <button type="button" data-hb-sq="-1" aria-label="Remove one"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>
+    <b data-hb-sq-n>1</b>
+    <button type="button" data-hb-sq="1" aria-label="Add one more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
+</div>
+</div>
+{% schema %}
+{"name": "SK · Product landing", "settings": []}
+{% endschema %}
