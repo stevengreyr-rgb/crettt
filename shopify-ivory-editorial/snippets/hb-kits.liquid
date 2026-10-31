@@ -5,8 +5,8 @@
   checkout applies the automatic "Ritual bundle · 20% off 2+" discount (per line, rounded down).
 
   Selecting a card opens it: the saved photo of everything in that offer (Settings › Files,
-  sc-white-*-final.png for the rituals; sc-bundle-*.png for the pink wand / blue Cera-Nol choices,
-  swapped in by ivory.js from data-iv-photos when a select changes), the finish and skincare choices, and a line-by-line list
+  sc-white-*-final.png for the rituals; Light & Hydration swaps to sc-bundle-collagen-blue.png
+  when blue Cera-Nol is chosen, via data-iv-photos in ivory.js), the finish and skincare choices, and a line-by-line list
   of what's inside with each item's price. Tapping the photo opens it full screen
   ([data-iv-zoom] → dialog[data-iv-zoom-dialog], handled in ivory.js). The one "Add to cart"
   button adds the selected card through initKit() in sk.js.
@@ -64,10 +64,6 @@
       assign solo_img = images['sc-mask-gallery-front-final.png']
   endcase
   assign solo_img = solo_img | default: solo.featured_image
-  if solo.id == booster.id
-    assign sv_key = 'sc-booster-' | append: solo_v.title | downcase | append: '.jpg'
-    assign solo_img = images[sv_key] | default: solo_img
-  endif
 -%}
 <section class="iv-choices" id="hb-kits" aria-labelledby="hb-kits-h" data-iv-choices>
 <h2 id="hb-kits-h">{{ 'ivory.select' | t }}</h2>
@@ -79,18 +75,8 @@
 <span class="iv-choice__price"><b data-hb-kit-now>{{ solo_v.price | money }}</b><s data-hb-kit-was>{{ solo_v.compare_at_price | default: solo_v.price | money }}</s></span>
 </label>
 <div class="iv-choice__details">
-{%- capture solo_photos -%}{%- for sv in solo.variants -%}{%- liquid
-  assign sv_img = sv.featured_image
-  if solo.id == booster.id
-    assign sv_key = 'sc-booster-' | append: sv.title | downcase | append: '.jpg'
-    assign sv_img = images[sv_key] | default: sv_img
-  endif
-  if sv.id == solo_v.id or sv_img == blank
-    assign sv_img = solo_img
-  endif
--%}"{{ forloop.index0 }}":[{{ sv_img | image_url: width: 1000 | json }},{{ sv_img | image_url: width: 2000 | json }}]{% unless forloop.last %},{% endunless %}{%- endfor -%}{%- endcapture -%}
 {%- if solo_img -%}
-<button type="button" class="iv-choice__photo" data-iv-photos="{ {{ solo_photos | escape }} }" data-iv-zoom="{{ solo_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ solo.title | escape }}" aria-label="Tap to see it all: {{ 'ivory.single' | t }}">{{ solo_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
+<button type="button" class="iv-choice__photo" data-iv-zoom="{{ solo_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ solo.title | escape }}" aria-label="Tap to see it all: {{ 'ivory.single' | t }}">{{ solo_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
 {%- endif -%}
 {% if solo.variants.size > 1 %}<label for="iv-single">{{ 'ivory.option' | t }}</label><select id="iv-single" data-slot="0">{% for sv in solo.variants %}<option value="{{ forloop.index0 }}" {% if sv.id == solo_v.id %}selected{% endif %} {% unless sv.available %}disabled{% endunless %}>{{ sv.title | capitalize }} — {{ sv.price | money }}{% unless sv.available %} · {{ 'ivory.sold_out' | t }}{% endunless %}</option>{% endfor %}</select>{% endif %}
 </div>
@@ -103,10 +89,8 @@
 <script type="application/json" data-hb-kit-data>{"name":"Biodance pads + free ampoule","pct":0,"gift":true,"slots":[[{{ o_bdp }},{{ o_bdb }}]]}</script>
 <label class="iv-choice__main"><input type="radio" name="iv-ritual" value="gift" data-iv-radio><span class="iv-choice__copy"><strong>{{ 'ivory.gift' | t }}</strong><span class="iv-saving" data-iv-saving></span><span class="iv-choice__what">{{ 'ivory.gift_detail' | t }}</span></span><span class="iv-choice__price"><b data-hb-kit-now>{{ v_pads_pink.price | money }}</b><s data-hb-kit-was>{{ v_pads_pink.price | plus: v_amp_pink.price | money }}</s></span></label>
 <div class="iv-choice__details">
-{%- assign g_blue = images['sk-cut-ceranol-duo.png'] | default: g_img -%}
-{%- capture g_photos -%}"0":[{{ g_img | image_url: width: 1000 | json }},{{ g_img | image_url: width: 2000 | json }}],"1":[{{ g_blue | image_url: width: 1000 | json }},{{ g_blue | image_url: width: 2000 | json }}]{%- endcapture -%}
 {%- if g_img -%}
-<button type="button" class="iv-choice__photo" data-iv-photos="{ {{ g_photos | escape }} }" data-iv-zoom="{{ g_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ 'ivory.gift' | t | escape }}" aria-label="Tap to see it all: {{ 'ivory.gift' | t }}">{{ g_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
+<button type="button" class="iv-choice__photo" data-iv-zoom="{{ g_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ 'ivory.gift' | t | escape }}" aria-label="Tap to see it all: {{ 'ivory.gift' | t }}">{{ g_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
 {%- endif -%}
 <label for="iv-gift">{{ 'ivory.skincare' | t }}</label><select id="iv-gift" data-slot="0"><option value="0">{{ 'ivory.pink_duo' | t }}</option><option value="1">{{ 'ivory.blue_duo' | t }}</option></select>
 <p class="iv-inside__h">What’s inside</p>
@@ -172,20 +156,13 @@
 </label>
 <div class="iv-choice__details">
 {%- liquid
-  # Photo per choice: key is the selected option of each select, in slot order (wand-care)
-  case k
-    when 'daily'
-      assign k_keys = '0:sc-white-daily-final.png,1:sc-bundle-daily-pink.png'
-    when 'collagen'
-      assign k_keys = '0:sc-white-collagen-final.png,1:sc-bundle-collagen-blue.png'
-    else
-      assign k_keys = '0-0:sc-white-complete-final.png,1-0:sc-bundle-complete-pink-pink.png,0-1:sc-bundle-complete-black-blue.png,1-1:sc-bundle-complete-pink-blue.png'
-  endcase
+  # Only Light & Hydration swaps its photo (pink / blue skincare); the other rituals keep their studio shot
+  assign k_keys = '0:sc-white-collagen-final.png,1:sc-bundle-collagen-blue.png'
   assign k_pairs = k_keys | split: ','
 -%}
 {%- capture k_photos -%}{%- for kp in k_pairs -%}{%- assign kv = kp | split: ':' -%}{%- assign kpi = images[kv[1]] | default: k_img -%}"{{ kv[0] }}":[{{ kpi | image_url: width: 1000 | json }},{{ kpi | image_url: width: 2000 | json }}]{% unless forloop.last %},{% endunless %}{%- endfor -%}{%- endcapture -%}
 {%- if k_img -%}
-<button type="button" class="iv-choice__photo" data-iv-photos="{ {{ k_photos | escape }} }" data-iv-zoom="{{ k_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ k_name | escape }}: {{ k_what | escape }}" aria-label="Tap to see it all: {{ k_name | escape }}">{{ k_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__count" aria-hidden="true">{{ k_count }} items</span><span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
+<button type="button" class="iv-choice__photo"{% if k == 'collagen' %} data-iv-photos="{ {{ k_photos | escape }} }"{% endif %} data-iv-zoom="{{ k_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ k_name | escape }}: {{ k_what | escape }}" aria-label="Tap to see it all: {{ k_name | escape }}">{{ k_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__count" aria-hidden="true">{{ k_count }} items</span><span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
 {%- endif -%}
 {% if k == 'complete' or k == 'daily' %}<label for="iv-{{ k }}-wand">{{ 'ivory.wand_finish' | t }}</label><select id="iv-{{ k }}-wand" data-slot="1"><option value="0">{{ 'ivory.black' | t }}</option><option value="1">{{ 'ivory.pink' | t }}</option></select>{% endif %}
 {% if k == 'complete' or k == 'collagen' %}<label for="iv-{{ k }}-care">{{ 'ivory.skincare' | t }}</label><select id="iv-{{ k }}-care" data-slot="{{ bslot }}"><option value="0">{{ 'ivory.pink_duo' | t }}</option><option value="1">{{ 'ivory.blue_duo' | t }}</option></select>{% endif %}
