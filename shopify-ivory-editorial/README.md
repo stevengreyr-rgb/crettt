@@ -21,10 +21,3 @@ shell) are out.
 The home opens on the Booster Pro landing; product bar and menu read Booster Pro · LEZO ·
 Biodance (`snippets/hb-header.liquid`). LEZO's light-color chips are tappable: one short line
 under them says what each color is used for (cosmetic wording, no treatment claims).
-
-## Casual at-home photos (Oct 31)
-Six casual phone-style photos of the real LEZO mask, made with Higgsfield (GPT Image 2.5) from
-the owner's mirror photo as reference, in Settings › Files as `lezo-ugc-*.png` (copies in `ugc/`):
-sofa (red), bedroom mirror (red), unboxing on the bed, unboxing in the kitchen, nightstand (green),
-reading in bed (blue). They lead the LEZO gallery; the travertine studio shot comes last. They are
-lifestyle images, not customer reviews, and are not labelled as such.
