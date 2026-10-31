@@ -87,12 +87,12 @@
 {% liquid
   assign iv_photo = 'sc-mask-gallery-front-final.png'
   if k == 'booster'
-    assign iv_photo = 'sc-white-wand-oct30.png'
+    assign iv_photo = 'sc-booster-black-hd.png'
   elsif k == 'bd'
     assign iv_photo = 'sc-white-collagen-oct30.png'
   endif
 %}
-{% unless k == 'other' or k == 'neck' %}<figure class="sk-gal__slide iv-product-image{% if k == 'lezo' %} is-studio{% endif %}">{{ images[iv_photo] | image_url: width: 1600 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600,900,1200,1600', sizes: '(min-width: 1000px) 50vw, 100vw', alt: name }}</figure>{% endunless %}
+{% unless k == 'other' or k == 'neck' %}<figure class="sk-gal__slide iv-product-image{% if k == 'lezo' %} is-studio{% endif %}" data-iv-hero>{{ images[iv_photo] | image_url: width: 1600 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '600,900,1200,1600', sizes: '(min-width: 1000px) 50vw, 100vw', alt: name }}</figure>{% endunless %}
         {%- if k == 'lezo' -%}
           {%- comment -%} LEZO: only the six detail shots, from gal_files below {%- endcomment -%}
         {%- elsif gal_mode == 'variants' -%}

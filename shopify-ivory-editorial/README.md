@@ -102,3 +102,8 @@ and pink wand + blue Cera-Nol adds exactly those variants to the cart ($232.80).
 - The 5% welcome pop-up (`sections/hb-footer.liquid`, now in this folder) shows the live store's cover
   shot, `sc-mask-reference-hero-final.png`: the model with the lit LEZO mask over her face. Framed at
   `50% 28%` so the mask and her face both stay in on phones.
+
+## Top gallery follows the chosen combo; "What's inside" sits on the photos (Oct 31)
+
+- The first gallery slide (`[data-iv-hero]` in `sk-product.liquid`) now mirrors the selected "Select your ritual" card and its finish / skincare: same photo as the card, faded in, gallery scrolled back to it. Booster Pro starts on the product-only `sc-booster-black-hd.png`/`-pink-hd.png` (no hands) to match the selected finish.
+- Each ritual card's "What's inside" list is drawn as small check labels on the bottom of its photo (and of the top gallery photo), so the list under the photo is gone; the list stays in the DOM, visually hidden, for screen readers and still drives the names.

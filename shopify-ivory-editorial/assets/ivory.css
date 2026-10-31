@@ -93,3 +93,20 @@ body .sc-ed.is-js .sc-ed__b:not(.is-in){transform:translate3d(0,40px,0)}
 body .sc-ed.is-js .sc-ed__b.iv-settled{transition:transform .45s cubic-bezier(.16,1,.3,1),box-shadow .45s,opacity .3s}
 @media(prefers-reduced-motion:reduce){.iv-rv,.iv-rv img{opacity:1!important;transform:none!important;transition:none!important}.iv-add:after{animation:none}.iv-choice.is-selected .iv-choice__details,.iv-choice.is-selected .iv-choice__shipping,.iv-choice__main input:checked,.iv-add__prices b.is-tick{animation:none}.iv-opt,.iv-choice,.iv-add,.iv-choice__photo img{transition:none}}
 .iv-inside li.is-tick span{display:inline-block;animation:iv-tick .5s cubic-bezier(.22,1,.36,1)}
+.iv-choice.has-in .iv-inside__h,.iv-choice.has-in .iv-choice__count{display:none}
+.iv-choice.has-in .iv-choice__photo{aspect-ratio:4/3}
+.iv-in{position:absolute;left:8px;right:8px;bottom:8px;z-index:2;display:flex;flex-wrap:wrap;gap:4px;text-align:left;pointer-events:none}
+.iv-in span{display:inline-flex;align-items:center;gap:5px;padding:5px 9px 5px 7px;border-radius:99px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(51,44,38,.1);font:600 10.5px/1.15 Arial,sans-serif;color:#332c26;white-space:nowrap}
+.iv-in span:before{content:"✓";font-size:9px;color:#95825e}
+.iv-in em{font-style:normal;padding:1px 5px;border-radius:99px;background:#332c26;color:#fff;font-size:8.5px;letter-spacing:.06em;text-transform:uppercase}
+.iv-in--hero{left:12px;right:12px;bottom:12px;animation:iv-inf .7s cubic-bezier(.22,1,.36,1)}
+.iv-in[hidden]{display:none}
+.iv-choice.has-in .iv-choice__zoom{top:10px;bottom:auto;padding:7px}
+.iv-choice.has-in .iv-choice__zoom{font-size:0;gap:0}
+.hb .iv-product-image{position:relative}
+.hb .iv-product-image.is-combo img{object-fit:contain!important;object-position:center!important}
+.hb .iv-product-image img{transition:opacity .45s ease}
+.hb .iv-product-image.is-swap img{opacity:.12}
+.hb .iv-product-image img[src*="sc-booster-"]{object-fit:contain;object-position:center;padding:3% 0}
+@media (min-width:750px){.iv-in span{font-size:12px;padding:6px 11px 6px 9px}}
+@keyframes iv-inf{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}

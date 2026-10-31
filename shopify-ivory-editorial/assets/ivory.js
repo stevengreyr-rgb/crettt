@@ -114,6 +114,66 @@
       card.querySelectorAll('select').forEach(select => select.addEventListener('change', () => {card.querySelector('[data-iv-radio]').checked = true; swap(); paint();}));
       swap();
     });
+    // "What's inside" sits on the card photo instead of a list under it; the list stays for screen readers.
+    const inside = card => {
+      const photo = card.querySelector('.iv-choice__photo');
+      const items = [...card.querySelectorAll('.iv-inside li:not(.iv-inside__off):not(.iv-inside__total)')];
+      if (!photo || !items.length) return;
+      card.classList.add('has-in');
+      card.querySelector('.iv-inside').classList.add('iv-vh');
+      const box = document.createElement('span');
+      box.className = 'iv-in';
+      box.setAttribute('aria-hidden', 'true');
+      photo.append(box);
+      const draw = () => {
+        box.innerHTML = '';
+        items.forEach(li => {
+          const row = document.createElement('span');
+          row.textContent = li.querySelector('span').textContent.replace(/^\s*1\s*×\s*/, '').replace(/Biodance |Hydro |Gel Toner |Booster Pro /g, '');
+          if (/FREE/.test(li.querySelector('b').textContent)) { const f = document.createElement('em'); f.textContent = 'Free'; row.append(f); }
+          box.append(row);
+        });
+      };
+      draw();
+      new MutationObserver(draw).observe(card.querySelector('.iv-inside'), { childList: true, characterData: true, subtree: true });
+    };
+    cards.forEach(inside);
+    // The big gallery photo at the top follows the chosen card and combo, with what's inside on it.
+    const hero = document.querySelector('[data-iv-hero]');
+    if (hero) {
+      const heroImg = hero.querySelector('img');
+      const heroIn = document.createElement('span');
+      heroIn.className = 'iv-in iv-in--hero';
+      heroIn.setAttribute('aria-hidden', 'true');
+      heroIn.hidden = true;
+      hero.append(heroIn);
+      let shown = heroImg && (heroImg.currentSrc || heroImg.src);
+      let first = true;
+      const follow = () => {
+        const card = selected(); if (!card || !heroImg) return;
+        const photo = card.querySelector('.iv-choice__photo');
+        const src = photo && photo.dataset.ivZoom;
+        const box = card.querySelector('.iv-choice__photo .iv-in');
+        heroIn.innerHTML = box ? box.innerHTML : '';
+        heroIn.hidden = !box;
+        hero.classList.toggle('is-combo', !!box);
+        // Same file at another size (the server-rendered first photo) counts as already shown.
+        const file = u => (u || '').split('?')[0].split('/').pop();
+        if (first) { first = false; if (file(src) === file(shown)) { shown = src; return; } }
+        if (!src || src === shown) return;
+        shown = src;
+        hero.classList.add('is-swap');
+        const done = () => hero.classList.remove('is-swap');
+        heroImg.addEventListener('load', done, { once: true }); setTimeout(done, 900);
+        heroImg.removeAttribute('srcset'); heroImg.removeAttribute('sizes'); heroImg.src = src;
+        const track = hero.closest('[data-sk-gal-track]');
+        if (track && track.scrollLeft) track.scrollTo({ left: 0, behavior: reduce() ? 'auto' : 'smooth' });
+      };
+      new MutationObserver(follow).observe(root, { subtree: true, attributes: true, attributeFilter: ['data-iv-zoom'] });
+      root.addEventListener('change', () => requestAnimationFrame(follow));
+      cards.forEach(c => { const b = c.querySelector('.iv-in'); if (b) new MutationObserver(follow).observe(b, { childList: true }); });
+      follow();
+    }
     button.addEventListener('click', () => selected()?.querySelector('[data-hb-kit-add]').click());
     paint();
     placeBar();
