@@ -21,3 +21,11 @@ shell) are out.
 The home opens on the Booster Pro landing; product bar and menu read Booster Pro · LEZO ·
 Biodance (`snippets/hb-header.liquid`). LEZO's light-color chips are tappable: one short line
 under them says what each color is used for (cosmetic wording, no treatment claims).
+
+## Light-through-skin infographics (Oct 31)
+`infographics/lezo-light-layers.jpg` and `infographics/booster-light-layers.jpg` (also in
+Settings › Files). Skin cross-section rendered with Higgsfield (no text), labels set on top with
+`infographics/compose.py` so every word is exact. LEZO: 470/520/590/630 nm as listed by the maker,
+purple and cyan noted as mixes. Booster Pro: colors only, no wavelengths (the maker lists none).
+Cosmetic wording only. Shown uncropped on a matching cream background (`.is-info`): second slide in
+the LEZO carousel, after the finishes in the Booster Pro carousel.
