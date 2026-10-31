@@ -33,3 +33,9 @@ the LEZO carousel, after the finishes in the Booster Pro carousel.
 ## Light & Hydration photo follows the skincare color (Oct 31)
 Only Light & Hydration swaps its photo: blue Cera-Nol shows `sc-bundle-collagen-blue` (Settings ›
 Files; copy in `bundle-photos/`). Every other card keeps its fixed studio shot.
+
+## Booster Pro "In use" photo (Oct 31)
+The "Two minutes, closer." section now shows `sc-booster-inuse-oct31.png` (Settings › Files):
+an editorial shot of a model gliding the black Booster Pro along her cheekbone, ivory silk and warm
+window light, rendered with Higgsfield from the product photo. It replaces the hands-on-white
+`sc-white-wand-oct30.png`, which stays as the first gallery slide.
