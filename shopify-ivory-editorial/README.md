@@ -92,3 +92,13 @@ swaps between `sk-cut-collagen-duo` and `sk-cut-ceranol-duo`.
 "What's inside" names the picked items too (Booster Pro Wand · Pink, Cera-Nol Gel Toner Pads, Hydro
 Cera-Nol Ampoule) via `data-iv-names`. Checked on the preview: all 8 combinations swap photo and names,
 and pink wand + blue Cera-Nol adds exactly those variants to the cart ($232.80).
+
+## Pink wand redone with the real product photo; welcome offer photo (Oct 31)
+- The pink-wand ritual shots (`sc-white-daily-pinkwand`, `sc-white-complete-pink-pink`,
+  `sc-white-complete-pink-blue`) no longer recolor the black wand, which looked gray and rough. The real
+  pink product cutout (`sk-cut-booster-pink.png`, same shape as the black one) is fitted onto the black
+  wand's exact position and size (`tools/fit.py`), the old wand's rim is filled from the background, and
+  a soft contact shadow sits it on the plinth (`tools/place.py`). Same filenames, replaced in Files.
+- The 5% welcome pop-up (`sections/hb-footer.liquid`, now in this folder) shows the live store's cover
+  shot, `sc-mask-reference-hero-final.png`: the model with the lit LEZO mask over her face. Framed at
+  `50% 28%` so the mask and her face both stay in on phones.
