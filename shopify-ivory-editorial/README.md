@@ -35,7 +35,9 @@ Only Light & Hydration swaps its photo: blue Cera-Nol shows `sc-bundle-collagen-
 Files; copy in `bundle-photos/`). Every other card keeps its fixed studio shot.
 
 ## Booster Pro "In use" photo (Oct 31)
-The "Two minutes, closer." section now shows `sc-booster-inuse-oct31.png` (Settings › Files):
-an editorial shot of a model gliding the black Booster Pro along her cheekbone, ivory silk and warm
-window light, rendered with Higgsfield from the product photo. It replaces the hands-on-white
-`sc-white-wand-oct30.png`, which stays as the first gallery slide.
+The "Two minutes, closer." section opens on a wide campaign shot, `sc-booster-campaign-oct31.png`
+(Settings › Files): close-up of a model pressing the black Booster Pro to her cheekbone, dewy skin,
+red glow with light rings, on a light gray seamless. Rendered with Higgsfield from the product photo.
+Full width (`.is-wide`: 16:9, 4:3 on phones) with the text underneath. It replaces the
+hands-on-white `sc-white-wand-oct30.png`, which stays as the first gallery slide. No result
+percentages: the maker publishes no test data.
