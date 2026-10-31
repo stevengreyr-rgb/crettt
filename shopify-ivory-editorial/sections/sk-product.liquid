@@ -333,12 +333,14 @@
 {%- liquid
   assign s_alt = nil
   assign s_fit = ''
+  assign s_sizes = '(min-width: 900px) 45vw, 100vw'
   assign s_tag = 'In use'
   case k
     when 'booster'
       assign s_img = images['sc-booster-campaign-oct31.png']
       assign s_alt = 'Close-up of a model pressing the Booster Pro to her cheekbone, red light glowing'
       assign s_fit = ' class="is-wide"'
+      assign s_sizes = '(min-width: 1280px) 1200px, 100vw'
       assign s_h = 'Two minutes, closer.'
       assign s_p = 'Use it after the mask, while your face is still bare. Glide slowly from the inner corner of the eye outwards, then along the smile lines and the jaw. Two unhurried minutes on the spots you notice in the mirror.'
     when 'bd'
@@ -356,7 +358,7 @@
 -%}
 <section class="hb-story" aria-labelledby="hb-story-h">
   <div class="hb-wrap hb-story__grid">
-    <figure {{ s_fit }}>{% render 'sk-img', img: s_img, sizes: '(min-width: 900px) 45vw, 100vw', alt: s_alt %}</figure>
+    <figure {{ s_fit }}>{% render 'sk-img', img: s_img, sizes: s_sizes, alt: s_alt %}</figure>
     <div>
       <span class="hb-new" style="margin-top:0">{{ s_tag }}</span>
       <h2 id="hb-story-h">{{ s_h }}</h2>
