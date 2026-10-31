@@ -73,3 +73,22 @@ centered pill on desktop; the page gets bottom padding while it shows so nothing
 - Scroll reveal: blocks below the fold (story, ritual cards, accordions, FAQ, newsletter, footer columns)
   rise 34 px and fade in over ~1.5 s, staggered 130 ms when several arrive together. The editorial
   banners use the same slower timing. Nothing above the fold is hidden, and reduced-motion turns it all off.
+
+## Ritual photos follow every choice (Oct 31)
+Each ritual's photo now matches the wand finish and skincare picked (Settings › Files; copies in
+`bundle-photos/`):
+
+| Ritual | Black / Pink Collagen | Black / Blue Cera-Nol | Pink / Pink Collagen | Pink / Blue Cera-Nol |
+| --- | --- | --- | --- | --- |
+| The Daily Ritual | `sc-white-daily-final` | — | `sc-white-daily-pinkwand` | — |
+| The Complete Routine | `sc-white-complete-final` | `sc-white-complete-black-blue` | `sc-white-complete-pink-pink` | `sc-white-complete-pink-blue` |
+| Light & Hydration | `sc-white-collagen-final` | `sc-bundle-collagen-blue` | | |
+
+The new shots are edits of the existing studio photos, not new renders: the wand body recolored to the
+pink finish (display kept black), the pads, jar and ampoule shifted to the Cera-Nol blue, and the labels
+rewritten to the real Cera-Nol wording (CERA-NOL GEL TONER PADS, HYDRO CERA-NOL AMPOULE, Moisturizing,
+Strengthening). Scripts in `bundle-photos/tools/`. On the Biodance page the pads + free ampoule card
+swaps between `sk-cut-collagen-duo` and `sk-cut-ceranol-duo`.
+"What's inside" names the picked items too (Booster Pro Wand · Pink, Cera-Nol Gel Toner Pads, Hydro
+Cera-Nol Ampoule) via `data-iv-names`. Checked on the preview: all 8 combinations swap photo and names,
+and pink wand + blue Cera-Nol adds exactly those variants to the cart ($232.80).

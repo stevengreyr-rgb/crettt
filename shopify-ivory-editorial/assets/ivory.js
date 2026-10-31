@@ -156,7 +156,15 @@
       if (sub) b.querySelector('small').textContent = sub.trim();
       group.append(b);
     });
-    const sync = () => group.querySelectorAll('.iv-opt').forEach(b => { const on = b.value === select.value; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; });
+    const sync = () => {
+      group.querySelectorAll('.iv-opt').forEach(b => { const on = b.value === select.value; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; });
+      // "What's inside" names the finish / skincare that was picked.
+      select.closest('.iv-choice').querySelectorAll('[data-iv-slot="' + select.dataset.slot + '"][data-iv-names]').forEach(li => {
+        let names; try { names = JSON.parse(li.dataset.ivNames); } catch { return; }
+        const span = li.querySelector('span'); const name = names[+select.value];
+        if (span && name && span.textContent !== name) { span.textContent = name; li.classList.remove('is-tick'); void li.offsetWidth; li.classList.add('is-tick'); }
+      });
+    };
     group.addEventListener('click', e => {
       const b = e.target.closest('.iv-opt');
       if (!b || b.disabled || b.value === select.value) return;
