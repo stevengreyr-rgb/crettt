@@ -48,3 +48,14 @@ adds `.iv-bar`: once the "Add to cart" button is off screen it slides up and fol
 with the chosen option's photo, name, was/now price (price ticks when the choice changes) and its own
 button, which adds exactly what the main button adds and flashes "Added ✓". Floating card on phones,
 centered pill on desktop; the page gets bottom padding while it shows so nothing hides behind it.
+
+## Booster Pro variant photos, FAQ markers, footer colors (Oct 31)
+- "Single product" on Booster Pro now shows the product alone, no hands: `sc-booster-pink-hd.png` /
+  `sc-booster-black-hd.png` (Settings › Files, 1800×2400, upscaled and sharpened from the studio
+  shots). The photo follows "Choose your option" (`data-iv-photos` keyed by variant index), and the
+  floating bar picks it up.
+- "Before you choose": iOS drew the `<summary>` marker as a blue ▶️ emoji. The marker is hidden and
+  replaced with a thin +, which turns into × when open.
+- Footer: the base theme colored its text for a dark footer (white headings, near-white links), so on
+  the ivory background it read as blank. Headings, links, the tagline, the bottom line and the list's
+  fine print now use the ivory ink colors.

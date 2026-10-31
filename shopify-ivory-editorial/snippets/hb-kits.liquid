@@ -57,7 +57,19 @@
   assign solo_v = solo.selected_or_first_available_variant
   case solo.id
     when booster.id
-      assign solo_img = images['sc-white-wand-oct30.png']
+      # Product only, one photo per finish (Settings › Files); the photo follows the chosen option
+      assign solo_img = images['sc-booster-black-hd.png']
+      for sv in solo.variants
+        assign sv_t = sv.title | downcase
+        if sv_t contains 'pink'
+          assign sv_img = images['sc-booster-pink-hd.png']
+        else
+          assign sv_img = images['sc-booster-black-hd.png']
+        endif
+        if sv.id == solo_v.id
+          assign solo_img = sv_img
+        endif
+      endfor
     when bd.id
       assign solo_img = images['sc-white-collagen-oct30.png']
     when lezo.id
@@ -76,7 +88,10 @@
 </label>
 <div class="iv-choice__details">
 {%- if solo_img -%}
-<button type="button" class="iv-choice__photo" data-iv-zoom="{{ solo_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ solo.title | escape }}" aria-label="Tap to see it all: {{ 'ivory.single' | t }}">{{ solo_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
+{%- if solo.id == booster.id -%}
+{%- capture solo_photos -%}{%- for sv in solo.variants -%}{%- assign sv_t = sv.title | downcase -%}{%- if sv_t contains 'pink' -%}{%- assign sv_img = images['sc-booster-pink-hd.png'] -%}{%- else -%}{%- assign sv_img = images['sc-booster-black-hd.png'] -%}{%- endif -%}"{{ forloop.index0 }}":[{{ sv_img | image_url: width: 1000 | json }},{{ sv_img | image_url: width: 1800 | json }}]{% unless forloop.last %},{% endunless %}{%- endfor -%}{%- endcapture -%}
+{%- endif -%}
+<button type="button" class="iv-choice__photo{% if solo.id == booster.id %} is-tall{% endif %}"{% if solo.id == booster.id %} data-iv-photos="{ {{ solo_photos | escape }} }"{% endif %} data-iv-zoom="{{ solo_img | image_url: width: 2000 }}" data-iv-zoom-alt="{{ solo.title | escape }}" aria-label="Tap to see it all: {{ 'ivory.single' | t }}">{{ solo_img | image_url: width: 1000 | image_tag: loading: 'lazy', widths: '500,800,1000', sizes: '(min-width: 1000px) 40vw, 92vw', alt: '' }}<span class="iv-choice__zoom" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/></svg>Tap to see it all</span></button>
 {%- endif -%}
 {% if solo.variants.size > 1 %}<label for="iv-single">{{ 'ivory.option' | t }}</label><select id="iv-single" data-slot="0">{% for sv in solo.variants %}<option value="{{ forloop.index0 }}" {% if sv.id == solo_v.id %}selected{% endif %} {% unless sv.available %}disabled{% endunless %}>{{ sv.title | capitalize }} — {{ sv.price | money }}{% unless sv.available %} · {{ 'ivory.sold_out' | t }}{% endunless %}</option>{% endfor %}</select>{% endif %}
 </div>
