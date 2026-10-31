@@ -59,3 +59,17 @@ centered pill on desktop; the page gets bottom padding while it shows so nothing
 - Footer: the base theme colored its text for a dark footer (white headings, near-white links), so on
   the ivory background it read as blank. Headings, links, the tagline, the bottom line and the list's
   fine print now use the ivory ink colors.
+
+## Clearer buttons and a slow scroll reveal (Oct 31)
+`ivory.js` / `ivory.css` only, no Liquid changes.
+- Finish and skincare dropdowns are now buttons, one per option, with a color dot (pink, black, blue)
+  and the price or contents underneath. The hidden `<select>` still drives `sk.js` and the photo swap;
+  arrow keys move between options. The card photo fades while it swaps.
+- Closed ritual cards say "Tap to choose →", press in slightly on tap and lift on hover; the chosen card
+  unfolds slowly and its radio pops.
+- "Add to cart" lifts on hover, presses in on tap, has a slow shine, ticks its price when it changes and
+  confirms "Added ✓" in green.
+- FAQ and product-info accordions slide open (0.9 s) and closed instead of snapping.
+- Scroll reveal: blocks below the fold (story, ritual cards, accordions, FAQ, newsletter, footer columns)
+  rise 34 px and fade in over ~1.5 s, staggered 130 ms when several arrive together. The editorial
+  banners use the same slower timing. Nothing above the fold is hidden, and reduced-motion turns it all off.

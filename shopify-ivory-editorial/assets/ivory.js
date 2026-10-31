@@ -133,6 +133,132 @@
       tip.append(name, ' ' + b.dataset.tip);
     });
   });
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { init(); lights(); }); else { init(); lights(); }
-  document.addEventListener('shopify:section:load',init);
+  const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Finish / skincare dropdowns become tap targets: one button per option, with a color dot.
+  // The hidden <select> stays the source of truth, so sk.js and the photo swap work unchanged.
+  const swatch = t => /pink/i.test(t) ? '#f2c3cd' : /black/i.test(t) ? '#25211d' : /blue/i.test(t) ? '#a8c8e8' : '';
+  const opts = () => document.querySelectorAll('.iv-choice select[data-slot]').forEach(select => {
+    if (select.dataset.ivOpts) return;
+    select.dataset.ivOpts = 'true';
+    const label = select.id && document.querySelector('label[for="' + select.id + '"]');
+    const group = document.createElement('div');
+    group.className = 'iv-opts';
+    group.setAttribute('role', 'radiogroup');
+    if (label) { label.id = label.id || select.id + '-l'; group.setAttribute('aria-labelledby', label.id); }
+    [...select.options].forEach(o => {
+      const [name, sub] = o.textContent.split(/\s+[—·]\s+/);
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'iv-opt'; b.value = o.value; b.disabled = o.disabled;
+      b.setAttribute('role', 'radio');
+      const c = swatch(name);
+      b.innerHTML = (c ? '<i style="--c:' + c + '"></i>' : '') + '<span><b></b>' + (sub ? '<small></small>' : '') + '</span>';
+      b.querySelector('b').textContent = name.trim();
+      if (sub) b.querySelector('small').textContent = sub.trim();
+      group.append(b);
+    });
+    const sync = () => group.querySelectorAll('.iv-opt').forEach(b => { const on = b.value === select.value; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; });
+    group.addEventListener('click', e => {
+      const b = e.target.closest('.iv-opt');
+      if (!b || b.disabled || b.value === select.value) return;
+      const photo = select.closest('.iv-choice').querySelector('[data-iv-photos] img');
+      if (photo) { photo.parentNode.classList.add('is-swap'); const done = () => photo.parentNode.classList.remove('is-swap'); photo.addEventListener('load', done, { once: true }); setTimeout(done, 700); }
+      select.value = b.value;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    group.addEventListener('keydown', e => {
+      if (!/^Arrow/.test(e.key)) return;
+      const all = [...group.querySelectorAll('.iv-opt:not(:disabled)')];
+      const i = all.indexOf(document.activeElement); if (i < 0) return;
+      e.preventDefault();
+      const next = all[(i + (/Right|Down/.test(e.key) ? 1 : -1) + all.length) % all.length];
+      next.click(); next.focus();
+    });
+    select.addEventListener('change', sync);
+    select.classList.add('iv-vh');
+    select.tabIndex = -1;
+    select.after(group);
+    sync();
+  });
+  // Main "Add to cart": price pill ticks on change, the button confirms "Added ✓" like the floating bar.
+  const addFeedback = () => document.querySelectorAll('[data-iv-add]').forEach(btn => {
+    if (btn.dataset.ivFx) return;
+    btn.dataset.ivFx = 'true';
+    const label = btn.querySelector('span');
+    const text = label.textContent;
+    const now = btn.querySelector('[data-iv-now]');
+    let busy = false;
+    new MutationObserver(() => {
+      const b = btn.getAttribute('aria-busy') === 'true';
+      if (busy && !b && !btn.disabled) {
+        btn.classList.add('is-done'); label.textContent = 'Added ✓';
+        setTimeout(() => { btn.classList.remove('is-done'); label.textContent = text; }, 1800);
+      }
+      busy = b;
+    }).observe(btn, { attributes: true, attributeFilter: ['aria-busy'] });
+    let last = now.textContent;
+    new MutationObserver(() => {
+      if (now.textContent === last) return;
+      last = now.textContent;
+      now.classList.remove('is-tick'); void now.offsetWidth; now.classList.add('is-tick');
+    }).observe(now, { childList: true, characterData: true, subtree: true });
+  });
+  // Accordions open and close by sliding instead of snapping.
+  const smooth = () => document.querySelectorAll('.iv-faq details, .hb-acc details').forEach(d => {
+    if (d.dataset.ivSmooth) return;
+    d.dataset.ivSmooth = 'true';
+    const s = d.querySelector('summary');
+    const body = document.createElement('div');
+    body.className = 'iv-acc';
+    [...d.childNodes].filter(n => n !== s).forEach(n => body.append(n));
+    d.append(body);
+    if (!body.animate) return;
+    let run = null;
+    s.addEventListener('click', e => {
+      if (reduce()) return;
+      e.preventDefault();
+      if (run) run.cancel();
+      body.style.overflow = 'hidden';
+      const end = () => { body.style.overflow = ''; run = null; };
+      if (d.open) {
+        d.classList.add('is-closing');
+        run = body.animate([{ height: body.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 600, easing: 'cubic-bezier(.4,0,.2,1)' });
+        run.onfinish = () => { d.open = false; d.classList.remove('is-closing'); end(); };
+      } else {
+        d.open = true;
+        run = body.animate([{ height: '0px', opacity: 0, transform: 'translateY(-6px)' }, { height: body.offsetHeight + 'px', opacity: 1, transform: 'none' }], { duration: 900, easing: 'cubic-bezier(.22,1,.36,1)' });
+        run.onfinish = end;
+      }
+    });
+  });
+  // Scroll reveal: blocks below the fold rise in slowly as they reach the screen, a few at a time.
+  const REVEAL = '.hb-story figure, .hb-story__grid > div > *, .iv-choices > h2, .iv-choice, .iv-add, .iv-checknote, .hb-acc details, .hb-rows, .iv-lights, .iv-faq > h2, .iv-faq details, .iv-faq__cta, .hb-news, .hb-foot__top > div, .hb-foot__base';
+  let io = null;
+  const reveal = () => {
+    if (reduce() || !('IntersectionObserver' in window)) return;
+    io = io || new IntersectionObserver(es => {
+      es.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top).forEach((e, i) => {
+        const el = e.target;
+        io.unobserve(el);
+        el.style.setProperty('--iv-d', Math.min(i, 6) * 130 + 'ms');
+        el.classList.add('is-in');
+        el.addEventListener('transitionend', function done(t) {
+          if (t.target !== el || t.propertyName !== 'transform') return;
+          el.removeEventListener('transitionend', done);
+          el.classList.remove('iv-rv', 'is-in'); el.style.removeProperty('--iv-d');
+        });
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    document.querySelectorAll(REVEAL).forEach(el => {
+      if (el.dataset.ivRv) return;
+      el.dataset.ivRv = 'true';
+      if (el.getBoundingClientRect().top < innerHeight * .9) return;
+      el.classList.add('iv-rv');
+      io.observe(el);
+    });
+    // The editorial banners keep their own reveal; once in, they get their quick hover back.
+    document.querySelectorAll('.sc-ed__b').forEach(b => b.addEventListener('transitionend', t => { if (t.propertyName === 'transform' && b.classList.contains('is-in')) b.classList.add('iv-settled'); }));
+  };
+  const all = () => { init(); lights(); opts(); addFeedback(); smooth(); reveal(); };
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', all); else all();
+  document.addEventListener('shopify:section:load', all);
 })();
