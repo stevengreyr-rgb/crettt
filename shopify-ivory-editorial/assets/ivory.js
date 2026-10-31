@@ -6,6 +6,49 @@
     const button = root.querySelector('[data-iv-add]');
     const selected = () => cards.find(card => card.querySelector('[data-iv-radio]').checked);
     const amount = text => Number(text.replace(/[^\d.]/g, '')) || 0;
+    // Floating add-to-bag bar: follows the screen once the main button is out of view and mirrors the chosen ritual.
+    const bar = document.createElement('div');
+    bar.className = 'iv-bar';
+    bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = '<button type="button" class="iv-bar__info" tabindex="-1" aria-label="See your ritual"><span class="iv-bar__img"><img alt=""></span><span class="iv-bar__t"><b></b><span><s></s> <em></em></span></span></button><button type="button" class="iv-bar__btn" tabindex="-1"><span>' + button.querySelector('span').textContent + '</span></button>';
+    document.body.append(bar);
+    const barBtn = bar.querySelector('.iv-bar__btn');
+    const barLabel = barBtn.querySelector('span').textContent;
+    barBtn.addEventListener('click', () => button.click());
+    bar.querySelector('.iv-bar__info').addEventListener('click', () => (selected() || root).scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+    const paintBar = (card, now, was) => {
+      const img = card.querySelector('.iv-choice__photo img');
+      const thumb = bar.querySelector('.iv-bar__img');
+      thumb.hidden = !img;
+      if (img) bar.querySelector('img').src = img.currentSrc || img.src;
+      // The single option reads as the product itself ("Booster Pro Wand"), not "Single product".
+      const single = card.querySelector('[data-iv-radio]').value === 'single';
+      bar.querySelector('b').textContent = single ? card.querySelector('.iv-choice__what').textContent.replace(/^1\s*×\s*/, '').trim() : card.querySelector('.iv-choice__copy strong').textContent;
+      const em = bar.querySelector('em');
+      if (em.textContent !== now.textContent) { em.textContent = now.textContent; em.classList.remove('is-tick'); void em.offsetWidth; em.classList.add('is-tick'); }
+      bar.querySelector('s').textContent = was.hidden ? '' : was.textContent;
+      barBtn.disabled = button.disabled;
+      const busy = button.getAttribute('aria-busy') === 'true';
+      if (barBtn.dataset.busy === 'true' && !busy && !button.disabled) {
+        barBtn.classList.add('is-done'); barBtn.querySelector('span').textContent = 'Added ✓';
+        setTimeout(() => { barBtn.classList.remove('is-done'); barBtn.querySelector('span').textContent = barLabel; }, 1800);
+      }
+      barBtn.dataset.busy = String(busy);
+      barBtn.setAttribute('aria-busy', String(busy));
+    };
+    let barRaf = 0;
+    const placeBar = () => {
+      const r = button.getBoundingClientRect();
+      const on = scrollY > 160 && (r.bottom < 0 || r.top > innerHeight);
+      if (bar.classList.contains('is-on') === on) return;
+      bar.classList.toggle('is-on', on);
+      document.body.classList.toggle('iv-bar-on', on);
+      bar.setAttribute('aria-hidden', String(!on));
+      bar.querySelectorAll('button').forEach(b => b.tabIndex = on ? 0 : -1);
+    };
+    const queueBar = () => { cancelAnimationFrame(barRaf); barRaf = requestAnimationFrame(placeBar); };
+    addEventListener('scroll', queueBar, { passive: true });
+    addEventListener('resize', queueBar);
     const paint = () => {
       cards.forEach(card => {
         card.classList.toggle('is-selected', card === selected());
@@ -25,6 +68,7 @@
       const source = card.querySelector('[data-hb-kit-add]');
       button.disabled = card.dataset.ivAvailable === 'false' || source.disabled;
       button.setAttribute('aria-busy', source.getAttribute('aria-busy') === 'true' ? 'true' : 'false');
+      paintBar(card, now, was);
       const sticky = document.querySelector('[data-sk-sticky-btn]');
       if(sticky) { sticky.disabled = button.disabled; const price = sticky.querySelector('[data-sk-sticky-price]'); if(price) price.textContent = now.textContent; }
     };
@@ -72,6 +116,7 @@
     });
     button.addEventListener('click', () => selected()?.querySelector('[data-hb-kit-add]').click());
     paint();
+    placeBar();
   });
   // LEZO light colors: tap a chip to read what that color is used for, in one short line.
   const lights = () => document.querySelectorAll('[data-iv-lights]').forEach(box => {

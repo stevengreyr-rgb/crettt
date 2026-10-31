@@ -41,3 +41,10 @@ red glow with light rings, on a light gray seamless. Rendered with Higgsfield fr
 Full width (`.is-wide`: 16:9, 4:3 on phones) with the text underneath. It replaces the
 hands-on-white `sc-white-wand-oct30.png`, which stays as the first gallery slide. No result
 percentages: the maker publishes no test data.
+
+## Floating add-to-bag bar (Oct 31)
+The old sticky bar never showed in this theme (it watched the hidden native form). `ivory.js` now
+adds `.iv-bar`: once the "Add to cart" button is off screen it slides up and follows the scroll,
+with the chosen option's photo, name, was/now price (price ticks when the choice changes) and its own
+button, which adds exactly what the main button adds and flashes "Added ✓". Floating card on phones,
+centered pill on desktop; the page gets bottom padding while it shows so nothing hides behind it.
