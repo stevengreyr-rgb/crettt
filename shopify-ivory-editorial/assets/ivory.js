@@ -57,7 +57,18 @@
     cards.forEach(card => {
       new MutationObserver(paint).observe(card.querySelector('[data-hb-kit-now]'), {childList:true,subtree:true,characterData:true});
       new MutationObserver(paint).observe(card.querySelector('[data-hb-kit-add]'), {attributes:true,attributeFilter:['disabled','aria-busy']});
-      card.querySelectorAll('select').forEach(select => select.addEventListener('change', () => {card.querySelector('[data-iv-radio]').checked = true; paint();}));
+      // The card photo follows the chosen finish / skincare: key = each select's value in slot order.
+      const photo = card.querySelector('[data-iv-photos]');
+      const swap = () => {
+        if (!photo) return;
+        let map; try { map = JSON.parse(photo.dataset.ivPhotos); } catch { return; }
+        const key = [...card.querySelectorAll('select[data-slot]')].sort((a, b) => a.dataset.slot - b.dataset.slot).map(x => x.value).join('-');
+        const hit = map[key]; if (!hit) return;
+        const img = photo.querySelector('img');
+        img.removeAttribute('srcset'); img.src = hit[0]; photo.dataset.ivZoom = hit[1];
+      };
+      card.querySelectorAll('select').forEach(select => select.addEventListener('change', () => {card.querySelector('[data-iv-radio]').checked = true; swap(); paint();}));
+      swap();
     });
     button.addEventListener('click', () => selected()?.querySelector('[data-hb-kit-add]').click());
     paint();

@@ -29,3 +29,10 @@ Settings › Files). Skin cross-section rendered with Higgsfield (no text), labe
 purple and cyan noted as mixes. Booster Pro: colors only, no wavelengths (the maker lists none).
 Cosmetic wording only. Shown uncropped on a matching cream background (`.is-info`): second slide in
 the LEZO carousel, after the finishes in the Booster Pro carousel.
+
+## Bundle photo follows the choice (Oct 31)
+Picking the wand finish or the skincare color swaps the card photo (and the full-screen view):
+`sc-bundle-daily-pink`, `sc-bundle-collagen-blue`, `sc-bundle-complete-{pink-pink,black-blue,pink-blue}`
+(Settings › Files; copies in `bundle-photos/`), edits of the sc-white-*-final shots with the real
+pink wand and blue Cera-Nol as references. Single product follows its variant (Booster Pro pink /
+black cutouts); the Biodance free-ampoule card switches between the pink and blue duo cutouts.
