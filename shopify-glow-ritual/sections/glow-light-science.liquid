@@ -1,0 +1,87 @@
+<section class="gl" data-gl>
+  <div class="gl-in">
+    <p class="gl-eye">KNOW YOUR LIGHT</p>
+    <h2 class="gl-h">Seven colors. <em>Four depths.</em></h2>
+    <p class="gl-sub">The mask and the wand share the same 7 lights. Longer wavelengths travel deeper into the skin. Tap a light to see where it reaches.</p>
+
+    <div class="gl-labels" role="group" aria-label="LEZO light colors">
+      <button type="button" data-i="0" style="--c:#4a7cf7"><b>Blue<br>470 nm</b><span>Clear-looking skin</span></button>
+      <button type="button" data-i="1" style="--c:#36c26a"><b>Green<br>520 nm</b><span>Even-looking tone</span></button>
+      <button type="button" data-i="2" style="--c:#f0b62e"><b>Yellow<br>590 nm</b><span>Calm & glow</span></button>
+      <button type="button" data-i="3" style="--c:#ec3b4c" aria-pressed="true"><b>Red<br>630 nm</b><span>Smooth & firm-looking</span></button>
+    </div>
+
+    <div class="gl-art">
+      <svg viewBox="0 0 1000 600" role="img" aria-label="Cross-section of skin layers with blue light stopping at the surface, green in the upper layers, yellow deeper and red reaching deepest">
+        <defs>
+          <pattern id="glCells" width="22" height="18" patternUnits="userSpaceOnUse"><circle cx="11" cy="9" r="7" fill="#f3c3c6" stroke="#e7a9ad" stroke-width="1"/></pattern>
+          <pattern id="glFat" width="46" height="40" patternUnits="userSpaceOnUse"><circle cx="23" cy="20" r="17" fill="#f7dc9a" stroke="#e9c46e" stroke-width="1.5"/><circle cx="17" cy="14" r="5" fill="#fff6d8" opacity=".8"/></pattern>
+          <linearGradient id="glSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe3df"/><stop offset="1" stop-color="#f2c9c4"/></linearGradient>
+          <filter id="glGlow" filterUnits="userSpaceOnUse" x="0" y="0" width="1000" height="600"><feGaussianBlur stdDeviation="6"/></filter>
+        </defs>
+        <path d="M0 430 C200 400 350 470 520 440 S820 400 1000 430 L1000 600 L0 600Z" fill="url(#glFat)"/>
+        <path d="M0 430 C200 400 350 470 520 440 S820 400 1000 430" fill="none" stroke="#e2b9a0" stroke-width="3"/>
+        <path d="M0 290 C220 260 380 320 540 295 S830 260 1000 290 L1000 430 C820 400 680 455 520 440 S200 400 0 430Z" fill="url(#glCells)"/>
+        <path d="M0 230 C220 200 380 260 540 235 S830 200 1000 230 L1000 292 C830 262 700 320 540 297 S220 262 0 292Z" fill="url(#glSkin)"/>
+        <path d="M0 230 C220 200 380 260 540 235 S830 200 1000 230" fill="none" stroke="#fff" stroke-width="4" opacity=".9"/>
+        <text x="985" y="268" text-anchor="end" class="gl-layer">Surface</text>
+        <text x="985" y="365" text-anchor="end" class="gl-layer">Upper layers</text>
+        <text x="985" y="520" text-anchor="end" class="gl-layer">Deeper layers</text>
+        <g class="gl-beam" data-b="0"><line pathLength="1" x1="140" y1="20" x2="140" y2="262" stroke="#4a7cf7" stroke-width="14" filter="url(#glGlow)"/><line pathLength="1" x1="140" y1="20" x2="140" y2="262" stroke="#b8ccff" stroke-width="3"/><circle cx="140" cy="262" r="16" fill="#fff" filter="url(#glGlow)"/></g>
+        <g class="gl-beam" data-b="1"><line pathLength="1" x1="360" y1="20" x2="360" y2="330" stroke="#36c26a" stroke-width="14" filter="url(#glGlow)"/><line pathLength="1" x1="360" y1="20" x2="360" y2="330" stroke="#bff3d0" stroke-width="3"/><circle cx="360" cy="330" r="16" fill="#fff" filter="url(#glGlow)"/></g>
+        <g class="gl-beam" data-b="2"><line pathLength="1" x1="580" y1="20" x2="580" y2="400" stroke="#f0b62e" stroke-width="14" filter="url(#glGlow)"/><line pathLength="1" x1="580" y1="20" x2="580" y2="400" stroke="#fff0c2" stroke-width="3"/><circle cx="580" cy="400" r="16" fill="#fff" filter="url(#glGlow)"/></g>
+        <g class="gl-beam" data-b="3"><line pathLength="1" x1="800" y1="20" x2="800" y2="490" stroke="#ec3b4c" stroke-width="14" filter="url(#glGlow)"/><line pathLength="1" x1="800" y1="20" x2="800" y2="490" stroke="#ffc4ca" stroke-width="3"/><circle cx="800" cy="490" r="16" fill="#fff" filter="url(#glGlow)"/></g>
+      </svg>
+    </div>
+
+    <p class="gl-tip" data-gl-tip aria-live="polite"></p>
+    <p class="gl-combo"><b>Purple</b> = red + blue · <b>Cyan</b> = blue + green · <b>White</b> = red + green + blue. Mixed lights, one session.</p>
+    <p class="gl-fine">Wavelengths as listed by the maker. For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Results vary.</p>
+  </div>
+</section>
+<style>
+.gl{background:linear-gradient(180deg,#fff 0,#fdf0f4 100%);padding:56px 0 40px;color:#1a1214}
+.gl-in{max-width:1100px;margin:0 auto;padding:0 16px}
+.gl-eye{margin:0 0 8px;font-size:11px;font-weight:800;letter-spacing:.18em;color:#e8508a}
+.gl-h{margin:0;font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.02em}
+.gl-sub{margin:10px 0 22px;color:#6f6266;font-size:15px;line-height:1.5;max-width:560px}
+.gl-labels{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:-8px;position:relative;z-index:2}
+.gl-labels button{text-align:left;background:none;border:0;border-top:3px solid var(--c);padding:10px 4px 0 0;color:#1a1214;font:inherit;cursor:pointer;opacity:.55;transition:opacity .25s;-webkit-tap-highlight-color:transparent}
+.gl-labels button[aria-pressed="true"]{opacity:1}
+.gl-labels b{display:block;font-size:clamp(13px,2.2vw,19px);line-height:1.15;font-weight:800}
+.gl-labels span{display:block;margin-top:6px;font-size:clamp(11px,1.8vw,15px);color:#6f6266;line-height:1.3}
+.gl-art svg{display:block;width:100%;height:auto}
+.gl-layer{font:600 18px/1 system-ui,sans-serif;fill:#8a6f6a;opacity:.85}
+.gl-beam{transition:opacity .35s}
+.gl.is-pick .gl-beam{opacity:.18}
+.gl.is-pick .gl-beam.is-on{opacity:1}
+.gl-tip{min-height:44px;margin:14px 0 0;font-size:15px;line-height:1.5}
+.gl-combo{margin:12px 0 0;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #f1e6ea;font-size:14px}
+.gl-fine{margin:12px 0 0;font-size:12px;font-style:italic;color:#9a8f92}
+</style>
+<script>
+(() => {
+  const s = document.querySelector('[data-gl]');
+  if (!s) return;
+  const tips = [
+    '<b>Blue · 470 nm</b> stays near the surface. Used in routines for oily, blemish-prone skin.',
+    '<b>Green · 520 nm</b> reaches the upper layers. Used in routines aimed at a more even-looking tone.',
+    '<b>Yellow · 590 nm</b> goes deeper. Used in routines to calm the look of redness and bring back glow.',
+    '<b>Red · 630 nm</b> reaches deepest of the four. The most studied color in at-home LED, used for smoother, firmer-looking skin.'
+  ];
+  const btns = [...s.querySelectorAll('.gl-labels button')];
+  const beams = [...s.querySelectorAll('.gl-beam')];
+  const tip = s.querySelector('[data-gl-tip]');
+  function pick(i) {
+    s.classList.add('is-pick');
+    btns.forEach((b, j) => b.setAttribute('aria-pressed', j === i ? 'true' : 'false'));
+    beams.forEach((b, j) => b.classList.toggle('is-on', j === i));
+    tip.innerHTML = tips[i];
+  }
+  btns.forEach((b, i) => b.addEventListener('click', () => pick(i)));
+  pick(3);
+})();
+</script>
+{% schema %}
+{"name": "Glow · Know your light", "settings": [], "presets": [{"name": "Glow · Know your light"}]}
+{% endschema %}
