@@ -15,22 +15,15 @@
 <div class="gr-wrap gr-top">
 
   <div class="gr-gal">
-    {%- comment -%}
-      Gallery in the editorial-carousel format: product shots plus real-use,
-      detail and unboxing photos, each of those with a short title band. Extra slides come from
-      Settings › Files; any missing file is just skipped. The light-layer infographics stay out
-      (they repeat the "Know your light" section).
-    {%- endcomment -%}
+    {%- comment -%} The LEZO light infographic stays out: it repeats the Booster Pro skin one. {%- endcomment -%}
     {%- liquid
-      assign ed_a = 'lezo-ugc-sofa-red.png|Hands-free, any night|Strap it on and keep reading, scrolling or resting.'
-      assign ed_b = 'sc-booster-inuse-oct31.png|Sized for the eye area|The Booster Pro glides along the cheekbone and under the eyes.~lezo-det-leds-red.webp|One LED in every cell|Molded cells spread the light across the whole face.~lezo-det-strap.webp|Stays put, no hands|Woven elastic strap with a slide adjuster.~lezo-ugc-unbox-bed.png|Out of the box|Charging cable and manual included, ready for night one.~lezo-ugc-bed-blue.png|Fits your night routine|Pick a color and settle in. Switch any time.'
       assign gr_n = 0
       assign gr_slides = ''
       assign gr_thumbs = ''
     -%}
     {%- for m in p.media -%}
       {%- assign m_src = m.preview_image.src | append: '' -%}
-      {%- if m_src contains 'light-layers' -%}{%- continue -%}{%- endif -%}
+      {%- if m_src contains 'lezo-light-layers' -%}{%- continue -%}{%- endif -%}
       {%- assign gr_n = gr_n | plus: 1 -%}
       {%- capture one -%}
         <figure class="gr-slide" data-media-id="{{ m.id }}">
@@ -44,27 +37,6 @@
       {%- capture th -%}<button type="button" aria-label="Image {{ gr_n }}">{{ m.preview_image | image_url: width: 220 | image_tag: loading: 'lazy', alt: '' }}</button>{%- endcapture -%}
       {%- assign gr_slides = gr_slides | append: one -%}
       {%- assign gr_thumbs = gr_thumbs | append: th -%}
-      {%- assign ed_list = '' -%}
-      {%- if gr_n == 1 -%}{%- assign ed_list = ed_a | append: '~' | append: ed_b -%}{%- endif -%}
-      {%- if ed_list != '' -%}
-        {%- assign eds = ed_list | split: '~' -%}
-        {%- for e in eds -%}
-          {%- assign ep = e | split: '|' -%}
-          {%- assign eimg = images[ep[0]] -%}
-          {%- if eimg -%}
-            {%- assign gr_n = gr_n | plus: 1 -%}
-            {%- capture one -%}
-              <figure class="gr-slide gr-slide--ed">
-                <figcaption class="gr-slide__cap"><b>{{ ep[1] }}</b><span>{{ ep[2] }}</span></figcaption>
-                {{ eimg | image_url: width: 1400 | image_tag: class: 'gr-slide__ph', widths: '500,800,1100,1400', sizes: '(min-width: 900px) 55vw, 100vw', loading: 'lazy', alt: ep[1] }}
-              </figure>
-            {%- endcapture -%}
-            {%- capture th -%}<button type="button" class="gr-th--ed" aria-label="Image {{ gr_n }}: {{ ep[1] | escape }}"><small>{{ ep[1] }}</small>{{ eimg | image_url: width: 220 | image_tag: loading: 'lazy', alt: '' }}</button>{%- endcapture -%}
-            {%- assign gr_slides = gr_slides | append: one -%}
-            {%- assign gr_thumbs = gr_thumbs | append: th -%}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endif -%}
     {%- endfor -%}
     <div class="gr-stage">
       <div class="gr-track" data-gr-track tabindex="0" aria-label="Product images, {{ gr_n }} slides">{{ gr_slides }}</div>
