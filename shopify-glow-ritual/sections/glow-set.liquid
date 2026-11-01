@@ -16,10 +16,10 @@
 
   <div class="gr-gal">
     {%- comment -%}
-      Gallery in the editorial-carousel format: product shots, the light infographic and real-use,
+      Gallery in the editorial-carousel format: product shots plus real-use,
       detail and unboxing photos, each of those with a short title band. Extra slides come from
-      Settings › Files; any missing file is just skipped. The LEZO infographic stays out (it repeats
-      the Booster Pro one and says six colors).
+      Settings › Files; any missing file is just skipped. The light-layer infographics stay out
+      (they repeat the "Know your light" section).
     {%- endcomment -%}
     {%- liquid
       assign ed_a = 'lezo-ugc-sofa-red.png|Hands-free, any night|Strap it on and keep reading, scrolling or resting.'
@@ -30,7 +30,7 @@
     -%}
     {%- for m in p.media -%}
       {%- assign m_src = m.preview_image.src | append: '' -%}
-      {%- if m_src contains 'lezo-light-layers' -%}{%- continue -%}{%- endif -%}
+      {%- if m_src contains 'light-layers' -%}{%- continue -%}{%- endif -%}
       {%- assign gr_n = gr_n | plus: 1 -%}
       {%- capture one -%}
         <figure class="gr-slide" data-media-id="{{ m.id }}">
@@ -45,8 +45,7 @@
       {%- assign gr_slides = gr_slides | append: one -%}
       {%- assign gr_thumbs = gr_thumbs | append: th -%}
       {%- assign ed_list = '' -%}
-      {%- if gr_n == 1 -%}{%- assign ed_list = ed_a -%}{%- endif -%}
-      {%- if m_src contains 'booster-light-layers' -%}{%- assign ed_list = ed_b -%}{%- endif -%}
+      {%- if gr_n == 1 -%}{%- assign ed_list = ed_a | append: '~' | append: ed_b -%}{%- endif -%}
       {%- if ed_list != '' -%}
         {%- assign eds = ed_list | split: '~' -%}
         {%- for e in eds -%}

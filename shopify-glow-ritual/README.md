@@ -24,8 +24,8 @@ Same structure and copy order; finer details and motion.
 
 ## Editorial carousel (Nov 1)
 Gallery in the format of an editorial skincare carousel: full-width slide, square thumbnails (active one
-framed in ink, the rest faded), round arrows with dots underneath. Order (14 slides):
-set on white → **Hands-free, any night** (sofa, red) → Booster Pro light infographic → **Sized for the eye
+framed in ink, the rest faded), round arrows with dots underneath. Order (13 slides; no skin-layer infographics, they repeat "Know your light"):
+set on white → **Hands-free, any night** (sofa, red) → **Sized for the eye
 area** (wand in use) → **One LED in every cell** (LED macro) → **Stays put, no hands** (strap) → **Out of the
 box** (unboxing) → **Fits your night routine** (bed, blue) → the three combo photos → wand and collagen cutouts.
 The six added slides are existing photos from Settings › Files with a cream title band; titled thumbnails.
