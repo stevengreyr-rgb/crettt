@@ -21,3 +21,12 @@ Same structure and copy order; finer details and motion.
   headlines rise word by word, eyebrows settle, blocks rise staggered on scroll, photos open like a
   curtain, beams draw down into the skin, FAQ/specs slide. Off with reduced motion; a 2.6 s CSS safety
   shows the first screen even if the script never loads.
+
+## Editorial carousel (Nov 1)
+Gallery in the format of an editorial skincare carousel: full-width slide, square thumbnails (active one
+framed in ink, the rest faded), round arrows with dots underneath. Order (14 slides):
+set on white → **Hands-free, any night** (sofa, red) → Booster Pro light infographic → **Sized for the eye
+area** (wand in use) → **One LED in every cell** (LED macro) → **Stays put, no hands** (strap) → **Out of the
+box** (unboxing) → **Fits your night routine** (bed, blue) → the three combo photos → wand and collagen cutouts.
+The six added slides are existing photos from Settings › Files with a cream title band; titled thumbnails.
+None of them repeat photos used further down the page. Edit the list in `ed_a` / `ed_b` at the top of the gallery.
