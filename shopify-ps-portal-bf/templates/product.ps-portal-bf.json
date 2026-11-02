@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "main": { "type": "ps-portal-bf", "settings": { "handle": "playstation-portal-black-friday", "ends": "2026-11-30T23:59:00-05:00" } }
+  },
+  "order": ["main"]
+}
