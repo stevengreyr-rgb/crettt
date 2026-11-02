@@ -7,6 +7,7 @@
   assign img_col_pink = images['sk-cut-collagen-duo.png']
   assign img_col_blue = images['sk-cut-ceranol-duo.png']
   assign img_ritual = images['IMG_1723.png']
+  assign img_box = images['sc-whats-in-the-box.jpg']
 -%}
 <script>try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('gm-js')}catch(e){}</script>
 <script src="{{ 'glow-motion.js' | asset_url }}" defer></script>
@@ -15,7 +16,7 @@
 <div class="gr-wrap gr-top">
 
   <div class="gr-gal">
-    {%- comment -%} The LEZO light infographic stays out: it repeats the Booster Pro skin one. {%- endcomment -%}
+    {%- comment -%} The LEZO light infographic stays out: it repeats the Booster Pro skin one. The unboxing photo (Settings › Files) follows the skin infographic. {%- endcomment -%}
     {%- liquid
       assign gr_n = 0
       assign gr_slides = ''
@@ -37,6 +38,18 @@
       {%- capture th -%}<button type="button" aria-label="Image {{ gr_n }}">{{ m.preview_image | image_url: width: 220 | image_tag: loading: 'lazy', alt: '' }}</button>{%- endcapture -%}
       {%- assign gr_slides = gr_slides | append: one -%}
       {%- assign gr_thumbs = gr_thumbs | append: th -%}
+      {%- if m_src contains 'booster-light-layers' and img_box -%}
+        {%- assign gr_n = gr_n | plus: 1 -%}
+        {%- capture one -%}
+          <figure class="gr-slide gr-slide--box">
+            {{ img_box | image_url: width: 300 | image_tag: class: 'gr-box__bg', loading: 'lazy', alt: '' }}
+            {{ img_box | image_url: width: 1400 | image_tag: class: 'gr-box__ph', widths: '500,800,1100,1400', sizes: '(min-width: 900px) 55vw, 100vw', loading: 'lazy', alt: 'Everything that came in the box: LEZO LED mask, Booster Pro wand, Biodance collagen pads and ampoule' }}
+          </figure>
+        {%- endcapture -%}
+        {%- capture th -%}<button type="button" aria-label="Image {{ gr_n }}: what's in the box">{{ img_box | image_url: width: 220 | image_tag: loading: 'lazy', alt: '' }}</button>{%- endcapture -%}
+        {%- assign gr_slides = gr_slides | append: one -%}
+        {%- assign gr_thumbs = gr_thumbs | append: th -%}
+      {%- endif -%}
     {%- endfor -%}
     <div class="gr-stage">
       <div class="gr-track" data-gr-track tabindex="0" aria-label="Product images, {{ gr_n }} slides">{{ gr_slides }}</div>
@@ -256,6 +269,9 @@
 .gr-track::-webkit-scrollbar{display:none}
 .gr-slide{flex:0 0 100%;margin:0;scroll-snap-align:center;scroll-snap-stop:always;aspect-ratio:1/1;overflow:hidden;background:#fff}
 .gr-slide>img{width:100%;height:100%;object-fit:contain;display:block}
+.gr-slide--box{position:relative;background:#8e8b88}
+.gr-slide--box .gr-box__bg{position:absolute;inset:-8%;width:116%;height:116%;object-fit:cover;filter:blur(26px) brightness(.96)}
+.gr-slide--box .gr-box__ph{position:relative;width:100%;height:100%;object-fit:contain;display:block}
 .gr-slide--ed{display:flex;flex-direction:column;background:#f4efea}
 .gr-slide__cap{flex:none;display:flex;flex-direction:column;gap:4px;padding:5.5% 6% 4%}
 .gr-slide__cap b{font:600 clamp(18px,5vw,26px)/1.1 var(--gl-font,system-ui);letter-spacing:-.025em;color:var(--ink)}

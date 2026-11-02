@@ -24,6 +24,9 @@ Same structure and copy order; finer details and motion.
 
 ## Carousel (Nov 1)
 Gallery in the format of an editorial skincare carousel: full-width slide, square thumbnails (active one
-framed in ink, the rest faded), round arrows with dots underneath. 8 slides: the set, the Booster Pro skin
-infographic, the three combo photos, the wand and the two collagen duos. The LEZO skin infographic stays out
-(it repeats the Booster Pro one). No extra lifestyle slides.
+framed in ink, the rest faded), round arrows with dots underneath. 9 slides: the set, the Booster Pro skin
+infographic, the unboxing photo, the three combo photos, the wand and the two collagen duos. The LEZO skin
+infographic stays out (it repeats the Booster Pro one).
+
+Unboxing photo: `sc-whats-in-the-box.jpg` (Settings › Files; copy here). Customer flat-lay "everything that
+came in the box" with the SEVENCRUSH card removed (fabric patched in). Shown whole, on a blurred copy of itself.
