@@ -1,0 +1,788 @@
+{%- comment -%}
+  Black Friday console landing (Nintendo Switch 2 / PlayStation Portal).
+  One section, two products: the "kind" setting picks the copy. Prices, variants, photos and stock come
+  from the Shopify product: price = Black Friday price, compare-at price = original price.
+  Own look (dark Black Friday), scoped under .bfx; does not depend on the Glow Ritual styles.
+{%- endcomment -%}
+{%- liquid
+  assign k = section.settings.kind
+  assign p = product | default: all_products[section.settings.handle]
+  assign cur = p.selected_or_first_available_variant
+  assign low = section.settings.low_stock | default: 10
+  assign off_pct = 0
+  if cur.compare_at_price > cur.price
+    assign off_pct = cur.compare_at_price | minus: cur.price | times: 100 | divided_by: cur.compare_at_price | round
+  endif
+  if k == 'portal'
+    assign name_a = 'PlayStation'
+    assign name_b = 'Portal'
+    assign pick_word = 'finish'
+    assign thing = 'remote player'
+  else
+    assign name_a = 'Nintendo Switch'
+    assign name_b = '2'
+    assign pick_word = 'edition'
+    assign thing = 'console'
+  endif
+-%}
+<section class="bfx bfx--{{ k }}" data-bfx data-kind="{{ k }}" data-low="{{ low }}" data-end="{{ section.settings.ends | escape }}">
+<script type="application/json" data-bfx-json>[
+{%- for v in p.variants -%}
+  {%- liquid
+    assign vd = v.title | downcase
+    if k == 'portal'
+      assign lab = 'White'
+      assign sub = 'The original'
+      assign sw = '#f2f2f4'
+      if vd contains '30'
+        assign lab = '30th Anniversary'
+        assign sub = 'Limited · PS1 gray'
+        assign sw = '#a9a9b2'
+      elsif vd contains 'black'
+        assign lab = 'Midnight Black'
+        assign sub = 'All black'
+        assign sw = '#1c1d22'
+      endif
+    else
+      assign lab = 'Console'
+      assign sub = 'Console only'
+      assign sw = '#2a2a30'
+      if vd contains 'mario'
+        assign lab = '+ Mario Kart World'
+        assign sub = 'Game as download code'
+        assign sw = '#e60012'
+      elsif vd contains 'pok'
+        assign lab = '+ Pokémon Legends: Z-A'
+        assign sub = 'Game as download code'
+        assign sw = '#2a6fdb'
+      endif
+    endif
+    assign vimg = v.featured_image | default: p.featured_image
+  -%}
+  {"id":{{ v.id }},"title":{{ v.title | json }},"label":{{ lab | json }},"sub":{{ sub | json }},"sw":{{ sw | json }},"price":{{ v.price }},"was":{{ v.compare_at_price | default: 0 }},"available":{{ v.available }},"qty":{% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity }}{% else %}null{% endif %},"media":{{ v.featured_media.id | default: 0 }},"img":{% if vimg %}{{ vimg | image_url: width: 1400 | json }}{% else %}null{% endif %}}{% unless forloop.last %},{% endunless %}
+{%- endfor -%}
+]</script>
+
+{%- comment -%} ───────────── 1. Countdown strip ───────────── {%- endcomment -%}
+<div class="bfx-strip" data-bfx-strip>
+  <span class="bfx-strip__k">Black Friday</span>
+  <span class="bfx-strip__t">{{ off_pct | default: 30 }}% off every {{ pick_word }}<span class="bfx-hide-s"> · free US shipping</span></span>
+  <span class="bfx-clock bfx-clock--s" data-bfx-clock aria-label="Time left in the sale"><b data-u="d">00</b><i>d</i><b data-u="h">00</b><i>h</i><b data-u="m">00</b><i>m</i><b data-u="s">00</b><i>s</i></span>
+</div>
+
+{%- comment -%} ───────────── 2. Hero + buy box ───────────── {%- endcomment -%}
+<div class="bfx-hero">
+  <div class="bfx-hero__bg" aria-hidden="true"><i></i><i></i></div>
+  <div class="bfx-wrap bfx-hero__grid">
+
+    <div class="bfx-stage" data-bfx-stage>
+      <span class="bfx-burst" aria-hidden="true"><b>-{{ off_pct | default: 30 }}%</b><small>Black Friday</small></span>
+      <button type="button" class="bfx-stage__zoom" data-bfx-zoom aria-label="Open photo full screen">
+        {%- assign hero_img = cur.featured_image | default: p.featured_image -%}
+        {%- if hero_img -%}
+          {{ hero_img | image_url: width: 1400 | image_tag: class: 'bfx-stage__img', widths: '500,800,1100,1400', sizes: '(min-width: 960px) 50vw, 100vw', loading: 'eager', fetchpriority: 'high', alt: p.title, data-bfx-hero: '' }}
+        {%- endif -%}
+      </button>
+      <div class="bfx-film" data-bfx-film aria-label="More photos">
+        {%- for m in p.media limit: 8 -%}
+          <button type="button" class="bfx-film__b{% if m.id == cur.featured_media.id or forloop.first and cur.featured_media == blank %} is-on{% endif %}" data-media="{{ m.id }}" data-src="{{ m.preview_image | image_url: width: 1400 }}" aria-label="Photo {{ forloop.index }}">
+            {{ m.preview_image | image_url: width: 180 | image_tag: loading: 'lazy', alt: '' }}
+          </button>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="bfx-buy">
+      <p class="bfx-eye"><span class="bfx-dot" aria-hidden="true"></span>Black Friday · while stock lasts</p>
+      <h1 class="bfx-h1">{{ name_a | replace: " ", "&nbsp;" | replace_first: "&nbsp;", " " }}&nbsp;<em>{{ name_b }}</em></h1>
+      <p class="bfx-lede">
+        {%- if k == 'portal' -%}Your PS5, off the TV. An 8" screen between two DualSense halves, now {{ off_pct | default: 30 }}% off.
+        {%- else -%}The new Nintendo console, on its own or with Mario Kart World or Pokémon Legends: Z-A. {{ off_pct | default: 30 }}% off.{%- endif -%}
+      </p>
+
+      <div class="bfx-price" aria-live="polite">
+        <span class="bfx-price__now" data-bfx-now>{{ cur.price | money }}</span>
+        <span class="bfx-price__side">
+          <s data-bfx-was {% unless cur.compare_at_price > cur.price %}hidden{% endunless %}>{{ cur.compare_at_price | money }}</s>
+          <span class="bfx-save" data-bfx-save {% unless cur.compare_at_price > cur.price %}hidden{% endunless %}>You save {{ cur.compare_at_price | minus: cur.price | money }}</span>
+        </span>
+      </div>
+
+      {%- form 'product', p, id: 'bfx-form', class: 'bfx-form', data-bfx-form: '' -%}
+        <input type="hidden" name="id" value="{{ cur.id }}" data-bfx-id>
+        <div class="bfx-terms">{{ form | payment_terms }}</div>
+
+        <fieldset class="bfx-pick">
+          <legend>Choose your {{ pick_word }} <span data-bfx-picked>{{ cur.title }}</span></legend>
+          <div class="bfx-opts" role="radiogroup" aria-label="Choose your {{ pick_word }}" data-bfx-opts>
+            {%- for v in p.variants -%}
+              <button type="button" role="radio" class="bfx-opt" data-vid="{{ v.id }}" aria-checked="{% if v.id == cur.id %}true{% else %}false{% endif %}" tabindex="{% if v.id == cur.id %}0{% else %}-1{% endif %}" {% unless v.available %}data-soldout{% endunless %}>
+                <span class="bfx-opt__img">{%- assign oi = v.featured_image | default: p.featured_image -%}{% if oi %}{{ oi | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{% endif %}</span>
+                <span class="bfx-opt__t"><b data-bfx-lab></b><small data-bfx-sub></small></span>
+                <span class="bfx-opt__p"><b>{{ v.price | money }}</b>{% if v.compare_at_price > v.price %}<s>{{ v.compare_at_price | money }}</s>{% endif %}</span>
+                {%- unless v.available -%}<span class="bfx-opt__so">Sold out</span>{%- endunless -%}
+              </button>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+
+        <p class="bfx-stock" data-bfx-stock hidden><span class="bfx-stock__bar"><i data-bfx-stockbar></i></span><span data-bfx-stocktxt></span></p>
+
+        <div class="bfx-ctas">
+          <button type="submit" class="bfx-cta" data-bfx-add {% unless cur.available %}disabled{% endunless %}>
+            <span class="bfx-cta__t" data-bfx-addt>Add to bag · {{ cur.price | money }}</span>
+          </button>
+          <button type="submit" name="return_to" value="/checkout" class="bfx-cta bfx-cta--ghost" data-bfx-buy {% unless cur.available %}disabled{% endunless %}>Buy now</button>
+        </div>
+        <p class="bfx-eta" data-bfx-eta>Free tracked shipping · arrives in 5–12 days</p>
+      {%- endform -%}
+
+      <ul class="bfx-trust">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>New, sealed, US model</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>Free tracked shipping</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>30-day returns</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure checkout</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} ───────────── 3. Savings receipt ───────────── {%- endcomment -%}
+<div class="bfx-sec bfx-wrap bfx-split" data-bfx-rv>
+  <div>
+    <p class="bfx-eye">The math</p>
+    <h2 class="bfx-h2">The real price. <em>Then {{ off_pct | default: 30 }}% less.</em></h2>
+    <p class="bfx-p">The original price is the maker's US list price. The Black Friday price is that, minus {{ off_pct | default: 30 }}%. Shipping is free. Nothing is added at checkout except sales tax where it applies.</p>
+  </div>
+  <div class="bfx-rcpt" aria-live="polite">
+    <p class="bfx-rcpt__h">SEVENCRUSH · Black Friday</p>
+    <div class="bfx-rcpt__r"><span data-bfx-rname>{{ p.title }} · {{ cur.title }}</span><span data-bfx-rwas>{{ cur.compare_at_price | default: cur.price | money }}</span></div>
+    <div class="bfx-rcpt__r is-off"><span>Black Friday −{{ off_pct | default: 30 }}%</span><span data-bfx-roff>−{{ cur.compare_at_price | minus: cur.price | at_least: 0 | money }}</span></div>
+    <div class="bfx-rcpt__r"><span>Shipping (US, tracked)</span><span>Free</span></div>
+    <div class="bfx-rcpt__r is-tot"><span>You pay</span><span data-bfx-rnow>{{ cur.price | money }}</span></div>
+    <p class="bfx-rcpt__f">Before tax · prices from this product, live</p>
+  </div>
+</div>
+
+{%- comment -%} ───────────── 4. Find yours (quiz) ───────────── {%- endcomment -%}
+<div class="bfx-sec bfx-wrap" data-bfx-rv>
+  <p class="bfx-eye">30 seconds</p>
+  <h2 class="bfx-h2">Not sure? <em>We'll pick with you.</em></h2>
+  <div class="bfx-quiz" data-bfx-quiz>
+    {%- if k == 'portal' -%}
+      <div class="bfx-q" data-q="1">
+        <p class="bfx-q__h"><span>1/2</span>Do you have a PS5 at home?</p>
+        <div class="bfx-q__a">
+          <button type="button" data-a="yes">Yes, I have a PS5</button>
+          <button type="button" data-a="no">No, not yet</button>
+        </div>
+      </div>
+      <div class="bfx-q" data-q="2" hidden>
+        <p class="bfx-q__h"><span>2/2</span>Which look is you?</p>
+        <div class="bfx-q__a">
+          <button type="button" data-pick="white">Clean white</button>
+          <button type="button" data-pick="black">All black</button>
+          <button type="button" data-pick="30">Retro PS1 gray</button>
+        </div>
+      </div>
+      <div class="bfx-q bfx-q--warn" data-q="no" hidden>
+        <p class="bfx-q__h">Heads-up: the Portal needs a PS5</p>
+        <p>It plays the games installed on your PS5 over Wi-Fi. Without a PS5, it can only stream selected PS5 games from the cloud with a PlayStation Plus Premium membership.</p>
+        <div class="bfx-q__a"><button type="button" data-a="yes">I'll use cloud streaming, continue</button><button type="button" data-reset>Start over</button></div>
+      </div>
+    {%- else -%}
+      <div class="bfx-q" data-q="1">
+        <p class="bfx-q__h"><span>1/1</span>What do you want to play first?</p>
+        <div class="bfx-q__a">
+          <button type="button" data-pick="mario">Racing with friends</button>
+          <button type="button" data-pick="pok">Catching Pokémon</button>
+          <button type="button" data-pick="console">I'll choose my own games</button>
+        </div>
+      </div>
+    {%- endif -%}
+    <div class="bfx-q bfx-q--ok" data-q="done" hidden>
+      <p class="bfx-q__h">Your pick: <b data-bfx-qres></b></p>
+      <p data-bfx-qprice></p>
+      <div class="bfx-q__a"><a href="#bfx-form" class="bfx-cta bfx-cta--sm" data-bfx-go>It's selected · go to bag</a><button type="button" data-reset>Start over</button></div>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} ───────────── 5. Compare ───────────── {%- endcomment -%}
+<div class="bfx-sec bfx-wrap" data-bfx-rv id="bfx-compare">
+  <p class="bfx-eye">Side by side</p>
+  <h2 class="bfx-h2">Every {{ pick_word }}, <em>every price.</em></h2>
+  <div class="bfx-cmp" style="--n:{{ p.variants.size }}" role="table" aria-label="Compare every {{ pick_word }}">
+    <div class="bfx-cmp__r bfx-cmp__head" role="row">
+      <span role="columnheader"></span>
+      {%- for v in p.variants -%}
+        <span role="columnheader" class="bfx-cmp__col" data-vid="{{ v.id }}">
+          {%- assign ci = v.featured_image | default: p.featured_image -%}{% if ci %}{{ ci | image_url: width: 300 | image_tag: loading: 'lazy', alt: '' }}{% endif %}
+          <b data-bfx-lab-of="{{ v.id }}">{{ v.title }}</b>
+        </span>
+      {%- endfor -%}
+    </div>
+    {%- if k == 'portal' -%}
+      {%- assign rows = '8" 1080p remote player|DualSense haptics & adaptive triggers|Remote Play + cloud streaming|Limited edition' | split: '|' -%}
+    {%- else -%}
+      {%- assign rows = 'Nintendo Switch 2 · 256 GB|Joy-Con 2, grip, dock & cables|Mario Kart World (download code)|Pokémon Legends: Z-A (download code)' | split: '|' -%}
+    {%- endif -%}
+    {%- for r in rows -%}
+      {%- assign ri = forloop.index -%}
+      <div class="bfx-cmp__r" role="row">
+        <span role="rowheader">{{ r }}</span>
+        {%- for v in p.variants -%}
+          {%- liquid
+            assign vd = v.title | downcase
+            assign yes = true
+            if ri == 4
+              if k == 'portal'
+                unless vd contains '30'
+                  assign yes = false
+                endunless
+              else
+                unless vd contains 'pok'
+                  assign yes = false
+                endunless
+              endif
+            elsif ri == 3 and k != 'portal'
+              unless vd contains 'mario'
+                assign yes = false
+              endunless
+            endif
+          -%}
+          <span role="cell" class="bfx-cmp__col" data-vid="{{ v.id }}">{% if yes %}<i class="bfx-yes" aria-label="Included"></i>{% else %}<i class="bfx-no" aria-label="Not included"></i>{% endif %}</span>
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+    <div class="bfx-cmp__r bfx-cmp__price" role="row">
+      <span role="rowheader">Black Friday price</span>
+      {%- for v in p.variants -%}
+        <span role="cell" class="bfx-cmp__col" data-vid="{{ v.id }}"><b>{{ v.price | money }}</b>{% if v.compare_at_price > v.price %}<s>{{ v.compare_at_price | money }}</s>{% endif %}<button type="button" class="bfx-cmp__btn" data-choose="{{ v.id }}" {% unless v.available %}disabled{% endunless %}>{% if v.available %}Choose{% else %}Sold out{% endif %}</button></span>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{%- comment -%} ───────────── 6. Feature bento ───────────── {%- endcomment -%}
+<div class="bfx-sec bfx-wrap" data-bfx-rv>
+  <p class="bfx-eye">{% if k == 'portal' %}Why it's good{% else %}What's new{% endif %}</p>
+  <h2 class="bfx-h2">{% if k == 'portal' %}Built like a DualSense. <em>Sees like a screen.</em>{% else %}Bigger, sharper. <em>Still a Switch.</em>{% endif %}</h2>
+  <div class="bfx-bento">
+    {%- if k == 'portal' -%}
+      <div class="bfx-tile bfx-tile--xl"><b class="bfx-big">8"</b><span>LCD screen, 1080p at 60 fps.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">Haptics</b><span>DualSense haptic feedback and adaptive triggers, on both sides.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">Remote Play</b><span>Plays the games installed on your PS5, over Wi-Fi.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">Cloud</b><span>PlayStation Plus Premium members can stream selected PS5 games, no console needed.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">5 / 15</b><span>Mbps: Sony's minimum and recommended connection.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">3.5 mm</b><span>Headphone jack, plus PlayStation Link for wireless earbuds.</span></div>
+    {%- else -%}
+      <div class="bfx-tile bfx-tile--xl"><b class="bfx-big">7.9"</b><span>1080p screen with HDR, up to 120 fps handheld.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">4K</b><span>On your TV through the dock.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">256 GB</b><span>Built in. Add more with a microSD Express card.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">Joy-Con 2</b><span>Snap on magnetically. Work as a mouse, too.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">C button</b><span>GameChat with the built-in mic.</span></div>
+      <div class="bfx-tile"><b class="bfx-mid">Switch games</b><span>Most Nintendo Switch games play on it.</span></div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- comment -%} ───────────── 7. Box / How it works ───────────── {%- endcomment -%}
+<div class="bfx-sec bfx-wrap" data-bfx-rv>
+  <p class="bfx-eye">{% if k == 'portal' %}How it works{% else %}In the box{% endif %}</p>
+  <h2 class="bfx-h2">{% if k == 'portal' %}Five steps. <em>Then just play.</em>{% else %}Open it. <em>Play it.</em>{% endif %}</h2>
+  <ol class="bfx-steps">
+    {%- if k == 'portal' -%}
+      <li><b>Connect</b><span>Put your PS5 and the Portal on Wi-Fi.</span></li>
+      <li><b>Sign in</b><span>Same PlayStation account on both.</span></li>
+      <li><b>Turn on Remote Play</b><span>In the PS5 settings. Leave the PS5 on or in rest mode.</span></li>
+      <li><b>Play</b><span>Your installed PS5 games, on the 8" screen.</span></li>
+      <li><b>Or stream</b><span>Selected PS5 games from the cloud with PlayStation Plus Premium.</span></li>
+    {%- else -%}
+      <li><b>Console</b><span>Nintendo Switch 2, 256 GB.</span></li>
+      <li><b>Joy-Con 2 (L) and (R)</b><span>Plus the Joy-Con 2 grip and two straps.</span></li>
+      <li><b>Dock</b><span>For your TV, up to 4K.</span></li>
+      <li><b>Cables</b><span>AC adapter, USB-C charging cable, Ultra High Speed HDMI cable.</span></li>
+      <li><b>The game</b><span>On the bundles: Mario Kart World or Pokémon Legends: Z-A, as a download code.</span></li>
+    {%- endif -%}
+  </ol>
+</div>
+
+{%- comment -%} ───────────── 8. Before you buy + FAQ ───────────── {%- endcomment -%}
+<div class="bfx-sec bfx-wrap bfx-split" data-bfx-rv>
+  <div>
+    <p class="bfx-eye">Before you buy</p>
+    <h2 class="bfx-h2">No surprises <em>after checkout.</em></h2>
+    <ul class="bfx-checks">
+      {%- if k == 'portal' -%}
+        <li>You need a PS5 for Remote Play, or PlayStation Plus Premium for cloud streaming.</li>
+        <li>No Bluetooth audio: use the 3.5 mm jack or PlayStation Link earbuds.</li>
+        <li>PS VR2 games aren't supported.</li>
+        <li>Works best on your home Wi-Fi (Sony: 5 Mbps minimum, 15 recommended).</li>
+      {%- else -%}
+        <li>Bundle games come as a download code, not a cartridge.</li>
+        <li>Extra storage needs a microSD Express card.</li>
+        <li>Online play needs Nintendo Switch Online, sold separately.</li>
+        <li>A few Nintendo Switch games may not be fully compatible.</li>
+      {%- endif -%}
+    </ul>
+  </div>
+  <div class="bfx-faq" data-bfx-faq>
+    <label class="bfx-faq__s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg><input type="search" placeholder="Search questions" data-bfx-faqs aria-label="Search questions"></label>
+    {%- if k == 'portal' -%}
+      <details><summary>Do I need a PS5?</summary><p>Yes, for Remote Play: it streams the games installed on your PS5. Without one, you can stream selected PS5 games from the cloud with PlayStation Plus Premium.</p></details>
+      <details><summary>Can I play away from home?</summary><p>Yes, on Wi-Fi with a fast, stable connection. It works best on your home network.</p></details>
+      <details><summary>What's the difference between the finishes?</summary><p>Only the look. White is the original, Midnight Black is all black, and the 30th Anniversary is a limited edition in PS1 gray.</p></details>
+    {%- else -%}
+      <details><summary>Which edition should I get?</summary><p>The bundles cost $50 more at list price and add a full game as a download code. If you want Mario Kart World or Pokémon Legends: Z-A anyway, the bundle is the better deal.</p></details>
+      <details><summary>Can I play my Switch games?</summary><p>Most Nintendo Switch physical and digital games work on Nintendo Switch 2. A few may not be fully compatible; Nintendo keeps the list on its site.</p></details>
+      <details><summary>Is the game a cartridge?</summary><p>No. On the bundles the game comes as a download code.</p></details>
+    {%- endif -%}
+    <details><summary>Is the 30% off the original price?</summary><p>Yes. The struck-through price is the maker's US list price, and you pay 30% less. You see both before you pay.</p></details>
+    <details><summary>Is it new?</summary><p>Yes. Brand new, factory sealed, US model.</p></details>
+    <details><summary>How long does shipping take?</summary><p>5–12 days in the US, free and tracked. The tracking number comes by email.</p></details>
+    <details><summary>Can I return it?</summary><p>Yes, within 30 days of delivery, unopened. Email sevencrush.store@gmail.com with your order number.</p></details>
+    <p class="bfx-faq__none" data-bfx-faqnone hidden>No question matches. Email sevencrush.store@gmail.com and we'll answer.</p>
+  </div>
+</div>
+
+{%- comment -%} ───────────── 9. Final call ───────────── {%- endcomment -%}
+<div class="bfx-end" data-bfx-rv>
+  <div class="bfx-wrap bfx-end__in">
+    <p class="bfx-eye">Ends in</p>
+    <div class="bfx-clock bfx-clock--l" data-bfx-clock aria-label="Time left in the sale"><b data-u="d">00</b><i>days</i><b data-u="h">00</b><i>hrs</i><b data-u="m">00</b><i>min</i><b data-u="s">00</b><i>sec</i></div>
+    <h2 class="bfx-h2">{{ name_a }} <em>{{ name_b }}</em> for <span data-bfx-endp>{{ cur.price | money }}</span></h2>
+    <a href="#bfx-form" class="bfx-cta bfx-cta--inline" data-bfx-go>Get mine</a>
+  </div>
+</div>
+
+<p class="bfx-wrap bfx-legal">
+  {%- if k == 'portal' -%}PlayStation, PS5, PlayStation Portal and DualSense are trademarks of Sony Interactive Entertainment. SEVENCRUSH is an independent retailer, not affiliated with Sony.
+  {%- else -%}Nintendo Switch 2, Joy-Con, Mario Kart and Pokémon are trademarks of their owners. SEVENCRUSH is an independent retailer, not affiliated with Nintendo.{%- endif -%}
+  Original prices are the maker's US list prices (MSRP).
+</p>
+
+{%- comment -%} ───────────── Sticky bar, toast, lightbox ───────────── {%- endcomment -%}
+<div class="bfx-bar" data-bfx-bar aria-hidden="true">
+  <span class="bfx-bar__img"><img data-bfx-barimg alt="" src="{{ hero_img | image_url: width: 120 }}"></span>
+  <span class="bfx-bar__t"><b>{{ name_a }} {{ name_b }}</b><small><span data-bfx-barv>{{ cur.title }}</span> · <s data-bfx-barwas>{{ cur.compare_at_price | money }}</s></small></span>
+  <button type="button" class="bfx-cta bfx-cta--sm" data-bfx-baradd tabindex="-1">Add · <span data-bfx-barp>{{ cur.price | money }}</span></button>
+</div>
+<div class="bfx-toast" data-bfx-toast role="status" aria-live="polite"></div>
+<dialog class="bfx-lb" data-bfx-lb><button type="button" class="bfx-lb__x" data-bfx-lbx aria-label="Close">×</button><img alt="" data-bfx-lbimg></dialog>
+</section>
+
+<style>
+.bfx{--ink:#f5f3f4;--mut:#a29ca0;--dim:#6e686c;--bg:#0b0a0b;--card:#151315;--card2:#1c191b;--line:#2a2629;--hot:#ff3b5c;--hot2:#ff7a59;--ok:#3ddc97;--grad:linear-gradient(135deg,#ff3b5c,#ff7a59);--ease:cubic-bezier(.16,1,.3,1);
+  --f:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;--fs:"Instrument Serif","Times New Roman",serif;
+  background:var(--bg);color:var(--ink);font-family:var(--f);-webkit-font-smoothing:antialiased;padding-bottom:110px;overflow:clip}
+.bfx--portal{--hot:#4f7cff;--hot2:#8b5cff;--grad:linear-gradient(135deg,#4f7cff,#8b5cff)}
+.bfx *{box-sizing:border-box}
+.bfx [hidden]{display:none!important}
+.bfx-wrap{max-width:1200px;margin:0 auto;padding:0 18px}
+.bfx-eye{display:flex;align-items:center;gap:8px;margin:0 0 10px;font:700 11px/1 var(--f);letter-spacing:.22em;text-transform:uppercase;color:var(--hot)}
+.bfx-dot{width:7px;height:7px;border-radius:50%;background:var(--hot);box-shadow:0 0 0 0 var(--hot);animation:bfxPulse 1.8s infinite}
+@keyframes bfxPulse{70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.bfx-h1{margin:0;font:800 clamp(40px,6.4vw,72px)/.92 var(--f);letter-spacing:-.045em}
+.bfx-h1 em,.bfx-h2 em{font:italic 400 1.06em/1 var(--fs);letter-spacing:-.01em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.06em}
+.bfx-h2{margin:0 0 26px;font:800 clamp(30px,5vw,52px)/1 var(--f);letter-spacing:-.04em;text-wrap:balance}
+.bfx-p,.bfx-lede{color:var(--mut);font-size:16px;line-height:1.55;margin:0}
+.bfx-lede{margin-top:14px;max-width:46ch}
+.bfx-sec{padding-top:clamp(80px,12vw,140px)}
+
+/* Strip */
+.bfx-strip{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 14px;padding:9px 14px;background:#000;border-bottom:1px solid var(--line);font-size:13px}
+.bfx-strip__k{font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:11px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bfx-strip__t{color:#d8d3d6}
+@media(max-width:520px){.bfx-hide-s{display:none}}
+.bfx-clock{display:inline-flex;align-items:baseline;gap:3px;font-variant-numeric:tabular-nums}
+.bfx-clock b{display:inline-block;font-weight:800;min-width:1.7em;text-align:center;border-radius:6px;background:#ffffff14;padding:3px 4px}
+.bfx-clock b.is-tick{animation:bfxFlip .5s var(--ease)}
+@keyframes bfxFlip{0%{transform:rotateX(90deg);opacity:.2}100%{transform:none;opacity:1}}
+.bfx-clock i{font-style:normal;color:var(--mut);font-size:11px;margin-right:4px}
+.bfx-clock--l{gap:6px;margin:6px 0 22px}
+.bfx-clock--l b{font-size:clamp(34px,7vw,64px);padding:10px 12px;border-radius:14px;background:var(--card2);border:1px solid var(--line);min-width:1.5em}
+.bfx-clock--l i{font-size:12px;margin-right:10px;text-transform:uppercase;letter-spacing:.14em}
+.bfx-over .bfx-clock{display:none}
+
+/* Hero */
+.bfx-hero{position:relative;padding:22px 0 10px;isolation:isolate}
+.bfx-hero__bg{position:absolute;inset:0;z-index:-1;overflow:hidden}
+.bfx-hero__bg i{position:absolute;width:60vmax;height:60vmax;border-radius:50%;filter:blur(90px);opacity:.33;background:var(--hot);top:-30vmax;left:-12vmax;animation:bfxDrift 18s ease-in-out infinite alternate}
+.bfx-hero__bg i+i{background:var(--hot2);top:auto;bottom:-36vmax;left:auto;right:-20vmax;opacity:.22;animation-duration:24s}
+@keyframes bfxDrift{to{transform:translate(8vmax,6vmax) scale(1.1)}}
+.bfx-hero__grid{display:grid;gap:26px}
+@media(min-width:960px){.bfx-hero__grid{grid-template-columns:1.05fr 1fr;gap:56px;align-items:start;padding-top:28px}.bfx-stage{position:sticky;top:64px}}
+.bfx-stage{position:relative;min-width:0}
+.bfx-stage__zoom{display:block;width:100%;padding:0;border:0;background:radial-gradient(80% 70% at 50% 40%,#fff,#ececef);border-radius:28px;aspect-ratio:1/1;overflow:hidden;cursor:zoom-in;border:1px solid var(--line);perspective:900px}
+.bfx-stage__img{width:100%;height:100%;object-fit:contain;padding:4%;display:block;transition:transform .8s var(--ease),opacity .35s;mix-blend-mode:multiply;will-change:transform}
+.bfx-stage__img.is-swap{opacity:0;transform:scale(.96)}
+.bfx-burst{position:absolute;z-index:3;top:-10px;right:-6px;display:grid;place-items:center;width:104px;height:104px;border-radius:50%;background:var(--grad);color:#fff;text-align:center;transform:rotate(10deg);box-shadow:0 18px 40px -14px var(--hot);animation:bfxSpin 14s linear infinite}
+.bfx-burst b{font:800 28px/1 var(--f);letter-spacing:-.04em;display:block}
+.bfx-burst small{display:block;font:700 9px/1 var(--f);letter-spacing:.16em;text-transform:uppercase;margin-top:-18px}
+@keyframes bfxSpin{0%,100%{transform:rotate(10deg)}50%{transform:rotate(-6deg) scale(1.04)}}
+.bfx-film{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 2px;scrollbar-width:none}
+.bfx-film::-webkit-scrollbar{display:none}
+.bfx-film__b{flex:0 0 66px;height:66px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);padding:4px;cursor:pointer;opacity:.55;transition:opacity .25s,border-color .25s,transform .3s var(--ease)}
+.bfx-film__b img{width:100%;height:100%;object-fit:contain;display:block}
+.bfx-film__b:hover{opacity:.9}
+.bfx-film__b.is-on{opacity:1;border-color:var(--ink);transform:translateY(-2px)}
+
+.bfx-price{display:flex;align-items:flex-end;gap:14px;margin:22px 0 4px;flex-wrap:wrap}
+.bfx-price__now{font:800 clamp(46px,8vw,68px)/.9 var(--f);letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.bfx-price__side{display:flex;flex-direction:column;gap:6px;padding-bottom:4px}
+.bfx-price__side s{color:var(--dim);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.bfx-save{display:inline-block;padding:5px 10px;border-radius:99px;background:#3ddc9722;color:var(--ok);font-size:13px;font-weight:700}
+.bfx-terms{font-size:13px;color:var(--mut);min-height:6px;margin-top:8px}
+.bfx-terms *{color:inherit!important}
+
+.bfx-pick{border:0;margin:20px 0 0;padding:0;min-width:0}
+.bfx-pick legend{display:flex;justify-content:space-between;gap:10px;width:100%;padding:0;margin-bottom:10px;font-weight:700;font-size:14px}
+.bfx-pick legend span{color:var(--mut);font-weight:500}
+.bfx-opts{display:grid;gap:8px}
+.bfx-opt{position:relative;display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:12px;width:100%;padding:8px 14px 8px 8px;border-radius:18px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:border-color .25s,background .25s,transform .2s var(--ease);-webkit-tap-highlight-color:transparent}
+.bfx-opt:hover{border-color:#4a4447}
+.bfx-opt:active{transform:scale(.985)}
+.bfx-opt:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+.bfx-opt[aria-checked=true]{border-color:var(--hot);background:linear-gradient(var(--card2),var(--card2)) padding-box,var(--grad) border-box;border-color:transparent;box-shadow:0 14px 34px -22px var(--hot)}
+.bfx-opt__img{width:52px;height:52px;border-radius:12px;background:#ffffff0d;overflow:hidden}
+.bfx-opt__img img{width:100%;height:100%;object-fit:contain}
+.bfx-opt__t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.bfx-opt__t b{font-size:15px}
+.bfx-opt__t small{font-size:12px;color:var(--mut)}
+.bfx-opt__t b::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;background:var(--sw,#888);box-shadow:inset 0 0 0 1px #ffffff40;vertical-align:1px}
+.bfx-opt__p{display:flex;flex-direction:column;align-items:flex-end;gap:2px;font-variant-numeric:tabular-nums}
+.bfx-opt__p b{font-size:15px}
+.bfx-opt__p s{font-size:12px;color:var(--dim)}
+.bfx-opt[data-soldout]{opacity:.45}
+.bfx-opt__so{position:absolute;top:6px;right:10px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+
+.bfx-stock{display:flex;align-items:center;gap:10px;margin:14px 0 0;font-size:13px;color:#ffc9a8}
+.bfx-stock__bar{flex:0 0 90px;height:6px;border-radius:9px;background:#ffffff14;overflow:hidden}
+.bfx-stock__bar i{display:block;height:100%;background:var(--grad);border-radius:inherit;transition:width .8s var(--ease)}
+
+.bfx-ctas{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:18px}
+.bfx-cta{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:19px 24px;border:0;border-radius:99px;background:var(--grad);color:#fff;font:800 16px/1 var(--f);text-decoration:none;cursor:pointer;overflow:hidden;box-shadow:0 18px 40px -18px var(--hot);transition:transform .25s var(--ease),box-shadow .25s,filter .2s}
+.bfx-cta::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,#ffffff55 50%,transparent 70%);transform:translateX(-120%);animation:bfxShine 3.6s 1.2s infinite}
+@keyframes bfxShine{40%,100%{transform:translateX(120%)}}
+.bfx-cta:hover{transform:translateY(-2px);box-shadow:0 22px 46px -18px var(--hot)}
+.bfx-cta:active{transform:scale(.97)}
+.bfx-cta[disabled]{opacity:.4;cursor:not-allowed;transform:none}
+.bfx-cta--ghost{background:transparent;border:1.5px solid #ffffff38;box-shadow:none}
+.bfx-cta--ghost::after{content:none}
+.bfx-cta--sm{padding:13px 18px;font-size:14px}
+.bfx-cta--inline{padding:20px 40px;font-size:17px}
+.bfx-cta.is-busy .bfx-cta__t{opacity:.5}
+.bfx-cta.is-done{background:var(--ok);color:#06200f}
+.bfx-eta{margin:12px 0 0;text-align:center;font-size:13px;color:var(--mut)}
+.bfx-eta b{color:var(--ink)}
+.bfx-trust{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bfx-trust li{display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:14px;background:#ffffff08;border:1px solid var(--line);font-size:12.5px;color:#d8d3d6}
+.bfx-trust svg{flex:none;width:18px;height:18px;fill:none;stroke:var(--hot);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* Receipt */
+.bfx-split{display:grid;gap:30px}
+@media(min-width:900px){.bfx-split{grid-template-columns:1fr 1fr;gap:64px;align-items:center}}
+.bfx-rcpt{position:relative;padding:26px 24px 30px;background:#f6f3ee;color:#1b1718;border-radius:6px;font:500 14px/1.4 ui-monospace,"SF Mono",Menlo,monospace;box-shadow:0 40px 80px -40px #000;transform:rotate(-1.2deg);
+  -webkit-mask:radial-gradient(circle 7px at 50% 100%,transparent 98%,#000) 0 0/18px 100% repeat-x;mask:radial-gradient(circle 7px at 50% 100%,transparent 98%,#000) 0 0/18px 100% repeat-x}
+.bfx-rcpt__h{margin:0 0 14px;padding-bottom:12px;border-bottom:1.5px dashed #c9c2b8;text-align:center;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:12px}
+.bfx-rcpt__r{display:flex;justify-content:space-between;gap:16px;padding:7px 0;font-variant-numeric:tabular-nums}
+.bfx-rcpt__r span:first-child{min-width:0}
+.bfx-rcpt__r.is-off{color:#c4213e}
+.bfx--portal .bfx-rcpt__r.is-off{color:#3a5bd9}
+.bfx-rcpt__r.is-tot{margin-top:8px;padding-top:12px;border-top:1.5px dashed #c9c2b8;font-weight:800;font-size:20px}
+.bfx-rcpt__f{margin:12px 0 0;font-size:11px;color:#8b847b;text-align:center}
+.bfx-rcpt .is-tick{animation:bfxPop .5s var(--ease)}
+@keyframes bfxPop{40%{transform:scale(1.08)}}
+
+/* Quiz */
+.bfx-quiz{max-width:760px}
+.bfx-q{padding:26px;border-radius:24px;background:var(--card);border:1px solid var(--line);animation:bfxIn .5s var(--ease)}
+@keyframes bfxIn{from{opacity:0;transform:translateY(12px)}}
+.bfx-q__h{margin:0 0 16px;font:700 20px/1.25 var(--f);letter-spacing:-.02em}
+.bfx-q__h span{display:inline-block;margin-right:10px;padding:4px 8px;border-radius:8px;background:#ffffff12;color:var(--mut);font-size:12px;vertical-align:3px}
+.bfx-q p{color:var(--mut);line-height:1.55}
+.bfx-q__a{display:flex;flex-wrap:wrap;gap:8px}
+.bfx-q__a button{padding:14px 18px;border-radius:99px;border:1.5px solid var(--line);background:#ffffff08;color:var(--ink);font:600 15px/1 var(--f);cursor:pointer;transition:border-color .2s,background .2s,transform .2s var(--ease)}
+.bfx-q__a button:hover{border-color:var(--hot);background:#ffffff10}
+.bfx-q__a button:active{transform:scale(.96)}
+.bfx-q--warn{border-color:#ffb02e55;background:linear-gradient(#2a2010,#1a160f)}
+.bfx-q--warn .bfx-q__h{color:#ffc65c}
+.bfx-q--ok{border-color:transparent;background:linear-gradient(var(--card2),var(--card2)) padding-box,var(--grad) border-box;border:1.5px solid transparent}
+.bfx-q--ok b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Compare */
+.bfx-cmp{border:1px solid var(--line);border-radius:24px;overflow:hidden;background:var(--card)}
+.bfx-cmp__r{display:grid;grid-template-columns:minmax(120px,1.3fr) repeat(var(--n),1fr);align-items:center;border-top:1px solid var(--line)}
+.bfx-cmp__r:first-child{border-top:0}
+.bfx-cmp__r>span{padding:14px 10px;font-size:13.5px}
+.bfx-cmp__r>span:first-child{color:var(--mut);padding-left:18px}
+.bfx-cmp__col{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:center;transition:background .3s}
+.bfx-cmp__col.is-on{background:#ffffff0c}
+.bfx-cmp__head .bfx-cmp__col img{width:min(110px,100%);aspect-ratio:1;object-fit:contain}
+.bfx-cmp__head b{font-size:13px;line-height:1.2}
+.bfx-cmp__head .bfx-cmp__col.is-on b{color:var(--hot)}
+.bfx-yes,.bfx-no{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%}
+.bfx-yes{background:#3ddc9722}
+.bfx-yes::before{content:"";width:9px;height:5px;border:2px solid var(--ok);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.bfx-no::before{content:"";width:10px;height:2px;border-radius:2px;background:var(--dim)}
+.bfx-cmp__price b{font-size:17px;font-variant-numeric:tabular-nums}
+.bfx-cmp__price s{font-size:12px;color:var(--dim)}
+.bfx-cmp__btn{margin-top:4px;padding:9px 14px;border-radius:99px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font:700 12px/1 var(--f);cursor:pointer}
+.bfx-cmp__col.is-on .bfx-cmp__btn{background:var(--grad);border-color:transparent;color:#fff}
+.bfx-cmp__btn[disabled]{opacity:.4;cursor:not-allowed}
+@media(max-width:600px){.bfx-cmp__r{grid-template-columns:96px repeat(var(--n),1fr)}.bfx-cmp__r>span{padding:12px 4px;font-size:12px}.bfx-cmp__r>span:first-child{padding-left:12px}.bfx-cmp__head b{font-size:11px}.bfx-cmp__price b{font-size:14px}}
+
+/* Bento */
+.bfx-bento{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.bfx-tile{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;min-height:150px;padding:20px;border-radius:24px;background:var(--card);border:1px solid var(--line);overflow:hidden;transition:transform .4s var(--ease),border-color .3s}
+.bfx-tile:hover{transform:translateY(-3px);border-color:#3a3437}
+.bfx-tile span{font-size:13.5px;line-height:1.45;color:var(--mut)}
+.bfx-tile--xl{grid-column:1/-1;min-height:220px;background:radial-gradient(90% 90% at 100% 0%,color-mix(in srgb,var(--hot) 35%,transparent),transparent 60%),var(--card)}
+.bfx-tile:last-child{grid-column:1/-1;min-height:120px}
+@media(min-width:900px){.bfx-bento{grid-template-columns:repeat(4,1fr)}.bfx-tile--xl{grid-column:span 2;grid-row:span 2}}
+.bfx-big{font:800 clamp(80px,14vw,150px)/.8 var(--f);letter-spacing:-.06em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bfx-mid{font:800 clamp(22px,3vw,30px)/1 var(--f);letter-spacing:-.03em}
+
+/* Steps */
+.bfx-steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;counter-reset:s}
+@media(min-width:900px){.bfx-steps{grid-template-columns:repeat(5,1fr)}}
+.bfx-steps li{counter-increment:s;position:relative;display:flex;flex-direction:column;gap:6px;padding:22px 18px 20px;border-radius:22px;background:var(--card);border:1px solid var(--line)}
+.bfx-steps li::before{content:counter(s,decimal-leading-zero);font:italic 400 34px/1 var(--fs);color:var(--hot);margin-bottom:8px}
+.bfx-steps b{font-size:16px}
+.bfx-steps span{font-size:13.5px;color:var(--mut);line-height:1.45}
+
+/* Checks + FAQ */
+.bfx-checks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.bfx-checks li{position:relative;padding:14px 16px 14px 46px;border-radius:16px;background:#ffffff07;border:1px solid var(--line);font-size:14.5px;line-height:1.45;color:#d8d3d6}
+.bfx-checks li::before{content:"!";position:absolute;left:14px;top:13px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#ffb02e22;color:#ffc65c;font-weight:800;font-size:12px}
+.bfx-faq__s{display:flex;align-items:center;gap:10px;padding:0 16px;border-radius:99px;background:var(--card);border:1px solid var(--line);margin-bottom:8px}
+.bfx-faq__s svg{width:18px;height:18px;fill:none;stroke:var(--mut);stroke-width:1.8;stroke-linecap:round}
+.bfx-faq__s input{flex:1;min-width:0;padding:15px 0;border:0;background:transparent;color:var(--ink);font:500 15px var(--f);outline:0}
+.bfx-faq details{border-bottom:1px solid var(--line)}
+.bfx-faq summary{display:flex;justify-content:space-between;gap:12px;padding:18px 2px;cursor:pointer;list-style:none;font-weight:700;font-size:15.5px}
+.bfx-faq summary::-webkit-details-marker{display:none}
+.bfx-faq summary::after{content:"";flex:none;width:12px;height:12px;margin-top:4px;background:linear-gradient(var(--hot),var(--hot)) center/12px 2px no-repeat,linear-gradient(var(--hot),var(--hot)) center/2px 12px no-repeat;transition:transform .35s var(--ease)}
+.bfx-faq details[open] summary::after{transform:rotate(135deg)}
+.bfx-faq p{margin:0 0 18px;color:var(--mut);line-height:1.6;font-size:14.5px}
+.bfx-faq__none{color:var(--mut);font-size:14px;padding:12px 2px}
+.bfx-faq mark{background:color-mix(in srgb,var(--hot) 40%,transparent);color:inherit;border-radius:3px}
+
+/* End */
+.bfx-end{margin-top:clamp(80px,12vw,140px);padding:clamp(60px,9vw,110px) 0;text-align:center;background:radial-gradient(60% 80% at 50% 0%,color-mix(in srgb,var(--hot) 30%,transparent),transparent 70%),#000;border-block:1px solid var(--line)}
+.bfx-end__in{display:flex;flex-direction:column;align-items:center}
+.bfx-end .bfx-eye{justify-content:center}
+.bfx-legal{margin-top:30px;font-size:12px;line-height:1.5;color:var(--dim)}
+
+/* Sticky bar */
+.bfx-bar{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:60;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 8px;border-radius:22px;background:#151315ee;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);box-shadow:0 20px 50px -14px #000;transform:translateY(150%);transition:transform .5s var(--ease)}
+.bfx-bar.is-on{transform:none}
+.bfx-bar__img{flex:0 0 44px;height:44px;border-radius:12px;background:#ffffff10;overflow:hidden}
+.bfx-bar__img img{width:100%;height:100%;object-fit:contain}
+.bfx-bar__t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.bfx-bar__t b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bfx-bar__t small{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bfx-bar__t s{color:var(--dim)}
+@media(min-width:900px){.bfx-bar{left:50%;right:auto;width:560px;transform:translate(-50%,150%)}.bfx-bar.is-on{transform:translate(-50%,0)}}
+
+.bfx-toast{position:fixed;left:50%;top:58px;z-index:70;transform:translate(-50%,-20px);opacity:0;pointer-events:none;padding:12px 18px;border-radius:99px;background:var(--ok);color:#06200f;font-weight:800;font-size:14px;box-shadow:0 14px 30px -10px #0009;transition:opacity .3s,transform .4s var(--ease)}
+.bfx-toast.is-on{opacity:1;transform:translate(-50%,0)}
+.bfx-toast.is-err{background:#ff5c5c;color:#fff}
+
+.bfx-lb{width:min(96vw,1000px);max-height:92vh;padding:0;border:0;border-radius:24px;background:#111;overflow:hidden}
+.bfx-lb::backdrop{background:#000c;backdrop-filter:blur(6px)}
+.bfx-lb img{display:block;width:100%;height:auto;max-height:92vh;object-fit:contain}
+.bfx-lb__x{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:0;background:#fffe;color:#000;font-size:24px;cursor:pointer}
+
+/* Reveal */
+.bfx-js [data-bfx-rv]{opacity:0;transform:translateY(34px);transition:opacity 1s var(--ease),transform 1.2s var(--ease)}
+.bfx-js [data-bfx-rv].is-in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.bfx *,.bfx *::before,.bfx *::after{animation:none!important;transition:none!important}.bfx-js [data-bfx-rv]{opacity:1;transform:none}}
+</style>
+
+<script>
+(() => {
+  const root = document.querySelector('[data-bfx]');
+  if (!root) return;
+  const $ = (q, el = root) => el.querySelector(q), $$ = (q, el = root) => [...el.querySelectorAll(q)];
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const V = JSON.parse($('[data-bfx-json]').textContent);
+  const fmt = (c) => '$' + (c / 100).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const low = +root.dataset.low || 10;
+  const byId = (id) => V.find((v) => v.id == id);
+  let cur = byId($('[data-bfx-id]').value) || V[0];
+
+  // Labels and swatches on the option buttons come from the variant data
+  $$('.bfx-opt').forEach((b) => { const v = byId(b.dataset.vid); if (!v) return; $('[data-bfx-lab]', b).textContent = v.label; $('[data-bfx-sub]', b).textContent = v.sub; b.style.setProperty('--sw', v.sw); });
+  $$('[data-bfx-lab-of]').forEach((b) => { const v = byId(b.dataset.bfxLabOf); if (v) b.textContent = v.label; });
+
+  // Reveal on scroll
+  if (!calm && 'IntersectionObserver' in window) {
+    root.classList.add('bfx-js');
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -10% 0px' });
+    $$('[data-bfx-rv]').forEach((el) => io.observe(el));
+  }
+
+  // Price count (from the original price down to the sale price)
+  const roll = (el, from, to, ms = 900) => {
+    if (!el) return;
+    if (calm || from === to) { el.textContent = fmt(to); return; }
+    const t0 = performance.now();
+    const step = (t) => { const k = Math.min(1, (t - t0) / ms), e = 1 - Math.pow(1 - k, 4); el.textContent = fmt(Math.round(from + (to - from) * e)); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  };
+  const tick = (el) => { if (!el || calm) return; el.classList.remove('is-tick'); void el.offsetWidth; el.classList.add('is-tick'); };
+
+  // Hero photo
+  const hero = $('[data-bfx-hero]');
+  const film = $$('.bfx-film__b');
+  const showImg = (src, mediaId) => {
+    if (hero && src) {
+      if (hero.getAttribute('src') !== src) { hero.classList.add('is-swap'); setTimeout(() => { hero.removeAttribute('srcset'); hero.src = src; hero.onload = () => hero.classList.remove('is-swap'); setTimeout(() => hero.classList.remove('is-swap'), 400); }, 160); }
+    }
+    film.forEach((b) => b.classList.toggle('is-on', mediaId ? b.dataset.media == mediaId : b.dataset.src === src));
+  };
+  film.forEach((b) => b.addEventListener('click', () => showImg(b.dataset.src, b.dataset.media)));
+
+  // Pointer tilt on the hero photo
+  const stage = $('[data-bfx-stage]');
+  if (hero && stage && !calm && matchMedia('(hover: hover)').matches) {
+    stage.addEventListener('pointermove', (e) => { const r = stage.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; hero.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 8}deg) scale(1.03)`; });
+    stage.addEventListener('pointerleave', () => { hero.style.transform = ''; });
+  }
+
+  // Lightbox
+  const lb = $('[data-bfx-lb]');
+  $('[data-bfx-zoom]')?.addEventListener('click', () => { if (!lb?.showModal || !hero) return; $('[data-bfx-lbimg]', lb).src = hero.currentSrc || hero.src; lb.showModal(); });
+  lb?.addEventListener('click', (e) => { if (e.target === lb || e.target.closest('[data-bfx-lbx]')) lb.close(); });
+
+  // Select a variant: everything on the page follows
+  function select(id, { scrollPhoto = true, animate = true } = {}) {
+    const v = byId(id); if (!v) return;
+    const prev = cur; cur = v;
+    $('[data-bfx-id]').value = v.id;
+    $$('.bfx-opt').forEach((b) => { const on = b.dataset.vid == v.id; b.setAttribute('aria-checked', on); b.tabIndex = on ? 0 : -1; });
+    $$('.bfx-cmp__col').forEach((c) => c.classList.toggle('is-on', c.dataset.vid == v.id));
+    $('[data-bfx-picked]').textContent = v.label;
+    const off = v.was > v.price;
+    animate ? roll($('[data-bfx-now]'), prev.price, v.price, 600) : ($('[data-bfx-now]').textContent = fmt(v.price));
+    const was = $('[data-bfx-was]'); was.hidden = !off; was.textContent = fmt(v.was);
+    const save = $('[data-bfx-save]'); save.hidden = !off; save.textContent = 'You save ' + fmt(v.was - v.price);
+    $('[data-bfx-addt]').textContent = (v.available ? 'Add to bag · ' : 'Sold out · ') + fmt(v.price);
+    $$('[data-bfx-add],[data-bfx-buy],[data-bfx-baradd]').forEach((b) => b.disabled = !v.available);
+    // receipt
+    const rn = $('[data-bfx-rname]'); if (rn) rn.textContent = v.title;
+    const rw = $('[data-bfx-rwas]'); if (rw) { rw.textContent = fmt(off ? v.was : v.price); tick(rw); }
+    const ro = $('[data-bfx-roff]'); if (ro) { ro.textContent = '−' + fmt(off ? v.was - v.price : 0); tick(ro); }
+    const rp = $('[data-bfx-rnow]'); if (rp) { rp.textContent = fmt(v.price); tick(rp); }
+    $('[data-bfx-endp]').textContent = fmt(v.price);
+    // sticky bar
+    $('[data-bfx-barv]').textContent = v.label; $('[data-bfx-barp]').textContent = fmt(v.price);
+    const bw = $('[data-bfx-barwas]'); bw.hidden = !off; bw.textContent = fmt(v.was);
+    if (v.img) $('[data-bfx-barimg]').src = v.img;
+    // honest low-stock line: only when Shopify tracks stock and it is low
+    const st = $('[data-bfx-stock]');
+    if (v.qty != null && v.qty > 0 && v.qty <= low) { st.hidden = false; $('[data-bfx-stocktxt]').textContent = 'Only ' + v.qty + ' left at this price'; $('[data-bfx-stockbar]').style.width = Math.max(8, (v.qty / low) * 100) + '%'; }
+    else st.hidden = true;
+    if (scrollPhoto) showImg(v.img, v.media);
+    if (location.pathname.includes('/products/')) history.replaceState(null, '', '?variant=' + v.id);
+  }
+  const opts = $('[data-bfx-opts]');
+  opts.addEventListener('click', (e) => { const b = e.target.closest('.bfx-opt'); if (b) select(b.dataset.vid); });
+  opts.addEventListener('keydown', (e) => {
+    const bs = $$('.bfx-opt', opts), i = bs.findIndex((b) => b.dataset.vid == cur.id);
+    const d = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key]; if (!d) return;
+    e.preventDefault(); const n = bs[(i + d + bs.length) % bs.length]; select(n.dataset.vid); n.focus();
+  });
+  $$('[data-choose]').forEach((b) => b.addEventListener('click', () => { select(b.dataset.choose); goForm(); }));
+  const goForm = () => { const f = $('#bfx-form') || $('[data-bfx-form]'); f?.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'center' }); };
+  $$('[data-bfx-go]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); goForm(); }));
+
+  // First paint: price counts down from the original price
+  select(cur.id, { scrollPhoto: false, animate: false });
+  if (cur.was > cur.price) roll($('[data-bfx-now]'), cur.was, cur.price, 1400);
+
+  // Add to bag without leaving the page; opens the theme's cart drawer when there is one
+  const toast = $('[data-bfx-toast]');
+  const say = (msg, err) => { toast.textContent = msg; toast.classList.toggle('is-err', !!err); toast.classList.add('is-on'); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove('is-on'), 2600); };
+  const form = $('[data-bfx-form]');
+  const addBtn = $('[data-bfx-add]');
+  async function add(btn) {
+    btn.classList.add('is-busy'); btn.disabled = true;
+    try {
+      const r = await fetch((window.Shopify?.routes?.root || '/') + 'cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items: [{ id: cur.id, quantity: 1 }] }) });
+      const j = await r.json(); if (!r.ok) throw new Error(j.description || j.message || 'Could not add');
+      btn.classList.add('is-done'); say('Added to your bag ✓');
+      document.dispatchEvent(new CustomEvent('sk:cart'));
+      const o = document.createElement('a'); o.setAttribute('data-sk-cart-open', ''); o.href = '/cart'; o.hidden = true; document.body.append(o);
+      if (document.getElementById('sk-cart')) o.click(); o.remove();
+      setTimeout(() => btn.classList.remove('is-done'), 1800);
+    } catch (err) { say(err.message, true); }
+    finally { btn.classList.remove('is-busy'); btn.disabled = !cur.available; }
+  }
+  form.addEventListener('submit', (e) => { if (e.submitter && e.submitter.hasAttribute('data-bfx-buy')) return; e.preventDefault(); add(addBtn); });
+  $('[data-bfx-baradd]').addEventListener('click', (e) => add(e.currentTarget));
+
+  // Sticky bar after the main button scrolls away
+  const bar = $('[data-bfx-bar]');
+  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { const on = !e.isIntersecting && e.boundingClientRect.top < 0; bar.classList.toggle('is-on', on); bar.setAttribute('aria-hidden', !on); $('[data-bfx-baradd]').tabIndex = on ? 0 : -1; }).observe(addBtn);
+
+  // Delivery dates
+  const eta = $('[data-bfx-eta]');
+  const day = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); };
+  eta.innerHTML = 'Free tracked shipping · arrives <b>' + day(5) + ' – ' + day(12) + '</b>';
+
+  // Countdown
+  const end = Date.parse(root.dataset.end);
+  const clocks = $$('[data-bfx-clock]');
+  if (end) {
+    const set = (u, n) => clocks.forEach((c) => { const b = c.querySelector('[data-u="' + u + '"]'); const t = String(n).padStart(2, '0'); if (b && b.textContent !== t) { b.textContent = t; tick(b); } });
+    const run = () => {
+      let s = Math.max(0, Math.floor((end - Date.now()) / 1000));
+      if (!s) { root.classList.add('bfx-over'); clearInterval(iv); return; }
+      set('d', Math.floor(s / 86400)); s %= 86400; set('h', Math.floor(s / 3600)); s %= 3600; set('m', Math.floor(s / 60)); set('s', s % 60);
+    };
+    const iv = setInterval(run, 1000); run();
+  }
+
+  // Quiz
+  const quiz = $('[data-bfx-quiz]');
+  if (quiz) {
+    const show = (q) => $$('.bfx-q', quiz).forEach((el) => el.hidden = el.dataset.q !== q);
+    const pickBy = (key) => V.find((v) => { const t = v.title.toLowerCase(); if (key === 'console' || key === 'white') return !/mario|pok|black|30/.test(t); return t.includes(key); }) || V[0];
+    quiz.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.hasAttribute('data-reset')) return show('1');
+      if (b.dataset.a === 'yes') return show('2');
+      if (b.dataset.a === 'no') return show('no');
+      if (b.dataset.pick) {
+        const v = pickBy(b.dataset.pick); select(v.id);
+        $('[data-bfx-qres]', quiz).textContent = v.label;
+        $('[data-bfx-qprice]', quiz).textContent = fmt(v.price) + (v.was > v.price ? ' instead of ' + fmt(v.was) + '. It is now selected above.' : '. It is now selected above.');
+        show('done');
+      }
+    });
+  }
+
+  // FAQ search
+  const qs = $('[data-bfx-faqs]');
+  if (qs) qs.addEventListener('input', () => {
+    const q = qs.value.trim().toLowerCase(); let any = false;
+    $$('[data-bfx-faq] details').forEach((d) => { const hit = !q || d.textContent.toLowerCase().includes(q); d.hidden = !hit; if (hit) any = true; if (q && hit) d.open = true; if (!q) d.open = false; });
+    $('[data-bfx-faqnone]').hidden = any;
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Black Friday console",
+  "settings": [
+    {"type": "select", "id": "kind", "label": "Product", "default": "switch2", "options": [{"value": "switch2", "label": "Nintendo Switch 2"}, {"value": "portal", "label": "PlayStation Portal"}]},
+    {"type": "text", "id": "handle", "label": "Product handle (used outside product pages)", "default": "nintendo-switch-2-black-friday"},
+    {"type": "text", "id": "ends", "label": "Sale ends (ISO date)", "default": "2026-11-30T23:59:00-05:00"},
+    {"type": "number", "id": "low_stock", "label": "Show 'Only N left' at or below", "default": 10}
+  ],
+  "presets": [{"name": "Black Friday console"}]
+}
+{% endschema %}
