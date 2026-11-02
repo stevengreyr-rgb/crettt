@@ -30,3 +30,13 @@ infographic stays out (it repeats the Booster Pro one).
 
 Unboxing photo: `sc-whats-in-the-box.jpg` (Settings › Files; copy here). Customer flat-lay "everything that
 came in the box" with the SEVENCRUSH card removed (fabric patched in). Shown whole, on a blurred copy of itself.
+
+## Cart drawer (Nov 2)
+`snippets/sk-cart-drawer.liquid` only (sk.js untouched: prices, quantities, discounts and checkout work as
+before). "Your bag" with a count pill, round close button (no square focus box), free-shipping banner with a
+filled bar, product photo contained on a soft tile, the Glow Ritual Set's long title shortened and its
+options shown as color chips (Wand · Pink / Collagen · Blue) plus what's in it, rounded quantity pill, remove
+with an icon, Subtotal / Shipping Free / big Total, pink "Secure checkout" pill with a lock, trust line
+(returns, secure payment, Card · PayPal · Shop Pay), designed empty state. Lines rise in when the drawer opens.
+The Glow Ritual theme is now live, so this went to the copy "SEVENCRUSH — Glow Ritual · carrito pro (borrador)"
+(`gid://shopify/OnlineStoreTheme/168458911963`); publish that copy to put it live.
