@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "main": { "type": "switch2-bf", "settings": { "handle": "nintendo-switch-2-black-friday", "ends": "2026-11-30T23:59:00-05:00" } }
+  },
+  "order": ["main"]
+}
