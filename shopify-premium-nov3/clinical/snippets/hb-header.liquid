@@ -1,0 +1,75 @@
+{% doc %}
+  Site header for every SEVENCRUSH page, clinical edit: a slate announcement bar with arrows
+  (the limited-time offer while it runs, then delivery and returns), the wordmark between a
+  tagline and a sub-line, and a navy assurance bar. Menu, search, account and bag (opens
+  the sk cart drawer) keep their original hooks.
+
+  @example
+  {% render 'hb-header' %}
+{% enddoc %}
+{% render 'sc-offer' %}
+{%- assign set = all_products['sevencrush-glow-ritual-set-led-mask-eye-wand-collagen-duo'] -%}
+<div class="hb cxh">
+  <div class="cxh-ann" data-cxh-ann>
+    <button type="button" class="cxh-ann__btn" data-cxh-prev aria-label="Previous message"><svg viewBox="0 0 10 18" aria-hidden="true"><path d="M9 1 1 9l8 8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
+    <div class="cxh-ann__msgs" aria-live="polite">
+      {%- if settings.sc_offer_on and settings.sc_offer_pct > 0 -%}
+        <p class="cxh-ann__m sc-off">{{ settings.sc_offer_pct }}% off at checkout · ends in <span data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></p>
+      {%- endif -%}
+      <p class="cxh-ann__m">Free tracked shipping across the US</p>
+      <p class="cxh-ann__m">30-day returns on unopened items</p>
+    </div>
+    <button type="button" class="cxh-ann__btn" data-cxh-next aria-label="Next message"><svg viewBox="0 0 10 18" aria-hidden="true"><path d="m1 1 8 8-8 8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
+  </div>
+  <header class="hb-head cxh-head">
+    <div class="hb-wrap hb-head__in">
+      <div class="hb-head__l">
+        <button type="button" class="hb-ico" data-sk-menu aria-controls="hb-menu" aria-expanded="false" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M3 6.5h18M3 12h18M3 17.5h18"/></svg>
+        </button>
+      </div>
+      <a class="cxh-brand" href="{{ routes.root_url }}" aria-label="SEVENCRUSH home">
+        <small>At-home light skincare</small>
+        <span class="hb-logo">Sevencrush</span>
+        <small>The Glow Ritual</small>
+      </a>
+      <div class="hb-head__r">
+        <a class="hb-ico" href="{{ routes.search_url }}" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></svg>
+        </a>
+        <button type="button" class="hb-ico" data-sk-cart-open aria-label="Open bag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M4.5 9h15l-1.4 11.5H5.9L4.5 9Z"/><path d="M8.5 9 12 3.5 15.5 9"/></svg>
+          <span class="hb-bubble" data-sk-count>{{ cart.item_count }}</span>
+        </button>
+      </div>
+    </div>
+    <nav class="hb-menu" id="hb-menu" aria-label="Main">
+      <a href="{{ set.url | default: '/' }}">The Glow Ritual Set</a>
+      <a href="/policies/shipping-policy">Shipping</a>
+      <a href="/policies/refund-policy">Returns</a>
+      <a href="/pages/contact">Help &amp; contact</a>
+      <a href="{{ routes.account_url }}">Account</a>
+    </nav>
+  </header>
+  <ul class="cxh-trust" aria-label="Our promises">
+    <li>Free US Shipping</li>
+    <li>30-Day Returns</li>
+    <li>Secure Checkout</li>
+    <li>Card · PayPal · Shop Pay</li>
+  </ul>
+</div>
+<script>
+(() => {
+  const bar = document.querySelector('[data-cxh-ann]');
+  if (!bar) return;
+  const all = [...bar.querySelectorAll('.cxh-ann__m')];
+  let i = 0, t;
+  const paint = () => { const list = all.filter((m) => !m.classList.contains('sc-off') || document.documentElement.classList.contains('sc-offer-on')); if (!list.length) return; i = (i + list.length) % list.length; all.forEach((m) => m.classList.toggle('is-on', m === list[i])); };
+  const step = (d) => { i += d; paint(); restart(); };
+  const restart = () => { clearInterval(t); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) t = setInterval(() => step(1), 5000); };
+  bar.querySelector('[data-cxh-prev]').addEventListener('click', () => step(-1));
+  bar.querySelector('[data-cxh-next]').addEventListener('click', () => step(1));
+  paint(); restart();
+  addEventListener('pagehide', () => clearInterval(t), { once: true });
+})();
+</script>

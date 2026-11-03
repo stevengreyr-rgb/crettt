@@ -1,0 +1,463 @@
+{% comment %}
+  Section contract.
+  The Glow Ritual Set landing (home + product page), "clinical edit" design:
+  Bodoni Moda display serif, Jost tracked sans, slate #4F6168 and navy #1D2236 on white.
+  Gallery › buy box › slate story block › the ritual › in the box. Variant logic, the
+  bag drawer (window.SK) and the limited-time offer line (snippets/sc-offer) are unchanged.
+  @example
+  {% section 'glow-set' %}
+{% endcomment %}
+{%- liquid
+  assign p = product | default: all_products['sevencrush-glow-ritual-set-led-mask-eye-wand-collagen-duo']
+  assign cur = p.selected_or_first_available_variant
+  assign img_wand_pink = images['sc-booster-pink-hd.png']
+  assign img_wand_black = images['sc-booster-black-hd.png']
+  assign img_col_pink = images['sk-cut-collagen-duo.png']
+  assign img_col_blue = images['sk-cut-ceranol-duo.png']
+  assign img_ritual = images['IMG_1723.png']
+  assign img_box = images['sc-whats-in-the-box.jpg']
+  assign gr_save = 0
+  if cur.compare_at_price > cur.price
+    assign gr_save = cur.compare_at_price | minus: cur.price
+  endif
+  assign gr_pct = 0
+  if settings.sc_offer_on and settings.sc_offer_pct > 0
+    assign gr_pct = settings.sc_offer_pct
+  endif
+-%}
+<section class="cx" data-gr>
+<script type="application/json" data-gr-json>{{ p.variants | json }}</script>
+
+<div class="cx-wrap cx-top">
+  <div class="cx-gal">
+    {%- liquid
+      assign gr_n = 0
+      assign gr_slides = ''
+      assign gr_thumbs = ''
+    -%}
+    {%- for m in p.media -%}
+      {%- assign m_src = m.preview_image.src | append: '' -%}
+      {%- if m_src contains 'lezo-light-layers' -%}{%- continue -%}{%- endif -%}
+      {%- assign gr_n = gr_n | plus: 1 -%}
+      {%- capture one -%}
+        <figure class="cx-slide" data-media-id="{{ m.id }}">
+          {%- if gr_n == 1 -%}
+            {{ m.preview_image | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 55vw, 100vw', loading: 'eager', fetchpriority: 'high', alt: m.alt | default: p.title }}
+          {%- else -%}
+            {{ m.preview_image | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 55vw, 100vw', loading: 'lazy', alt: m.alt | default: p.title }}
+          {%- endif -%}
+        </figure>
+      {%- endcapture -%}
+      {%- capture th -%}<button type="button" aria-label="Image {{ gr_n }}">{{ m.preview_image | image_url: width: 220 | image_tag: loading: 'lazy', alt: '' }}</button>{%- endcapture -%}
+      {%- assign gr_slides = gr_slides | append: one -%}
+      {%- assign gr_thumbs = gr_thumbs | append: th -%}
+      {%- if m_src contains 'booster-light-layers' and img_box -%}
+        {%- assign gr_n = gr_n | plus: 1 -%}
+        {%- capture one -%}
+          <figure class="cx-slide cx-slide--box">
+            {{ img_box | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 55vw, 100vw', loading: 'lazy', alt: 'Everything that came in the box: LEZO LED mask, Booster Pro wand, Biodance collagen pads and ampoule' }}
+          </figure>
+        {%- endcapture -%}
+        {%- capture th -%}<button type="button" aria-label="Image {{ gr_n }}: what's in the box">{{ img_box | image_url: width: 220 | image_tag: loading: 'lazy', alt: '' }}</button>{%- endcapture -%}
+        {%- assign gr_slides = gr_slides | append: one -%}
+        {%- assign gr_thumbs = gr_thumbs | append: th -%}
+      {%- endif -%}
+    {%- endfor -%}
+    <div class="cx-track" data-gr-track tabindex="0" aria-label="Product images, {{ gr_n }} slides">{{ gr_slides }}</div>
+    <div class="cx-galbar">
+      <div class="cx-thumbs" data-gr-thumbs>{{ gr_thumbs }}</div>
+      <div class="cx-arrows">
+        <button type="button" data-gr-prev aria-label="Previous image"><svg viewBox="0 0 32 12" aria-hidden="true"><path d="M31 6H1m5-5L1 6l5 5" fill="none" stroke="currentColor" stroke-width="1"/></svg></button>
+        <span aria-hidden="true"></span>
+        <button type="button" data-gr-next aria-label="Next image"><svg viewBox="0 0 32 12" aria-hidden="true"><path d="M1 6h30m-5-5 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cx-buy">
+    <p class="cx-kick">At-home LED skincare</p>
+    <h1 class="cx-h1">The Glow Ritual Set: LED Mask, Eye Wand &amp; Collagen Duo</h1>
+    <p class="cx-sub">The LED mask, the eye wand and the hydration step of a complete light ritual, together in one box.</p>
+
+    <div class="cx-price">
+      <span class="cx-price__now" data-gr-price>{{ cur.price | money }}</span>
+      <s class="cx-price__was" data-gr-was{% if gr_save == 0 %} hidden{% endif %}>{{ cur.compare_at_price | money }}</s>
+      <span class="cx-price__save" data-gr-save{% if gr_save == 0 %} hidden{% endif %}>Save {{ gr_save | money_without_trailing_zeros }}</span>
+    </div>
+    {%- if gr_pct > 0 -%}
+      <p class="cx-offer">{{ settings.sc_offer_title | escape }} · {{ gr_pct }}% off, applied at checkout · ends in <span data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></p>
+    {%- endif -%}
+
+    {%- form 'product', p, id: 'gr-form', class: 'cx-form' -%}
+      <input type="hidden" name="id" value="{{ cur.id }}" data-gr-id>
+      {%- for opt in p.options_with_values -%}
+        {%- assign oi = forloop.index0 -%}
+        <fieldset class="cx-opt" data-gr-opt>
+          <legend>{% if oi == 0 %}Eye wand finish{% else %}Collagen duo{% endif %}<span data-gr-picked="{{ oi }}">{{ opt.selected_value }}</span></legend>
+          <div class="cx-tiles">
+            {%- for val in opt.values -%}
+              {%- liquid
+                assign vd = val | downcase
+                assign t_img = nil
+                assign t_sub = ''
+                assign t_name = val
+                if oi == 0
+                  assign t_sub = 'Booster Pro wand'
+                  if vd contains 'pink'
+                    assign t_img = img_wand_pink
+                  else
+                    assign t_img = img_wand_black
+                  endif
+                else
+                  if vd contains 'pink'
+                    assign t_img = img_col_pink
+                    assign t_name = 'Pink'
+                    assign t_sub = 'Collagen pads + ampoule'
+                  else
+                    assign t_img = img_col_blue
+                    assign t_name = 'Blue'
+                    assign t_sub = 'Ceramide pads + ampoule'
+                  endif
+                endif
+              -%}
+              <button type="button" class="cx-tile" data-val="{{ val | escape }}" data-name="{{ t_name | escape }}" aria-pressed="{% if val == opt.selected_value %}true{% else %}false{% endif %}">
+                <span class="cx-tile__img">{% if t_img %}{{ t_img | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{% endif %}</span>
+                <span class="cx-tile__t"><b>{{ t_name }}</b><small>{{ t_sub }}</small></span>
+              </button>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endfor -%}
+
+      <button type="submit" class="cx-cta" data-gr-atc {% unless cur.available %}disabled{% endunless %}><span>Add to bag</span><span aria-hidden="true">·</span><span data-gr-price2>{{ cur.price | money }}</span></button>
+      <button type="submit" name="return_to" value="/checkout" class="cx-buynow" data-gr-buy {% unless cur.available %}disabled{% endunless %}>Buy it now</button>
+      <p class="cx-eta" data-gr-eta>Order today, delivered in 5–12 days</p>
+    {%- endform -%}
+
+    <dl class="cx-facts">
+      <div><dt>In the box</dt><dd>LEZO LED mask, Booster Pro eye wand, gel pads and ampoule</dd></div>
+      <div><dt>Lights</dt><dd>7 colors on the mask and the wand</dd></div>
+      <div><dt>Shipping</dt><dd>Free and tracked across the US</dd></div>
+      <div><dt>Returns</dt><dd>30 days on unopened items</dd></div>
+    </dl>
+  </div>
+</div>
+
+<div class="cx-slate">
+  <div class="cx-wrap">
+    <ul class="cx-benefits">
+      <li>Red Light, Hands Free</li>
+      <li>Seven Wavelengths</li>
+      <li>A Wand for the Eyes</li>
+      <li>Collagen Hydration</li>
+    </ul>
+    <div class="cx-story">
+      <h2 class="cx-h2">Most at-home routines stop halfway.</h2>
+      <p>A mask covers the face but skips the delicate skin around the eyes. A handheld wand reaches the eyes but takes too long for the whole face. And light on skin that feels tight and dry is hard to keep up night after night. So most routines get dropped after the first week.</p>
+      <p>The Glow Ritual Set closes those gaps. The LEZO mask treats the full face hands-free with seven light colors. The Booster Pro wand uses the same seven lights around the eyes. A gel pad before and a few drops of ampoule after add the hydration step. One box, one evening slot, about twenty minutes.</p>
+      <p class="cx-story__tag">LED mask + eye wand · 7 light colors · Collagen or ceramide duo · UV-free light</p>
+    </div>
+  </div>
+</div>
+
+<div class="cx-wrap cx-sec" id="ritual">
+  <p class="cx-kick">The ritual</p>
+  <h2 class="cx-h2 cx-h2--ink">Five steps, twenty minutes.</h2>
+  <div class="cx-rit">
+    {%- if img_ritual -%}
+      <figure class="cx-rit__ph">{{ img_ritual | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 45vw, 100vw', loading: 'lazy', alt: 'Woman pressing in the collagen ampoule with a dropper' }}</figure>
+    {%- endif -%}
+    <ol class="cx-steps">
+      <li><span>I</span><div><b>Cleanse</b><p>Start on clean, dry skin with makeup removed.</p></div></li>
+      <li><span>II</span><div><b>Prepare</b><p>Lay a collagen gel pad on each area while you get ready.</p></div></li>
+      <li><span>III</span><div><b>Light</b><p>Wear the LEZO mask, pick one of the seven colors and rest for the session time in its manual.</p></div></li>
+      <li><span>IV</span><div><b>Eyes</b><p>Choose the same color on the Booster Pro and glide it slowly around the eye area.</p></div></li>
+      <li><span>V</span><div><b>Seal</b><p>Warm a few drops of ampoule between your fingers and press them in.</p></div></li>
+    </ol>
+  </div>
+</div>
+
+<div class="cx-wrap cx-sec">
+  <p class="cx-kick">In the box</p>
+  <h2 class="cx-h2 cx-h2--ink">Three tools, one routine.</h2>
+  <div class="cx-box">
+    <a class="cx-card" href="#gr-form">
+      <span class="cx-card__ph">{{ images['sc-ed2-lezo.png'] | image_url: width: 1400 | image_tag: widths: '600,900,1200', sizes: '(min-width: 990px) 33vw, 100vw', alt: 'Model holding the LEZO LED mask, lit red', loading: 'lazy' }}</span>
+      <b>The LEZO LED Mask</b>
+      <span>Full-face light on an adjustable strap, open at the eyes and mouth. Seven colors.</span>
+    </a>
+    <a class="cx-card" href="#gr-form">
+      <span class="cx-card__ph">{{ images['sc-refined-daily-oct29.png'] | image_url: width: 1400 | image_tag: widths: '600,900,1200', sizes: '(min-width: 990px) 33vw, 100vw', alt: 'LEZO mask and Booster Pro wand on a blush set', loading: 'lazy' }}</span>
+      <b>The Booster Pro Wand</b>
+      <span>The same seven lights in a USB-rechargeable wand for the eye area. Pink or black.</span>
+    </a>
+    <a class="cx-card" href="#gr-form">
+      <span class="cx-card__ph">{{ images['sc-refined-gel-oct29.png'] | image_url: width: 1400 | image_tag: widths: '600,900,1200', sizes: '(min-width: 990px) 33vw, 100vw', alt: 'Model with a gel pad beside collagen pads and ampoule', loading: 'lazy' }}</span>
+      <b>The Collagen Duo</b>
+      <span>Gel toner pads with a matching ampoule. Pink collagen or blue ceramide.</span>
+    </a>
+  </div>
+</div>
+
+<div class="cx-wrap cx-sec">
+  <p class="cx-kick">Clinic or home</p>
+  <h2 class="cx-h2 cx-h2--ink">The ritual, without the appointment.</h2>
+  <div class="cx-table" role="table" aria-label="In-office LED versus the Glow Ritual Set">
+    <div class="cx-tr cx-th" role="row"><span role="columnheader"></span><span role="columnheader">In-office LED</span><span role="columnheader">The Glow Ritual Set</span></div>
+    <div class="cx-tr" role="row"><span role="rowheader">Cost</span><span>$25–$85 per session</span><span>{{ cur.price | money }}, once</span></div>
+    <div class="cx-tr" role="row"><span role="rowheader">Ten sessions</span><span>About $250–$850</span><span>Included</span></div>
+    <div class="cx-tr" role="row"><span role="rowheader">When</span><span>By appointment</span><span>Any evening, at home</span></div>
+  </div>
+  <p class="cx-fine">In-office session prices from Healthline, citing RealSelf; they vary by location. At-home devices are not the same as professional treatments.</p>
+</div>
+
+<div class="cx-wrap cx-sec cx-faqwrap">
+  <p class="cx-kick">Questions</p>
+  <h2 class="cx-h2 cx-h2--ink">Before you order.</h2>
+  <div class="cx-faq">
+    <details><summary>What exactly is in the box?</summary><p>The LEZO LED face mask in white, the Booster Pro eye wand in the finish you choose, and the gel toner pads with their matching ampoule in the duo you choose.</p></details>
+    <details><summary>Do the mask and the wand use the same lights?</summary><p>Yes. Both have the same seven colors: red, blue, green, yellow, purple, cyan and white, so you can use one color on the face and around the eyes in the same session.</p></details>
+    <details><summary>Pink or blue duo?</summary><p>Pink is the collagen pads and collagen ampoule. Blue is the ceramide pads and ampoule, a good pick for skin that feels tight or dry.</p></details>
+    <details><summary>How often should I use it?</summary><p>Follow each product's manual for session time and frequency. A fixed slot, such as after cleansing in the evening, makes it easy to keep up.</p></details>
+    <details><summary>Is it right for me?</summary><p>LED light is UV-free. Follow each manual for session time and eye protection, and patch-test the collagen products first. Speak with your doctor before use if you take medication that makes you sensitive to light (such as isotretinoin), have an active rash or skin condition, are pregnant, or have a condition triggered by light.</p></details>
+    <details><summary>Shipping and returns</summary><p>Free tracked delivery across the US in 5–12 days. You have 30 days from delivery to return unopened, unused items: email sevencrush.store@gmail.com with your order number.</p></details>
+    <details><summary>Full product description</summary><div>{{ p.description }}</div></details>
+  </div>
+  <p class="cx-fine">For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Individual results vary.</p>
+</div>
+
+<div class="cx-sticky" data-gr-sticky>
+  <span class="cx-sticky__t">The Glow Ritual Set<small data-gr-sticky-v>{{ cur.title }}</small></span>
+  <button type="button" class="cx-cta" data-gr-sticky-btn {% unless cur.available %}disabled{% endunless %}>Add · <span data-gr-price3>{{ cur.price | money }}</span></button>
+</div>
+</section>
+
+<style>
+.cx{--cx-ink:#1e2629;--cx-mut:#5d6a70;--cx-line:#dfe4e5;--cx-mist:#f2f4f4;--cx-slate:#4f6168;--cx-navy:#1d2236;--cx-serif:"Bodoni Moda","Didot","Times New Roman",serif;--cx-sans:"Jost","Futura","Helvetica Neue",sans-serif;--cx-ease:cubic-bezier(.2,.7,.2,1);background:#fff;color:var(--cx-ink);font:400 16px/1.6 var(--cx-sans);letter-spacing:.02em;-webkit-font-smoothing:antialiased}
+.cx *{box-sizing:border-box}
+.cx-wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.cx [hidden]{display:none!important}
+.cx button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+
+/* Type */
+.cx-kick{margin:0 0 14px;font:500 11px/1.2 var(--cx-sans);letter-spacing:.28em;text-transform:uppercase;color:var(--cx-mut)}
+.cx-h1{margin:0;font:400 clamp(32px,7.2vw,50px)/1.12 var(--cx-serif);letter-spacing:.005em;color:var(--cx-ink)}
+.cx-h2{margin:0;font:400 clamp(30px,6vw,46px)/1.15 var(--cx-serif);letter-spacing:.01em;color:#fff}
+.cx-h2--ink{color:var(--cx-ink);margin-bottom:clamp(28px,4vw,44px)}
+.cx-sub{margin:16px 0 0;max-width:46ch;color:var(--cx-mut);font-size:16px;line-height:1.65}
+.cx-fine{margin:18px 0 0;font:italic 400 12.5px/1.6 var(--cx-sans);color:#7b878c;letter-spacing:.02em}
+
+/* Gallery */
+.cx-top{display:grid;gap:28px;padding-top:8px}
+.cx-gal{min-width:0;margin:0 -20px}
+.cx-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;background:#fff}
+.cx-track::-webkit-scrollbar{display:none}
+.cx-slide{flex:0 0 100%;margin:0;aspect-ratio:1/1;scroll-snap-align:center;scroll-snap-stop:always;background:#fff;overflow:hidden}
+.cx-slide img{width:100%;height:100%;object-fit:contain;display:block}
+.cx-slide--box{background:#eef0f0}
+.cx-galbar{display:flex;align-items:center;justify-content:flex-end;gap:20px;padding:14px 20px 0}
+.cx-thumbs{display:none}
+.cx-arrows{display:flex;align-items:center;gap:18px;color:var(--cx-ink)}
+.cx-arrows span{width:1px;height:22px;background:var(--cx-line)}
+.cx-arrows button{display:grid;place-items:center;width:44px;height:36px;border:0;background:none;cursor:pointer;transition:opacity .2s,transform .4s var(--cx-ease)}
+.cx-arrows svg{width:30px;height:12px}
+.cx-arrows button[disabled]{opacity:.28;cursor:default}
+.cx-arrows button:not([disabled]):hover{transform:translateX(2px)}
+.cx-arrows button[data-gr-prev]:not([disabled]):hover{transform:translateX(-2px)}
+
+/* Buy box */
+.cx-buy{min-width:0}
+.cx-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;margin:26px 0 0}
+.cx-price__now{font:400 30px/1 var(--cx-serif);letter-spacing:.01em}
+.cx-price__was{font-size:16px;color:#8a959a}
+.cx-price__save{font:500 11px/1 var(--cx-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--cx-slate)}
+.cx-offer{display:none;margin:12px 0 0;padding:12px 14px;background:var(--cx-mist);border-left:2px solid var(--cx-slate);font-size:13.5px;line-height:1.5;color:var(--cx-ink)}
+html.sc-offer-on .cx-offer{display:block}
+.cx-offer span{font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+.cx-form{margin-top:6px}
+.cx-opt{border:0;margin:28px 0 0;padding:0;min-width:0}
+.cx-opt legend{display:flex;justify-content:space-between;width:100%;padding:0;margin:0 0 12px;font:500 11px/1.2 var(--cx-sans);letter-spacing:.24em;text-transform:uppercase;color:var(--cx-ink)}
+.cx-opt legend span{letter-spacing:.06em;text-transform:none;font-weight:400;color:var(--cx-mut)}
+.cx-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cx-tile{display:flex;align-items:center;gap:12px;min-height:72px;padding:10px 12px;border:1px solid var(--cx-line);border-radius:0;background:#fff;text-align:left;cursor:pointer;transition:border-color .25s,box-shadow .25s}
+.cx-tile:hover{border-color:#b7c0c3}
+.cx-tile[aria-pressed="true"]{border-color:var(--cx-navy);box-shadow:inset 0 0 0 1px var(--cx-navy)}
+.cx-tile:focus-visible{outline:2px solid var(--cx-slate);outline-offset:2px}
+.cx-tile__img{flex:none;width:46px;height:46px;background:var(--cx-mist);overflow:hidden}
+.cx-tile__img img{width:100%;height:100%;object-fit:contain;display:block}
+.cx-tile__t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cx-tile b{font:500 14.5px/1.2 var(--cx-sans);letter-spacing:.04em}
+.cx-tile small{font-size:12px;line-height:1.3;color:var(--cx-mut);letter-spacing:.02em}
+.cx-cta{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;margin-top:30px;padding:0 20px;border:0;border-radius:0;background:var(--cx-navy);color:#fff!important;font:500 13px/1 var(--cx-sans)!important;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:background .25s}
+.cx-cta:hover{background:#2c3350}
+.cx-cta[disabled]{opacity:.45;cursor:not-allowed}
+.cx-cta[aria-busy=true]{color:transparent!important;pointer-events:none}
+.cx-cta[aria-busy=true]::before{content:"";position:absolute;inset:0;margin:auto;width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);border-top-color:#fff;animation:cx-spin .7s linear infinite}
+.cx-cta.t-done{color:transparent!important}
+.cx-cta.t-done::before{content:"Added to bag";position:absolute;inset:0;display:grid;place-items:center;color:#fff;letter-spacing:.24em}
+@keyframes cx-spin{to{transform:rotate(1turn)}}
+.cx-buynow{display:block;width:100%;margin:8px 0 0;padding:14px;border:1px solid var(--cx-ink);background:#fff;font:500 12px/1 var(--cx-sans);letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:background .25s,color .25s}
+.cx-buynow:hover{background:var(--cx-ink);color:#fff}
+.cx-buynow[disabled]{opacity:.4}
+.cx-eta{margin:14px 0 0;text-align:center;font-size:13px;color:var(--cx-mut)}
+.cx-eta b{font-weight:500;color:var(--cx-ink)}
+.cx-eta.is-err{color:#9b3a3a}
+.cx-facts{margin:30px 0 0;padding:0;border-top:1px solid var(--cx-line)}
+.cx-facts div{display:grid;grid-template-columns:104px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--cx-line)}
+.cx-facts dt{font:500 11px/1.6 var(--cx-sans);letter-spacing:.22em;text-transform:uppercase;color:var(--cx-mut)}
+.cx-facts dd{margin:0;font-size:14px;line-height:1.55}
+
+/* Slate story block */
+.cx-slate{margin-top:clamp(64px,9vw,110px);background:var(--cx-slate);color:#fff}
+.cx-slate .cx-wrap{padding-top:clamp(56px,8vw,96px);padding-bottom:clamp(56px,8vw,96px)}
+.cx-benefits{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:44px 20px;text-align:center}
+.cx-benefits li{font:italic 400 clamp(22px,5.6vw,34px)/1.25 var(--cx-serif);letter-spacing:.03em}
+.cx-story{max-width:760px;margin:clamp(56px,8vw,88px) auto 0}
+.cx-story p{margin:22px 0 0;font-size:16px;line-height:1.75;letter-spacing:.04em;color:#eef2f3}
+.cx-story .cx-story__tag{margin-top:26px;font-style:italic;color:#dfe6e8}
+
+/* Sections */
+.cx-sec{padding-top:clamp(72px,10vw,120px)}
+.cx-rit{display:grid;gap:32px}
+.cx-rit__ph{margin:0;aspect-ratio:4/5;overflow:hidden;background:var(--cx-mist)}
+.cx-rit__ph img{width:100%;height:100%;object-fit:cover;display:block}
+.cx-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--cx-line)}
+.cx-steps li{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:22px 0;border-bottom:1px solid var(--cx-line)}
+.cx-steps li>span{font:italic 400 22px/1.2 var(--cx-serif);color:var(--cx-slate)}
+.cx-steps b{display:block;font:400 22px/1.25 var(--cx-serif);letter-spacing:.01em}
+.cx-steps p{margin:6px 0 0;font-size:15px;line-height:1.65;color:var(--cx-mut)}
+.cx-box{display:grid;gap:40px}
+.cx-card{display:block;color:inherit;text-decoration:none}
+.cx-card__ph{display:block;aspect-ratio:4/5;overflow:hidden;background:var(--cx-mist);margin-bottom:18px}
+.cx-card__ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s var(--cx-ease)}
+.cx-card:hover .cx-card__ph img{transform:scale(1.03)}
+.cx-card b{display:block;font:400 24px/1.25 var(--cx-serif)}
+.cx-card>span:last-child{display:block;margin-top:8px;font-size:15px;line-height:1.6;color:var(--cx-mut)}
+.cx-table{border-top:1px solid var(--cx-ink)}
+.cx-tr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:16px 0;border-bottom:1px solid var(--cx-line);font-size:14.5px;line-height:1.45}
+.cx-tr>span:first-child{font:500 11px/1.7 var(--cx-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--cx-mut)}
+.cx-tr>span:last-child{color:var(--cx-ink);font-weight:500}
+.cx-th>span{font:500 11px/1.4 var(--cx-sans)!important;letter-spacing:.2em;text-transform:uppercase;color:var(--cx-mut)!important}
+.cx-th>span:last-child{color:var(--cx-ink)!important}
+.cx-faq{border-top:1px solid var(--cx-line)}
+.cx-faq details{border-bottom:1px solid var(--cx-line)}
+.cx-faq summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;cursor:pointer;list-style:none;font:400 19px/1.35 var(--cx-serif);letter-spacing:.01em}
+.cx-faq summary::-webkit-details-marker{display:none}
+.cx-faq summary::after{content:"";flex:none;width:13px;height:13px;background:linear-gradient(var(--cx-ink),var(--cx-ink)) center/13px 1px no-repeat,linear-gradient(var(--cx-ink),var(--cx-ink)) center/1px 13px no-repeat;transition:transform .35s var(--cx-ease)}
+.cx-faq details[open] summary::after{transform:rotate(45deg)}
+.cx-faq details>p,.cx-faq details>div{margin:0;padding:0 0 22px;font-size:15px;line-height:1.7;color:var(--cx-mut);max-width:70ch}
+.cx-faqwrap{padding-bottom:clamp(56px,8vw,96px)}
+
+/* Sticky bar */
+.cx-sticky{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;gap:14px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--cx-line);transform:translateY(110%);transition:transform .45s var(--cx-ease)}
+.cx-sticky.is-on{transform:none}
+.cx-sticky__t{flex:1;min-width:0;font:400 17px/1.2 var(--cx-serif)}
+.cx-sticky__t small{display:block;margin-top:2px;font:400 12px/1.2 var(--cx-sans);letter-spacing:.04em;color:var(--cx-mut)}
+.cx-sticky .cx-cta{width:auto;min-height:48px;margin:0;padding:0 22px;font-size:12px!important}
+
+@media(min-width:990px){
+  .cx-wrap{padding:0 40px}
+  .cx-top{grid-template-columns:1.15fr 1fr;gap:72px;align-items:start;padding-top:40px}
+  .cx-gal{margin:0;position:sticky;top:24px}
+  .cx-galbar{justify-content:space-between;padding:16px 0 0}
+  .cx-thumbs{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+  .cx-thumbs::-webkit-scrollbar{display:none}
+  .cx-thumbs button{flex:0 0 64px;height:64px;padding:0;border:1px solid transparent;background:#fff;cursor:pointer;opacity:.5;transition:opacity .25s,border-color .25s}
+  .cx-thumbs button img{width:100%;height:100%;object-fit:contain;display:block}
+  .cx-thumbs button.is-on{opacity:1;border-color:var(--cx-ink)}
+  .cx-buy{padding-top:12px}
+  .cx-benefits{grid-template-columns:repeat(4,1fr)}
+  .cx-rit{grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+  .cx-box{grid-template-columns:repeat(3,1fr);gap:28px}
+  .cx-sticky{left:auto;right:24px;bottom:24px;width:440px;border:1px solid var(--cx-line);box-shadow:0 20px 50px -30px rgba(29,34,54,.45);transform:translateY(160%)}
+  .cx-sticky.is-on{transform:none}
+}
+@media(prefers-reduced-motion:reduce){.cx *{transition:none!important;animation:none!important}}
+</style>
+
+<script>
+(() => {
+  const root = document.querySelector('[data-gr]');
+  if (!root) return;
+  const variants = JSON.parse(root.querySelector('[data-gr-json]').textContent);
+  const idInput = root.querySelector('[data-gr-id]');
+  const fmt = (c) => '$' + (c / 100).toFixed(2);
+  const opts = [...root.querySelectorAll('[data-gr-opt]')];
+  const track = root.querySelector('[data-gr-track]');
+  const slides = [...track.children];
+  const thumbs = [...root.querySelectorAll('[data-gr-thumbs] button')];
+  const prev = root.querySelector('[data-gr-prev]'), next = root.querySelector('[data-gr-next]');
+  const mark = (i) => {
+    thumbs.forEach((t, j) => t.classList.toggle('is-on', j === i));
+    prev.disabled = i <= 0; next.disabled = i >= slides.length - 1;
+    const t = thumbs[i]; if (t && t.offsetParent) { const bar = t.parentNode; bar.scrollTo({ left: t.offsetLeft - (bar.clientWidth - t.clientWidth) / 2, behavior: 'smooth' }); }
+  };
+  const go = (i, smooth = true) => { i = Math.max(0, Math.min(slides.length - 1, i)); track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft, behavior: smooth ? 'smooth' : 'auto' }); };
+  const cur = () => Math.round(track.scrollLeft / track.clientWidth);
+  let last = -1;
+  track.addEventListener('scroll', () => { const i = cur(); if (i !== last) { last = i; mark(i); } }, { passive: true });
+  mark(0);
+  thumbs.forEach((t, i) => t.addEventListener('click', () => go(i)));
+  prev.addEventListener('click', () => go(cur() - 1));
+  next.addEventListener('click', () => go(cur() + 1));
+
+  function sync(scroll) {
+    const sel = opts.map((f) => f.querySelector('[aria-pressed="true"]')?.dataset.val);
+    const v = variants.find((x) => x.options.every((o, i) => o === sel[i]));
+    opts.forEach((f, i) => { const s = root.querySelector('[data-gr-picked="' + i + '"]'); if (s && sel[i]) s.textContent = sel[i]; });
+    const btns = root.querySelectorAll('[data-gr-atc],[data-gr-buy],[data-gr-sticky-btn]');
+    if (!v) { btns.forEach((b) => b.disabled = true); return; }
+    idInput.value = v.id;
+    ['[data-gr-price]', '[data-gr-price2]', '[data-gr-price3]'].forEach((q) => { const e = root.querySelector(q); if (e) e.textContent = fmt(v.price); });
+    const sv = root.querySelector('[data-gr-sticky-v]'); if (sv) sv.textContent = v.title;
+    const was = root.querySelector('[data-gr-was]'), save = root.querySelector('[data-gr-save]');
+    const off = v.compare_at_price && v.compare_at_price > v.price ? v.compare_at_price - v.price : 0;
+    if (was) { was.hidden = !off; if (off) was.textContent = fmt(v.compare_at_price); }
+    if (save) { save.hidden = !off; if (off) save.textContent = 'Save ' + fmt(off).replace('.00', ''); }
+    btns.forEach((b) => b.disabled = !v.available);
+    if (scroll && v.featured_media) {
+      const i = slides.findIndex((s) => s.dataset.mediaId == v.featured_media.id);
+      if (i > -1) go(i);
+    }
+    if (location.pathname.includes('/products/')) history.replaceState(null, '', '?variant=' + v.id);
+  }
+  opts.forEach((f) => f.addEventListener('click', (e) => {
+    const b = e.target.closest('.cx-tile');
+    if (!b) return;
+    f.querySelectorAll('.cx-tile').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    sync(true);
+  }));
+  sync(false);
+
+  const eta = root.querySelector('[data-gr-eta]');
+  if (eta) {
+    const add = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+    eta.innerHTML = 'Order today, delivered <b>' + add(5) + ' – ' + add(12) + '</b>';
+  }
+
+  const sticky = root.querySelector('[data-gr-sticky]');
+  const atc = root.querySelector('[data-gr-atc]');
+  // Add to bag stays on the page and opens the bag drawer (sk.js); Buy it now keeps the native checkout post.
+  const form = root.querySelector('#gr-form');
+  if (form) form.addEventListener('submit', async (e) => {
+    if (!window.SK || !window.SK.addItems) return;
+    if (e.submitter && e.submitter.name === 'return_to') return;
+    e.preventDefault();
+    if (atc.getAttribute('aria-busy') === 'true') return;
+    atc.setAttribute('aria-busy', 'true');
+    try {
+      await window.SK.addItems([{ id: Number(idInput.value), quantity: 1 }]);
+      atc.classList.add('t-done'); setTimeout(() => atc.classList.remove('t-done'), 1600);
+    } catch (err) { if (eta) { eta.textContent = err.message || 'Something went wrong. Please try again.'; eta.classList.add('is-err'); } }
+    finally { atc.removeAttribute('aria-busy'); }
+  });
+  root.querySelector('[data-gr-sticky-btn]').addEventListener('click', () => atc.click());
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => sticky.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(atc);
+  }
+})();
+</script>
+
+{% schema %}
+{"name": "Glow Ritual Set landing", "settings": [], "presets": [{"name": "Glow Ritual Set landing"}]}
+{% endschema %}

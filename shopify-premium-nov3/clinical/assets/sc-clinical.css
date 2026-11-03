@@ -1,0 +1,143 @@
+/* ==================================================================
+   SEVENCRUSH — Clinical edit (Nov 3)
+   One quiet system for every page: Bodoni Moda (display) + Jost (text,
+   tracked), slate #4F6168 and navy #1D2236 on white, square corners,
+   hairlines, no gradients. Loaded last, after glow-fix / glow-premium.
+   ================================================================== */
+:root{
+  --cx-ink:#1e2629;--cx-mut:#5d6a70;--cx-line:#dfe4e5;--cx-mist:#f2f4f4;--cx-slate:#4f6168;--cx-navy:#1d2236;
+  --cx-serif:"Bodoni Moda","Didot","Times New Roman",serif;--cx-sans:"Jost","Futura","Helvetica Neue",sans-serif;
+  /* Re-point the older tokens so every legacy rule follows the new palette */
+  --gl-pk:#4f6168;--gl-pk2:#e9edee;--gl-pk3:#f2f4f4;--gl-ink:#1e2629;--gl-mut:#5d6a70;--gl-line:#dfe4e5;--gl-grad:#1d2236;
+  --gl-font:"Jost","Futura","Helvetica Neue",sans-serif;--gl-serif:"Bodoni Moda","Didot",serif;
+  --hb-pk:#1d2236;--hb-pk-dk:#2c3350;--hb-pk-soft:#f2f4f4;--hb-ink:#1e2629;--hb-line:#dfe4e5;--hb-grey:#5d6a70;
+  --hb-disp:"Jost","Futura",sans-serif;--hb-sans:"Jost","Futura",sans-serif;--sk-sans:"Jost","Futura",sans-serif
+}
+html body.hb-page{background:#fff;color:var(--cx-ink);font-family:var(--cx-sans)!important;letter-spacing:.02em}
+html body.hb-page ::selection{background:#d9e1e3}
+
+/* ---------- Header ---------- */
+.cxh .cxh-ann{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;min-height:46px;background:var(--cx-slate);color:#fff}
+.cxh .cxh-ann__btn{display:grid;place-items:center;height:46px;border:0;background:none;color:#fff;cursor:pointer;opacity:.85}
+.cxh .cxh-ann__btn:hover{opacity:1}
+.cxh .cxh-ann__btn svg{width:8px;height:15px}
+.cxh .cxh-ann__msgs{text-align:center;min-width:0}
+html body .cxh .cxh-ann__m{display:none!important;margin:0;padding:8px 0;font:400 13px/1.35 var(--cx-sans);letter-spacing:.12em}
+html body .cxh .cxh-ann__m.is-on{display:block!important;animation:cxh-in .5s ease}
+.cxh .cxh-ann__m [data-sc-countdown]{font-variant-numeric:tabular-nums;white-space:nowrap}
+@keyframes cxh-in{from{opacity:0}to{opacity:1}}
+html body .cxh .hb-head{position:sticky;top:0;background:#fff!important;color:var(--cx-ink)!important;border-bottom:1px solid var(--cx-line)!important}
+html body .cxh .hb-head__in{min-height:92px}
+html body .cxh .hb-ico{color:var(--cx-ink)!important}
+html body .cxh .hb-ico svg{width:25px;height:25px}
+.cxh .cxh-brand{display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;color:var(--cx-ink)}
+.cxh .cxh-brand small{font:500 9.5px/1 var(--cx-sans);letter-spacing:.32em;text-transform:uppercase;color:var(--cx-ink)}
+html body .cxh .hb-logo{font:400 clamp(26px,7.4vw,38px)/1 var(--cx-sans)!important;letter-spacing:.28em!important;margin-right:-.28em;text-transform:uppercase;color:var(--cx-ink)!important}
+html body .cxh .hb-bubble{top:6px;right:4px;min-width:17px;height:17px;border-radius:50%;background:var(--cx-navy)!important;color:#fff!important;font:500 10px/17px var(--cx-sans)}
+html body .cxh .hb-menu{background:#fff}
+html body .cxh .hb-menu a{font:400 22px/1.2 var(--cx-serif)!important;text-transform:none!important;letter-spacing:.01em;color:var(--cx-ink);border-top-color:var(--cx-line)}
+.cxh .cxh-trust{list-style:none;margin:0;padding:0 20px;display:flex;gap:40px;overflow-x:auto;scrollbar-width:none;background:var(--cx-navy);color:#fff;white-space:nowrap}
+.cxh .cxh-trust::-webkit-scrollbar{display:none}
+.cxh .cxh-trust li{flex:none;padding:14px 0;font:400 13px/1 var(--cx-sans);letter-spacing:.1em}
+@media(min-width:990px){.cxh .cxh-trust{justify-content:center;gap:64px}html body .cxh .hb-head__in{min-height:104px}}
+
+/* ---------- Footer + sign-up ---------- */
+html body .hb-foot{background:var(--cx-slate)!important;color:#eef2f3!important;padding-top:clamp(64px,9vw,104px)}
+html body .hb-foot :is(ul,li,a){color:#eef2f3!important}
+html body .hb-foot a:hover{color:#fff!important}
+html body .hb-foot .hb-foot__mark{font:400 clamp(28px,6vw,44px)/1 var(--cx-sans)!important;letter-spacing:.28em!important;text-transform:uppercase;color:#fff!important}
+html body .hb-foot .hb-foot__line{color:#dfe6e8!important;font-size:15px;letter-spacing:.04em}
+html body .hb-foot .hb-foot__h{font:500 11px/1.2 var(--cx-sans)!important;letter-spacing:.28em!important;text-transform:uppercase;color:#fff!important}
+html body .hb-foot ul{font-size:15px;letter-spacing:.04em}
+html body .hb-foot .hb-foot__base{border-top-color:rgba(255,255,255,.22)!important;color:#dfe6e8!important;letter-spacing:.08em}
+html body .hb-news{border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important}
+html body .hb-news .hb-news__pic{background:var(--cx-mist)}
+html body .hb-news .hb-news__badge{border-radius:0;background:var(--cx-navy);box-shadow:none;font:500 11px/1 var(--cx-sans);letter-spacing:.24em}
+html body .hb-news .hb-news__body{background:#fff!important}
+html body .hb-news .hb-news__k{font:500 11px/1.2 var(--cx-sans)!important;letter-spacing:.28em;color:var(--cx-mut)!important}
+html body .hb-news .hb-news__h{font:400 clamp(30px,6vw,44px)/1.12 var(--cx-serif)!important;letter-spacing:.005em!important}
+html body .hb-news .hb-news__h em{font-style:italic!important;color:var(--cx-slate)!important}
+html body .hb-news .hb-news__price{font-family:var(--cx-sans)}
+html body .hb-news .hb-news__price span{border-radius:0;background:var(--cx-mist);color:var(--cx-slate)}
+html body .hb-news .hb-news__row{border:1px solid var(--cx-line);border-radius:0;padding:0;box-shadow:none!important}
+html body .hb-news .hb-news__row input{font-family:var(--cx-sans);letter-spacing:.04em}
+html body .hb-news .hb-news__row button{border-radius:0;background:var(--cx-navy)!important;box-shadow:none;font:500 12px/1 var(--cx-sans);letter-spacing:.24em;text-transform:uppercase}
+html body .hb-news .hb-news__fine{font-family:var(--cx-sans)}
+html body .hb-news .hb-news__code{border-radius:0;border:1px dashed var(--cx-slate);background:var(--cx-mist);color:var(--cx-navy);font-family:var(--cx-sans)}
+html body .hb-news .hb-news__go{border-radius:0;background:var(--cx-navy);font:500 12px/1 var(--cx-sans);letter-spacing:.24em;text-transform:uppercase}
+@media(max-width:480px){html body .hb-news .hb-news__row{border:0;gap:10px}html body .hb-news .hb-news__row input{border:1px solid var(--cx-line);min-height:52px}html body .hb-news .hb-news__row button{min-height:52px}}
+html body .sc-welcome .hb-news{border-radius:0!important}
+html body .sc-welcome{border-radius:0}
+html body .sc-welcome__close{border-radius:0;box-shadow:none}
+
+/* ---------- Buttons everywhere: square, navy, tracked ---------- */
+html body :is(.hb-pill,.hb-card__btn,.sk-btn,.hbc__btn,.hb-buynow){border-radius:0!important;background:var(--cx-navy)!important;color:#fff!important;box-shadow:none!important;font:500 12.5px/1 var(--cx-sans)!important;letter-spacing:.22em!important;text-transform:uppercase!important}
+html body :is(.hb-pill,.hb-card__btn,.sk-btn,.hbc__btn):hover{background:#2c3350!important}
+
+/* ---------- Bag drawer ---------- */
+html body #sk-cart.gc{--gc-pk:#4f6168;--gc-pk2:#e9edee;--gc-pk3:#f2f4f4;--gc-ink:#1e2629;--gc-mut:#5d6a70;--gc-line:#dfe4e5;font-family:var(--cx-sans)}
+html body #sk-cart .sk-cart__scrim{background:rgba(29,34,54,.42)}
+@media(min-width:600px){html body #sk-cart .sk-cart__panel{border-radius:0;top:0;right:0;bottom:0}}
+html body #sk-cart .sk-cart__head h2{font:400 28px/1 var(--cx-serif)!important;letter-spacing:.005em!important}
+html body #sk-cart .gc-n{border-radius:0;font-family:var(--cx-sans)}
+html body #sk-cart .sk-x{border-radius:0;background:none}
+html body #sk-cart .gc-ship{border-radius:0;background:var(--cx-mist)}
+html body #sk-cart .gc-ship__i{border-radius:0;color:var(--cx-slate)}
+html body #sk-cart .gc-ship__bar{border-radius:0;height:2px}
+html body #sk-cart .gc-ship__bar i{border-radius:0;background:var(--cx-navy)}
+html body #sk-cart .sk-line img{border-radius:0;background:var(--cx-mist)}
+html body #sk-cart .sk-line__t{font:400 18px/1.25 var(--cx-serif);letter-spacing:.005em}
+html body #sk-cart .gc-chips span{border-radius:0;background:var(--cx-mist);letter-spacing:.04em}
+html body #sk-cart .sk-line .sk-qty{border-radius:0}
+html body #sk-cart .gc-free{color:var(--cx-slate)}
+html body #sk-cart .sk-cart__foot{background:#fff}
+html body #sk-cart .sk-cart__foot .sk-sumrow.is-total span:last-child{font:400 26px/1 var(--cx-serif);letter-spacing:0}
+html body #sk-cart .gc-go{border-radius:0!important;background:var(--cx-navy)!important;box-shadow:none!important;font:500 12.5px/1 var(--cx-sans)!important;letter-spacing:.22em!important;text-transform:uppercase!important}
+html body #sk-cart .gc-go::after{content:none}
+html body #sk-cart .gc-trust svg{color:var(--cx-slate)}
+html body #sk-cart .gc-empty__i{border-radius:0;background:var(--cx-mist);color:var(--cx-slate)}
+html body #sk-cart .gc-empty b{font:400 24px/1.2 var(--cx-serif)}
+html body #sk-cart .gc-empty a{border-radius:0;background:var(--cx-navy);box-shadow:none;font:500 12px/1 var(--cx-sans);letter-spacing:.22em;text-transform:uppercase}
+
+/* ---------- Bag page, collection, simple pages ---------- */
+html body :is(.hb-title,.hb-close__h){font:400 clamp(34px,6vw,52px)/1.1 var(--cx-serif)!important;letter-spacing:.005em!important}
+html body .hb-cartpage .hb-empty{border-radius:0;background:var(--cx-mist);border:0}
+html body .hb-empty__ph{border-radius:0}
+html body .hb-empty__h{font:400 clamp(28px,5vw,40px)/1.15 var(--cx-serif)}
+html body .hb-empty__h em{color:var(--cx-slate)}
+html body .hb-empty__k{letter-spacing:.28em;color:var(--cx-mut)}
+html body .hb-cartpage__sum{border-radius:0!important;background:var(--cx-mist)!important;border:0!important}
+html body .hb-cline__img img{border-radius:0}
+html body .hb-cline__t{font:400 19px/1.3 var(--cx-serif)}
+html body .hbc .hbc__media{border-radius:0;box-shadow:none;background:var(--cx-mist)}
+html body .hbc .hbc__tag{border-radius:0;background:var(--cx-navy);font:500 10.5px/1 var(--cx-sans);letter-spacing:.22em;padding:8px 10px}
+html body .hbc .hbc__k{font:500 11px/1.3 var(--cx-sans);letter-spacing:.26em;color:var(--cx-mut)}
+html body .hbc .hbc__name{font:400 clamp(28px,5vw,40px)/1.1 var(--cx-serif)!important;text-transform:none!important}
+html body .hbc .hbc__name em{display:inline;font:italic 400 1em/1.1 var(--cx-serif);color:var(--cx-slate)}
+html body .hbc .hbc__price b{font:400 26px/1 var(--cx-serif)}
+html body .hbc .hbc__price i{font:500 11px/1 var(--cx-sans);font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:var(--cx-slate)}
+html body .hbc .hbc__offer b{color:var(--cx-slate)}
+
+/* ---------- Know your light ---------- */
+html body .gl{background:var(--cx-mist)!important;color:var(--cx-ink);padding-bottom:clamp(64px,9vw,104px)!important}
+html body .gl .gl-eye{font:500 11px/1.2 var(--cx-sans);letter-spacing:.28em;color:var(--cx-mut)}
+html body .gl .gl-eye::before{content:none}
+html body .gl .gl-h{font:400 clamp(30px,6vw,46px)/1.15 var(--cx-serif)!important;letter-spacing:.01em!important}
+html body .gl .gl-h em{font:italic 400 1em/1 var(--cx-serif)!important;color:var(--cx-slate)!important}
+html body .gl .gl-sub{color:var(--cx-mut);letter-spacing:.03em}
+html body .gl .gl-labels b{font:400 clamp(15px,2.4vw,22px)/1.2 var(--cx-serif)}
+html body .gl .gl-labels span{letter-spacing:.03em}
+html body .gl .gl-tip{letter-spacing:.03em}
+html body .gl .gl-fine{color:#7b878c}
+
+/* ---------- Policy / contact pages ---------- */
+html body .hb-policy{font-family:var(--cx-sans);letter-spacing:.02em}
+html body .hb-policy h1{font:400 clamp(34px,6vw,52px)/1.1 var(--cx-serif)}
+
+/* Display serif wins over the older "every h1/h2/summary is sans" rule */
+html body .cx :is(.cx-h1,.cx-h2),html body .cx .cx-faq summary{font-family:var(--cx-serif)!important;font-weight:400!important}
+html body .hb-news .hb-news__h,html body .hb-news .hb-news__h em{font-family:var(--cx-serif)!important;font-weight:400!important}
+html body .cx .cx-cta,html body .cx .cx-buynow,html body .cx .cx-tile{font-family:var(--cx-sans)!important}
+/* Phone gallery: less empty white around landscape photos */
+@media(max-width:989px){html body .cx .cx-slide{aspect-ratio:4/3}}
+@media(max-width:480px){html body .cxh .cxh-ann__m{font-size:12px;letter-spacing:.08em}}
