@@ -53,7 +53,6 @@
     {%- endfor -%}
     <div class="gr-stage">
       <div class="gr-track" data-gr-track tabindex="0" aria-label="Product images, {{ gr_n }} slides">{{ gr_slides }}</div>
-      <span class="gr-count" data-gr-count aria-hidden="true">1 / {{ gr_n }}</span>
     </div>
     <div class="gr-thumbs" data-gr-thumbs>{{ gr_thumbs }}</div>
     <div class="gr-ctrl">
@@ -64,9 +63,8 @@
   </div>
 
   <div class="gr-buy">
-    <p class="gr-eye">SEVENCRUSH · THE GLOW RITUAL</p>
     <h1 class="gr-h1">The Glow <em>Ritual</em> Set</h1>
-    <p class="gr-sub">LED face mask + eye wand + collagen duo. Everything for your night ritual, in one box.</p>
+    <p class="gr-sub">The LEZO LED mask, the Booster Pro eye wand and a collagen duo. One box, your whole night ritual.</p>
     {%- liquid
       assign gr_save = 0
       if cur.compare_at_price > cur.price
@@ -84,35 +82,24 @@
       <b data-gr-price>{{ cur.price | money }}</b>
       <s class="gr-was" data-gr-was{% if gr_save == 0 %} hidden{% endif %}>{{ cur.compare_at_price | money }}</s>
       <span class="gr-save" data-gr-save{% if gr_save == 0 %} hidden{% endif %}>Save {{ gr_save | money_without_trailing_zeros }}</span>
-      <span class="gr-ship">Free US shipping</span>
     </div>
     {%- if gr_pct > 0 -%}
       <div class="gr-price gr-price--off">
         <b data-gr-offnow>{{ gr_now | money }}</b>
         <s class="gr-was" data-gr-offwas>{{ cur.price | money }}</s>
         <span class="gr-save gr-save--off">−{{ gr_pct }}%</span>
-        <span class="gr-ship">Free US shipping</span>
       </div>
-      <p class="gr-offer"><span class="gr-offer__dot" aria-hidden="true"></span><span><b>{{ settings.sc_offer_title | escape }} · {{ gr_pct }}% off</b>, applied automatically at checkout. Ends in <span class="gr-offer__cd" data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></span></p>
+      <p class="gr-offer"><span class="gr-offer__dot" aria-hidden="true"></span><span>{{ gr_pct }}% off ends in <b class="gr-offer__cd" data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</b> · applied at checkout</span></p>
     {%- endif -%}
 
     {%- form 'product', p, id: 'gr-form', class: 'gr-form' -%}
       <input type="hidden" name="id" value="{{ cur.id }}" data-gr-id>
       <div class="gr-pay">{{ form | payment_terms }}</div>
 
-      <div class="gr-step">
-        <p class="gr-step__h"><span>1</span>Your LED mask <em>· included</em></p>
-        <div class="gr-fixed">
-          {% if img_mask %}{{ img_mask | image_url: width: 200 | image_tag: loading: 'lazy', alt: 'LEZO LED face mask' }}{% endif %}
-          <div><b>LEZO LED Mask · White</b><span>7 light colors · hands-free strap</span></div>
-          <i aria-hidden="true">✓</i>
-        </div>
-      </div>
-
       {%- for opt in p.options_with_values -%}
         {%- assign oi = forloop.index0 -%}
         <fieldset class="gr-step gr-opt" data-gr-opt>
-          <legend class="gr-step__h"><span>{{ forloop.index | plus: 1 }}</span>{% if oi == 0 %}Choose your eye wand color{% else %}Choose your collagen duo{% endif %}</legend>
+          <legend class="gr-step__h"><span>{{ forloop.index }}</span>{% if oi == 0 %}Eye wand color{% else %}Collagen duo{% endif %}</legend>
           <div class="gr-tiles">
             {%- for val in opt.values -%}
               {%- liquid
@@ -121,13 +108,11 @@
                 assign t_sub = ''
                 assign t_name = val
                 if oi == 0
-                  assign t_name = 'Booster Pro · ' | append: val
+                  assign t_sub = 'Booster Pro'
                   if vd contains 'pink'
                     assign t_img = img_wand_pink
-                    assign t_sub = 'Pink · 7 light colors'
                   else
                     assign t_img = img_wand_black
-                    assign t_sub = 'Black · 7 light colors'
                   endif
                 else
                   if vd contains 'pink'
@@ -137,7 +122,7 @@
                   else
                     assign t_img = img_col_blue
                     assign t_name = 'Blue · Ceramide'
-                    assign t_sub = 'For dry-feeling skin'
+                    assign t_sub = 'For dry skin'
                   endif
                 endif
               -%}
@@ -152,24 +137,15 @@
         </fieldset>
       {%- endfor -%}
 
-      <div class="gr-sum" aria-live="polite">
-        <p class="gr-sum__h">Your set</p>
-        <ul>
-          <li><i class="gr-ck" aria-hidden="true"></i>LEZO LED Mask · White</li>
-          <li><i class="gr-ck" aria-hidden="true"></i><span data-gr-sum="0">Booster Pro · {{ p.options_with_values[0].selected_value }}</span></li>
-          <li><i class="gr-ck" aria-hidden="true"></i><span><span data-gr-sum="1">{% if p.options_with_values[1].selected_value contains 'Pink' %}Pink · Collagen{% else %}Blue · Ceramide{% endif %}</span> pads + ampoule</span></li>
-        </ul>
-      </div>
-
       <button type="submit" class="gr-cta" data-gr-atc {% unless cur.available %}disabled{% endunless %}>Add my set to bag · <span class="sc-reg" data-gr-price2>{{ cur.price | money }}</span>{% if gr_pct > 0 %}<span class="sc-off" data-gr-offprice>{{ gr_now | money }}</span>{% endif %}</button>
-      <button type="submit" name="return_to" value="/checkout" class="gr-cta gr-cta--2" data-gr-buy {% unless cur.available %}disabled{% endunless %}>Buy it now</button>
+      <button type="submit" name="return_to" value="/checkout" class="gr-buynow" data-gr-buy {% unless cur.available %}disabled{% endunless %}>Buy it now</button>
       <p class="gr-eta" data-gr-eta>Order today, arrives in 5–12 days</p>
     {%- endform -%}
 
     <ul class="gr-trust">
-      <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></i><span><b>Free shipping</b>US, tracked</span></li>
-      <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></i><span><b>30-day returns</b>Unopened items</span></li>
-      <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></i><span><b>Secure checkout</b>Card, PayPal, Shop Pay</span></li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>Free US shipping</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>30-day returns</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure checkout</li>
     </ul>
     <a class="gr-5" href="#hb-news">Get 5% off your first order →</a>
   </div>
@@ -213,7 +189,7 @@
       <div class="gr-ed__c">
         <p class="gr-ed__k">In the set · 02</p>
         <h3 class="gr-ed__h">Mask + wand,<br><em>the same 7 lights.</em></h3>
-        <p class="gr-ed__o"><b>{{ cur.price | money_without_trailing_zeros }}</b><span><small>Mask + wand + duo</small><i>one price, free shipping</i></span></p>
+        <p class="gr-ed__o"><b>3-in-1</b><span><small>Mask + wand + duo</small><i>one box, free shipping</i></span></p>
         <span class="gr-ed__cta">Pick my wand color</span>
       </div>
     </a>
@@ -245,22 +221,13 @@
   <h2 class="gr-h2">The ritual, <em>without the appointment.</em></h2>
   <div class="gr-table" role="table" aria-label="In-office LED versus the Glow Ritual Set">
     <div class="gr-tr gr-th" role="row"><span role="columnheader"></span><span role="columnheader">In-office LED</span><span role="columnheader" class="is-us">Glow Ritual Set</span></div>
-    <div class="gr-tr" role="row"><span role="rowheader">Price</span><span>$25–$85 per session</span><span class="is-us">{{ cur.price | money }} once</span></div>
+    <div class="gr-tr" role="row"><span role="rowheader">Price</span><span>$25–$85 per session</span><span class="is-us"><span class="sc-reg">{{ cur.price | money }}</span>{% if gr_pct > 0 %}<span class="sc-off">{{ gr_now | money }}</span>{% endif %} once</span></div>
     <div class="gr-tr" role="row"><span role="rowheader">A 10-session course</span><span>≈ $250–$850</span><span class="is-us">Included</span></div>
     <div class="gr-tr" role="row"><span role="rowheader">When</span><span>Booked appointments</span><span class="is-us">Any night, at home</span></div>
     <div class="gr-tr" role="row"><span role="rowheader">Eye-area tool</span><span>Varies</span><span class="is-us">Booster Pro wand</span></div>
     <div class="gr-tr" role="row"><span role="rowheader">Hydration step</span><span>Varies</span><span class="is-us">Collagen duo</span></div>
   </div>
   <p class="gr-fine">In-office session prices from Healthline, citing RealSelf; they vary by location. At-home devices are not the same as professional treatments.</p>
-</div>
-
-<div class="gr-wrap gr-sec">
-  <p class="gr-eye">BEFORE YOU START</p>
-  <h2 class="gr-h2">Is it right for you?</h2>
-  <div class="gr-safe">
-    <div><b>Good to know</b><p>LED light is UV-free. Follow each manual for session time and eye protection. Patch-test the collagen products first.</p></div>
-    <div><b>Talk to your doctor first if you</b><p>Take medication that makes you sensitive to light (such as isotretinoin), have an active rash or skin condition, are pregnant, or have a condition triggered by light.</p></div>
-  </div>
 </div>
 
 <div class="gr-wrap gr-sec">
@@ -272,6 +239,7 @@
   <details class="gr-faq"><summary>How often should I use it?</summary><p>Follow the manual of each product for session time and frequency. Consistency matters more than long sessions: pick a fixed slot, like after cleansing and before bed.</p></details>
   <details class="gr-faq"><summary>How long does shipping take?</summary><p>Delivery takes 5–12 days in the US, free and tracked. You get the tracking number by email.</p></details>
   <details class="gr-faq"><summary>Can I return it?</summary><p>Yes. You have 30 days from delivery to return unopened, unused items. Email sevencrush.store@gmail.com with your order number.</p></details>
+  <details class="gr-faq"><summary>Is it right for me?</summary><p>LED light is UV-free. Follow each manual for session time and eye protection, and patch-test the collagen products first. Talk to your doctor before using it if you take medication that makes you sensitive to light (such as isotretinoin), have an active rash or skin condition, are pregnant, or have a condition triggered by light.</p></details>
   <details class="gr-faq"><summary>Full product description</summary><div>{{ p.description }}</div></details>
   <p class="gr-fine">For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Individual results vary.</p>
 </div>

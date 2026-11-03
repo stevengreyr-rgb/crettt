@@ -14,7 +14,6 @@ body .gr [hidden]{display:none!important}
 
 /* ---------- Gallery ---------- */
 body .gr .gr-stage{position:relative}
-body .gr .gr-count{position:absolute;top:14px;right:14px;z-index:2;color:#fff;border-radius:99px;pointer-events:none}
 body .gr .gr-slide{background:#fff}
 
 @media(max-width:899px){
@@ -32,7 +31,7 @@ body .gr .gr-slide{background:#fff}
 }
 @media(min-width:900px){
   body .gr .gr-dots i.is-on{background:var(--gl-ink)}
-  body .gr .gr-count{display:none}
+  body .gr .gr-dots{display:none}
 }
 
 /* ---------- Buy box details ---------- */
@@ -104,8 +103,8 @@ html.sc-offer-on .sc-reg,html.sc-offer-on body .gr .gr-price--reg,html.sc-offer-
 html.sc-offer-on body .gr .gr-price--off{display:flex!important}
 html.sc-offer-on body .gr .gr-offer{display:flex!important}
 body .gr .gr-save--off{background:var(--gl-grad);color:#fff;box-shadow:0 8px 18px -10px #e8508a}
-body .gr .gr-offer{align-items:center;gap:10px;margin:2px 0 4px;padding:11px 14px;border-radius:14px;background:linear-gradient(135deg,var(--gl-pk3),var(--gl-pk2));border:1px solid #f6d3df;font:500 13px/1.4 var(--gl-font);color:#4a3d41}
-body .gr .gr-offer b{font-weight:700;color:var(--gl-ink)}
+body .gr .gr-offer{align-items:center;gap:9px;margin:4px 0 0;padding:0;background:none;border:0;font:500 13.5px/1.4 var(--gl-font);color:var(--gl-mut)}
+body .gr .gr-offer b{font-weight:700}
 body .gr .gr-offer__cd{font-weight:700;color:var(--gl-pk);font-variant-numeric:tabular-nums;white-space:nowrap}
 body .gr .gr-offer__dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--gl-pk);box-shadow:0 0 0 0 #e8508a66;animation:sc-pulse 2s ease-out infinite}
 @keyframes sc-pulse{0%{box-shadow:0 0 0 0 #e8508a66}70%,100%{box-shadow:0 0 0 9px #e8508a00}}
@@ -123,3 +122,57 @@ body .gr .gr-cta[aria-busy=true]{color:transparent!important;pointer-events:none
 body .gr .gr-cta[aria-busy=true]::before{content:"";position:absolute;inset:0;margin:auto;width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:t-spin .7s linear infinite}
 body .gr .gr-eta.is-err{color:#a23f3f;font-weight:600}
 html.sc-offer-on .hb-news__price{display:none!important}
+
+/* ==================================================================
+   Clean pass (Nov 3, round 2): one idea per line, nothing repeated.
+   Buy box order: name › promise › price › offer › 2 choices › 1 button.
+   ================================================================== */
+body .gr .gr-sub{max-width:44ch;margin-top:12px;font-size:15.5px;line-height:1.5}
+body .gr .gr-price{margin:20px 0 0}
+body .gr .gr-price b{font-size:clamp(34px,7vw,42px)}
+body .gr .gr-pay{margin-top:10px;font-size:12px;color:#9a8f92}
+body .gr .gr-pay:empty{display:none}
+body .gr .gr-form{margin-top:4px}
+
+/* Choices: two clear rows, roomy tiles, color name first */
+body .gr .gr-step{margin:26px 0 0}
+body .gr .gr-step__h{margin:0 0 12px;font:600 14px/1.2 var(--gl-font);letter-spacing:0;color:var(--gl-ink)}
+body .gr .gr-step__h span{width:22px;height:22px;font-size:11px;background:var(--gl-ink)}
+body .gr .gr-tiles{gap:10px}
+body .gr .gr-tile{grid-template-columns:44px 1fr;column-gap:12px;min-height:64px;padding:9px 34px 9px 9px;border:1.5px solid #ece4e7;border-radius:16px;background:#fff;box-shadow:none}
+body .gr .gr-tile__img{width:44px;height:44px;border-radius:12px;background:#faf6f7}
+body .gr .gr-tile b{font-size:14px;font-weight:600;letter-spacing:-.01em}
+body .gr .gr-tile small{font-size:12px;color:var(--gl-mut)}
+body .gr .gr-tile__ok{right:10px;width:18px;height:18px;border-width:1.5px}
+body .gr .gr-tile[aria-pressed="true"]{border-color:var(--gl-ink);background:#fff;box-shadow:0 0 0 1px var(--gl-ink)}
+body .gr .gr-tile[aria-pressed="true"] .gr-tile__ok{background:var(--gl-ink);border-color:var(--gl-ink)}
+
+/* One button, one quiet alternative */
+body .gr .gr-cta[data-gr-atc]{margin-top:28px}
+body .gr .gr-buynow{display:block;width:100%;margin:6px 0 0;padding:14px;border:0;background:none;color:var(--gl-ink);font:600 15px/1 var(--gl-font);text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px;cursor:pointer}
+body .gr .gr-buynow:hover{color:var(--gl-pk)}
+body .gr .gr-buynow[disabled]{opacity:.4;cursor:not-allowed}
+body .gr .gr-eta{margin:4px 0 0;font-size:13px}
+
+/* Reassurance: a single line, not three boxes */
+body .gr .gr-trust{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;margin:18px 0 0;padding:16px 0 0;border-top:1px solid var(--gl-line)}
+body .gr .gr-trust li{display:inline-flex;flex-direction:row;align-items:center;gap:6px;padding:0;border:0;border-radius:0;background:none;font:500 12.5px/1.2 var(--gl-font);color:var(--gl-mut)}
+body .gr .gr-trust svg{flex:none;width:16px;height:16px;color:var(--gl-pk)}
+
+/* Sticky bar: name + price only */
+body .gr .gr-sticky__t small{display:none}
+
+/* Desktop: buy box breathes */
+@media(min-width:900px){
+  body .gr .gr-top{gap:64px}
+  body .gr .gr-buy{padding-top:8px;max-width:520px}
+}
+
+/* Footer sign-up: shorter */
+.hb-news .hb-news__perks{display:none}
+
+/* Rhythm between the landing and "Know your light": one gap, not two stacked paddings */
+body .gr{padding-bottom:24px}
+body .gl{padding-top:clamp(64px,9vw,100px)!important}
+/* Same left edge as every other section */
+body .gl .gl-in{max-width:1200px}

@@ -30,3 +30,18 @@ Preview: `https://sevencrush.com/products/sevencrush-glow-ritual-set-led-mask-ey
 `layout/theme.liquid` (loads `glow-premium.css`), `assets/glow-premium.css` (new), `sections/glow-set.liquid`,
 `sections/hb-footer.liquid`, `sections/hb-cart.liquid`, `snippets/hb-card.liquid`, `snippets/hb-header.liquid`,
 `snippets/sc-offer.liquid` (new), `snippets/sk-cart-drawer.liquid`, `config/settings_schema.json`, `config/settings_data.json`.
+
+## Clean pass (round 2)
+Feedback: "se ve desordenado y amontonado". Buy box rebuilt as one clear path:
+name › one-line promise › price (one row: $114.00 ~~$189.99~~ −40%) › one quiet line with the countdown ›
+2 choices › 1 button.
+- Removed: eyebrow over the title, "Free US shipping" chip in the price row, the offer box (now one line),
+  step 1 "Your LED mask · included" (not a choice; it's in the promise line), the "Your set" summary (repeated the tiles),
+  the 1/9 counter (dots already show it), the three trust boxes (now one quiet line), the sticky bar's variant text,
+  the footer sign-up perks list.
+- "Buy it now" is a quiet text button under the main CTA instead of a second big button.
+- Choice tiles: color name first ("Pink / Booster Pro"), roomier, selected = ink outline (calmer than pink everywhere).
+- "Is it right for you?" section folded into the FAQ ("Is it right for me?"), same safety text.
+- No more mixed prices: the "Mask + wand" tile shows "3-in-1" instead of $189.99, and the clinic table shows the offer price while it runs.
+- One gap between the landing and "Know your light"; that section now shares the same left edge.
+Phone page: 7,268 → 6,351 px tall.
