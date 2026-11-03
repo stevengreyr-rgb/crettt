@@ -45,3 +45,9 @@ name › one-line promise › price (one row: $114.00 ~~$189.99~~ −40%) › on
 - No more mixed prices: the "Mask + wand" tile shows "3-in-1" instead of $189.99, and the clinic table shows the offer price while it runs.
 - One gap between the landing and "Know your light"; that section now shares the same left edge.
 Phone page: 7,268 → 6,351 px tall.
+
+## Price stays the real price (round 3)
+The page shows the product's real price everywhere ($189.99, compare-at $290.96 struck, Save $100.97) — buy box,
+button, sticky bar, clinic table and collection card. The 40% offer is only announced (one line with the countdown,
+"applied at checkout", plus the top strip); the discount itself still comes off at checkout via the automatic discount.
+Product prices in Shopify were never changed (all 4 variants: 189.99 / compare 290.96).

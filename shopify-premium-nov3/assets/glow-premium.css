@@ -99,8 +99,10 @@ body .hb-gridpage .hbc__btn{text-transform:none;letter-spacing:.01em;font-size:1
 .sc-off,body .gr .gr-price--off,body .gr .gr-offer{display:none!important}
 html.sc-offer-on :is(span,a,b).sc-off{display:inline!important}
 html.sc-offer-on p.sc-off{display:block!important}
-html.sc-offer-on .sc-reg,html.sc-offer-on body .gr .gr-price--reg,html.sc-offer-on body .gr .gr-5{display:none!important}
-html.sc-offer-on body .gr .gr-price--off{display:flex!important}
+html.sc-offer-on .sc-reg,html.sc-offer-on body .gr .gr-5{display:none!important}
+/* The price always shows the real price ($189.99, compare-at struck); the offer is only announced, never pre-subtracted */
+html.sc-offer-on body .gr .sc-reg{display:inline!important}
+html.sc-offer-on body .gr .sc-off,html.sc-offer-on body .gr .gr-price--off{display:none!important}
 html.sc-offer-on body .gr .gr-offer{display:flex!important}
 body .gr .gr-save--off{background:var(--gl-grad);color:#fff;box-shadow:0 8px 18px -10px #e8508a}
 body .gr .gr-offer{align-items:center;gap:9px;margin:4px 0 0;padding:0;background:none;border:0;font:500 13.5px/1.4 var(--gl-font);color:var(--gl-mut)}

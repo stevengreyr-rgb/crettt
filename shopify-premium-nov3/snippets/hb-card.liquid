@@ -80,8 +80,7 @@
   {%- if why != '' -%}<p class="hb-card__why hbc__why">{{ why }}</p>{%- endif -%}
   <p class="hb-card__price hbc__price"><b>{% if p.price_varies %}<small>From</small> {% endif %}{{ v.price | money }}</b>{% if v.compare_at_price > v.price %}<s>{{ v.compare_at_price | money }}</s>{% endif %}{% if note != '' %}<i>{{ note }}</i>{% endif %}</p>
   {%- if settings.sc_offer_on and settings.sc_offer_pct > 0 -%}
-    {%- assign off_now = v.price | times: settings.sc_offer_pct | divided_by: 100 | times: -1 | plus: v.price -%}
-    <p class="hbc__offer sc-off"><b>{{ off_now | money }}</b> with {{ settings.sc_offer_pct }}% off at checkout · ends in <span data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></p>
+    <p class="hbc__offer sc-off"><b>{{ settings.sc_offer_pct }}% off</b> at checkout · ends in <span data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></p>
   {%- endif -%}
   {%- if quick and v.available -%}
     <button type="button" class="hb-card__btn hbc__btn" data-sk-add='[{"id":{{ v.id }},"quantity":1}]'>Add to bag</button>
