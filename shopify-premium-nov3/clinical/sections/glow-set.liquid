@@ -14,7 +14,10 @@
   assign img_wand_black = images['sc-booster-black-hd.png']
   assign img_col_pink = images['sk-cut-collagen-duo.png']
   assign img_col_blue = images['sk-cut-ceranol-duo.png']
-  assign img_ritual = images['IMG_1723.png']
+  assign img_ritual = images['cx-mask-sofa.png']
+  assign img_mask_st = images['cx-mask-studio.png']
+  assign img_wand_st = images['cx-wand-studio.png']
+  assign img_table = images['cx-ritual-table.png']
   assign img_box = images['sc-whats-in-the-box.jpg']
   assign gr_save = 0
   if cur.compare_at_price > cur.price
@@ -165,7 +168,10 @@
   <h2 class="cx-h2 cx-h2--ink">Five steps, twenty minutes.</h2>
   <div class="cx-rit">
     {%- if img_ritual -%}
-      <figure class="cx-rit__ph">{{ img_ritual | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 45vw, 100vw', loading: 'lazy', alt: 'Woman pressing in the collagen ampoule with a dropper' }}</figure>
+      <figure class="cx-rit__ph">
+        <span class="cx-rit__img">{{ img_ritual | image_url: width: 1600 | image_tag: widths: '500,800,1100,1400,1600', sizes: '(min-width: 990px) 45vw, 100vw', loading: 'lazy', alt: 'Woman resting on a cream sofa wearing the LED mask lit red' }}</span>
+        <figcaption>Eyes closed, hands free. The mask does the work while you rest.</figcaption>
+      </figure>
     {%- endif -%}
     <ol class="cx-steps">
       <li><span>I</span><div><b>Cleanse</b><p>Start on clean, dry skin with makeup removed.</p></div></li>
@@ -179,22 +185,25 @@
 
 <div class="cx-wrap cx-sec">
   <p class="cx-kick">In the box</p>
-  <h2 class="cx-h2 cx-h2--ink">Three tools, one routine.</h2>
+  <h2 class="cx-h2 cx-h2--ink">Three tools, one considered routine.</h2>
   <div class="cx-box">
-    <a class="cx-card" href="#gr-form">
-      <span class="cx-card__ph">{{ images['sc-ed2-lezo.png'] | image_url: width: 1400 | image_tag: widths: '600,900,1200', sizes: '(min-width: 990px) 33vw, 100vw', alt: 'Model holding the LEZO LED mask, lit red', loading: 'lazy' }}</span>
+    <a class="cx-card cx-card--tall" href="#gr-form">
+      <span class="cx-card__ph">{% if img_mask_st %}{{ img_mask_st | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 40vw, 100vw', alt: 'Woman holding the white LEZO LED mask, lit red, in front of her face', loading: 'lazy' }}{% endif %}</span>
+      <span class="cx-card__k">01 · The mask</span>
       <b>The LEZO LED Mask</b>
-      <span>Full-face light on an adjustable strap, open at the eyes and mouth. Seven colors.</span>
+      <span class="cx-card__d">A sculpted full-face shell that rests lightly on the skin and leaves your hands free. Seven light colors, an adjustable woven strap, open at the eyes and mouth: the center of the evening ritual.</span>
     </a>
-    <a class="cx-card" href="#gr-form">
-      <span class="cx-card__ph">{{ images['sc-refined-daily-oct29.png'] | image_url: width: 1400 | image_tag: widths: '600,900,1200', sizes: '(min-width: 990px) 33vw, 100vw', alt: 'LEZO mask and Booster Pro wand on a blush set', loading: 'lazy' }}</span>
-      <b>The Booster Pro Wand</b>
-      <span>The same seven lights in a USB-rechargeable wand for the eye area. Pink or black.</span>
+    <a class="cx-card cx-card--tall" href="#gr-form">
+      <span class="cx-card__ph">{% if img_wand_st %}{{ img_wand_st | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 40vw, 100vw', alt: 'The black Booster Pro LED eye wand standing upright, its chrome head lit red', loading: 'lazy' }}{% endif %}</span>
+      <span class="cx-card__k">02 · The wand</span>
+      <b>The Booster Pro</b>
+      <span class="cx-card__d">Precision for the most delicate skin. The same seven lights in a slim, USB-rechargeable wand, its chrome head shaped to follow the contour of the eye. In pink or black.</span>
     </a>
-    <a class="cx-card" href="#gr-form">
-      <span class="cx-card__ph">{{ images['sc-refined-gel-oct29.png'] | image_url: width: 1400 | image_tag: widths: '600,900,1200', sizes: '(min-width: 990px) 33vw, 100vw', alt: 'Model with a gel pad beside collagen pads and ampoule', loading: 'lazy' }}</span>
+    <a class="cx-card cx-card--wide" href="#gr-form">
+      <span class="cx-card__ph">{% if img_table %}{{ img_table | image_url: width: 2000 | image_tag: widths: '600,900,1200,1600,2000', sizes: '(min-width: 990px) 80vw, 100vw', alt: 'Woman patting her cheeks at a white table with the LED mask, collagen pads and ampoule', loading: 'lazy' }}{% endif %}</span>
+      <span class="cx-card__k">03 · The duo</span>
       <b>The Collagen Duo</b>
-      <span>Gel toner pads with a matching ampoule. Pink collagen or blue ceramide.</span>
+      <span class="cx-card__d">The step before the light and the step after. Gel toner pads prepare the skin while you set up; a few drops of ampoule seal it in once the session ends. Pink collagen or blue ceramide.</span>
     </a>
   </div>
 </div>
@@ -319,8 +328,7 @@ html.sc-offer-on .cx-offer{display:block}
 /* Sections */
 .cx-sec{padding-top:clamp(72px,10vw,120px)}
 .cx-rit{display:grid;gap:32px}
-.cx-rit__ph{margin:0;aspect-ratio:4/5;overflow:hidden;background:var(--cx-mist)}
-.cx-rit__ph img{width:100%;height:100%;object-fit:cover;display:block}
+.cx-rit__ph{margin:0}
 .cx-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--cx-line)}
 .cx-steps li{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:22px 0;border-bottom:1px solid var(--cx-line)}
 .cx-steps li>span{font:italic 400 22px/1.2 var(--cx-serif);color:var(--cx-slate)}
@@ -332,7 +340,13 @@ html.sc-offer-on .cx-offer{display:block}
 .cx-card__ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s var(--cx-ease)}
 .cx-card:hover .cx-card__ph img{transform:scale(1.03)}
 .cx-card b{display:block;font:400 24px/1.25 var(--cx-serif)}
-.cx-card>span:last-child{display:block;margin-top:8px;font-size:15px;line-height:1.6;color:var(--cx-mut)}
+.cx-card__k{display:block;margin-bottom:10px;font:500 10.5px/1.2 var(--cx-sans);letter-spacing:.28em;text-transform:uppercase;color:var(--cx-mut)}
+.cx-card__d{display:block;margin-top:10px;max-width:52ch;font-size:15px;line-height:1.7;color:var(--cx-mut)}
+.cx-card--tall .cx-card__ph{aspect-ratio:4/5}
+.cx-card--wide .cx-card__ph{aspect-ratio:3/2}
+.cx-rit__img{display:block;aspect-ratio:4/5;overflow:hidden;background:var(--cx-mist)}
+.cx-rit__img img{width:100%;height:100%;object-fit:cover;display:block}
+.cx-rit__ph figcaption{margin-top:14px;font:italic 400 17px/1.5 var(--cx-serif);color:var(--cx-mut)}
 .cx-table{border-top:1px solid var(--cx-ink)}
 .cx-tr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:16px 0;border-bottom:1px solid var(--cx-line);font-size:14.5px;line-height:1.45}
 .cx-tr>span:first-child{font:500 11px/1.7 var(--cx-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--cx-mut)}
@@ -368,7 +382,9 @@ html.sc-offer-on .cx-offer{display:block}
   .cx-buy{padding-top:12px}
   .cx-benefits{grid-template-columns:repeat(4,1fr)}
   .cx-rit{grid-template-columns:1fr 1fr;gap:72px;align-items:center}
-  .cx-box{grid-template-columns:repeat(3,1fr);gap:28px}
+  .cx-box{grid-template-columns:1fr 1fr;gap:56px 32px}
+  .cx-card--wide{grid-column:1/-1}
+  .cx-card--wide b,.cx-card--wide .cx-card__k,.cx-card--wide .cx-card__d{max-width:640px}
   .cx-sticky{left:auto;right:24px;bottom:24px;width:440px;border:1px solid var(--cx-line);box-shadow:0 20px 50px -30px rgba(29,34,54,.45);transform:translateY(160%)}
   .cx-sticky.is-on{transform:none}
 }

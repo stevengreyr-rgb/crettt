@@ -19,3 +19,12 @@ a copy of "Premium Clean". Whole storefront re-dressed in a quiet clinical-edito
 Preview: https://sevencrush.com/products/sevencrush-glow-ritual-set-led-mask-eye-wand-collagen-duo?preview_theme_id=168541618395
 
 - Nov 3 fix: "In the box" photos shown at their own 16:9 shape and the ritual photo square, so nothing is cropped.
+
+## New photography (Nov 3)
+Four studio images chosen by the merchant from Higgsfield, uploaded to Settings › Files and used once each:
+- `cx-mask-sofa.png` — The ritual photo, caption "Eyes closed, hands free. The mask does the work while you rest."
+- `cx-mask-studio.png` — In the box · 01 The LEZO LED Mask
+- `cx-wand-studio.png` — In the box · 02 The Booster Pro
+- `cx-ritual-table.png` — In the box · 03 The Collagen Duo (wide)
+The four older pink banners are no longer used. No image repeats anywhere in the theme: option tiles use color
+swatches (their product cutouts already sit in the gallery), and the sign-up card and empty bag are text-only.
