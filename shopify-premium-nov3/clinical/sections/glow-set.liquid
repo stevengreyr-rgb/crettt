@@ -15,7 +15,6 @@
   assign img_col_pink = images['sk-cut-collagen-duo.png']
   assign img_col_blue = images['sk-cut-ceranol-duo.png']
   assign img_ritual = images['cx-mask-sofa.png']
-  assign img_mask_st = images['cx-mask-studio.png']
   assign img_wand_st = images['cx-wand-studio.png']
   assign img_table = images['cx-ritual-table.png']
   assign img_box = images['sc-whats-in-the-box.jpg']
@@ -23,6 +22,7 @@
   if cur.compare_at_price > cur.price
     assign gr_save = cur.compare_at_price | minus: cur.price
   endif
+  assign gr_per = cur.price | divided_by: 100
   assign gr_pct = 0
   if settings.sc_offer_on and settings.sc_offer_pct > 0
     assign gr_pct = settings.sc_offer_pct
@@ -135,11 +135,17 @@
       <button type="submit" class="cx-cta" data-gr-atc {% unless cur.available %}disabled{% endunless %}><span>Add to bag</span><span aria-hidden="true">·</span><span data-gr-price2>{{ cur.price | money }}</span></button>
       <button type="submit" name="return_to" value="/checkout" class="cx-buynow" data-gr-buy {% unless cur.available %}disabled{% endunless %}>Buy it now</button>
       <p class="cx-eta" data-gr-eta>Order today, delivered in 5–12 days</p>
+      <div class="cx-pay">
+        <p><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1" fill="none" stroke="currentColor"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor"/></svg>Secure, encrypted checkout</p>
+        {%- if shop.enabled_payment_types.size > 0 -%}
+          <ul aria-label="Accepted payment methods">{%- for t in shop.enabled_payment_types limit: 6 -%}<li>{{ t | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
+        {%- endif -%}
+      </div>
     {%- endform -%}
 
     <dl class="cx-facts">
       <div><dt>In the box</dt><dd>LEZO LED mask, Booster Pro eye wand, gel pads and ampoule</dd></div>
-      <div><dt>Lights</dt><dd>7 colors on the mask and the wand</dd></div>
+      <div><dt>Lights</dt><dd>7 colors on the mask and the wand<span class="cx-lights" aria-hidden="true"><i style="--c:#d8352f"></i><i style="--c:#2f6fd8"></i><i style="--c:#3aa45a"></i><i style="--c:#e8c43a"></i><i style="--c:#8a4fc8"></i><i style="--c:#3cc4cf"></i><i style="--c:#f4f4f1"></i></span></dd></div>
       <div><dt>Shipping</dt><dd>Free and tracked across the US</dd></div>
       <div><dt>Returns</dt><dd>30 days on unopened items</dd></div>
     </dl>
@@ -185,25 +191,19 @@
 
 <div class="cx-wrap cx-sec">
   <p class="cx-kick">In the box</p>
-  <h2 class="cx-h2 cx-h2--ink">Three tools, one considered routine.</h2>
+  <h2 class="cx-h2 cx-h2--ink">The two steps around the mask.</h2>
   <div class="cx-box">
-    <a class="cx-card cx-card--tall" href="#gr-form">
-      <span class="cx-card__ph">{% if img_mask_st %}{{ img_mask_st | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 40vw, 100vw', alt: 'Woman holding the white LEZO LED mask, lit red, in front of her face', loading: 'lazy' }}{% endif %}</span>
-      <span class="cx-card__k">01 · The mask</span>
-      <b>The LEZO LED Mask</b>
-      <span class="cx-card__d">A sculpted full-face shell that rests lightly on the skin and leaves your hands free. Seven light colors, an adjustable woven strap, open at the eyes and mouth: the center of the evening ritual.</span>
-    </a>
-    <a class="cx-card cx-card--tall" href="#gr-form">
+    <a class="cx-card cx-card--split" href="#gr-form">
       <span class="cx-card__ph">{% if img_wand_st %}{{ img_wand_st | image_url: width: 1400 | image_tag: widths: '500,800,1100,1400', sizes: '(min-width: 990px) 40vw, 100vw', alt: 'The black Booster Pro LED eye wand standing upright, its chrome head lit red', loading: 'lazy' }}{% endif %}</span>
-      <span class="cx-card__k">02 · The wand</span>
+      <span class="cx-card__tx"><span class="cx-card__k">01 · The wand</span>
       <b>The Booster Pro</b>
-      <span class="cx-card__d">Precision for the most delicate skin. The same seven lights in a slim, USB-rechargeable wand, its chrome head shaped to follow the contour of the eye. In pink or black.</span>
+      <span class="cx-card__d">Precision for the most delicate skin. The same seven lights in a slim, USB-rechargeable wand, its chrome head shaped to follow the contour of the eye. In pink or black.</span></span>
     </a>
-    <a class="cx-card cx-card--wide" href="#gr-form">
+    <a class="cx-card cx-card--split cx-card--rev" href="#gr-form">
       <span class="cx-card__ph">{% if img_table %}{{ img_table | image_url: width: 2000 | image_tag: widths: '600,900,1200,1600,2000', sizes: '(min-width: 990px) 80vw, 100vw', alt: 'Woman patting her cheeks at a white table with the LED mask, collagen pads and ampoule', loading: 'lazy' }}{% endif %}</span>
-      <span class="cx-card__k">03 · The duo</span>
+      <span class="cx-card__tx"><span class="cx-card__k">02 · The duo</span>
       <b>The Collagen Duo</b>
-      <span class="cx-card__d">The step before the light and the step after. Gel toner pads prepare the skin while you set up; a few drops of ampoule seal it in once the session ends. Pink collagen or blue ceramide.</span>
+      <span class="cx-card__d">The step before the light and the step after. Gel toner pads prepare the skin while you set up; a few drops of ampoule seal it in once the session ends. Pink collagen or blue ceramide.</span></span>
     </a>
   </div>
 </div>
@@ -215,6 +215,7 @@
     <div class="cx-tr cx-th" role="row"><span role="columnheader"></span><span role="columnheader">In-office LED</span><span role="columnheader">The Glow Ritual Set</span></div>
     <div class="cx-tr" role="row"><span role="rowheader">Cost</span><span>$25–$85 per session</span><span>{{ cur.price | money }}, once</span></div>
     <div class="cx-tr" role="row"><span role="rowheader">Ten sessions</span><span>About $250–$850</span><span>Included</span></div>
+    <div class="cx-tr" role="row"><span role="rowheader">Per session</span><span>$25–$85</span><span>About {{ gr_per | money }} over 100 evenings</span></div>
     <div class="cx-tr" role="row"><span role="rowheader">When</span><span>By appointment</span><span>Any evening, at home</span></div>
   </div>
   <p class="cx-fine">In-office session prices from Healthline, citing RealSelf; they vary by location. At-home devices are not the same as professional treatments.</p>
@@ -233,6 +234,16 @@
     <details><summary>Full product description</summary><div>{{ p.description }}</div></details>
   </div>
   <p class="cx-fine">For cosmetic use. Not intended to diagnose, treat, cure or prevent any disease. Individual results vary.</p>
+</div>
+
+<div class="cx-end">
+  <div class="cx-wrap">
+    <p class="cx-kick">Tonight</p>
+    <h2 class="cx-h2">Twenty minutes, one box, every evening.</h2>
+    <p class="cx-end__p"><span data-gr-price4>{{ cur.price | money }}</span>{%- if gr_pct > 0 -%}<span class="cx-end__o"> · {{ gr_pct }}% off at checkout, ends in <span data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></span>{%- endif -%}</p>
+    <button type="button" class="cx-cta cx-cta--light" data-gr-end-btn {% unless cur.available %}disabled{% endunless %}>Add to bag</button>
+    <p class="cx-end__f">Free tracked shipping · 30-day returns · Secure checkout</p>
+  </div>
 </div>
 
 <div class="cx-sticky" data-gr-sticky>
@@ -342,8 +353,9 @@ html.sc-offer-on .cx-offer{display:block}
 .cx-card b{display:block;font:400 24px/1.25 var(--cx-serif)}
 .cx-card__k{display:block;margin-bottom:10px;font:500 10.5px/1.2 var(--cx-sans);letter-spacing:.28em;text-transform:uppercase;color:var(--cx-mut)}
 .cx-card__d{display:block;margin-top:10px;max-width:52ch;font-size:15px;line-height:1.7;color:var(--cx-mut)}
-.cx-card--tall .cx-card__ph{aspect-ratio:4/5}
-.cx-card--wide .cx-card__ph{aspect-ratio:3/2}
+.cx-card__tx{display:block}
+.cx-card--split:first-child .cx-card__ph{aspect-ratio:1/1}
+.cx-card--rev .cx-card__ph{aspect-ratio:3/2}
 .cx-rit__img{display:block;aspect-ratio:4/5;overflow:hidden;background:var(--cx-mist)}
 .cx-rit__img img{width:100%;height:100%;object-fit:cover;display:block}
 .cx-rit__ph figcaption{margin-top:14px;font:italic 400 17px/1.5 var(--cx-serif);color:var(--cx-mut)}
@@ -362,6 +374,26 @@ html.sc-offer-on .cx-offer{display:block}
 .cx-faq details>p,.cx-faq details>div{margin:0;padding:0 0 22px;font-size:15px;line-height:1.7;color:var(--cx-mut);max-width:70ch}
 .cx-faqwrap{padding-bottom:clamp(56px,8vw,96px)}
 
+/* Payment, lights, closing */
+.cx-pay{margin:18px 0 0;padding-top:16px;border-top:1px solid var(--cx-line);text-align:center}
+.cx-pay p{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font:500 10.5px/1.2 var(--cx-sans);letter-spacing:.22em;text-transform:uppercase;color:var(--cx-mut)}
+.cx-pay svg{width:13px;height:13px}
+.cx-pay ul{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;list-style:none;margin:12px 0 0;padding:0}
+.cx-pay li svg{display:block;width:38px;height:24px}
+.cx-lights{display:flex;gap:6px;margin-top:8px}
+.cx-lights i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(30,38,41,.14)}
+.cx-end{background:var(--cx-navy);color:#fff;text-align:center}
+.cx-end .cx-wrap{padding-top:clamp(64px,9vw,104px);padding-bottom:clamp(64px,9vw,104px)}
+.cx-end .cx-kick{color:#aeb6c6}
+.cx-end .cx-h2{max-width:18ch;margin:0 auto}
+.cx-end__p{margin:22px 0 0;font:400 24px/1.4 var(--cx-serif)}
+.cx-end__o{font:400 14px/1.4 var(--cx-sans);letter-spacing:.04em;color:#d6dbe6}
+.cx-end__o span{font-variant-numeric:tabular-nums}
+html:not(.sc-offer-on) .cx-end__o{display:none}
+.cx-cta--light{max-width:380px;margin:28px auto 0;background:#fff!important;color:var(--cx-navy)!important}
+.cx-cta--light:hover{background:#e9ecf2!important}
+.cx-end__f{margin:16px 0 0;font-size:12.5px;letter-spacing:.06em;color:#aeb6c6}
+
 /* Sticky bar */
 .cx-sticky{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;gap:14px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--cx-line);transform:translateY(110%);transition:transform .45s var(--cx-ease)}
 .cx-sticky.is-on{transform:none}
@@ -369,6 +401,24 @@ html.sc-offer-on .cx-offer{display:block}
 .cx-sticky__t small{display:block;margin-top:2px;font:400 12px/1.2 var(--cx-sans);letter-spacing:.04em;color:var(--cx-mut)}
 .cx-sticky .cx-cta{width:auto;min-height:48px;margin:0;padding:0 22px;font-size:12px!important}
 
+@media(max-width:989px){
+  .cx-top{gap:18px}
+  .cx-galbar{padding-top:8px}
+  .cx-kick{margin-bottom:8px}
+  .cx-h1{font-size:27px;line-height:1.18}
+  .cx-sub{display:none}
+  .cx-price{margin-top:14px}
+  .cx-price__now{font-size:26px}
+  .cx-offer{margin-top:10px;padding:9px 12px;font-size:12.5px}
+  .cx-opt{margin-top:18px}
+  .cx-opt legend{margin-bottom:8px}
+  .cx-tiles{gap:8px}
+  .cx-tile{min-height:52px;padding:8px 10px;gap:10px}
+  .cx-tile small{display:none}
+  .cx-cta{margin-top:20px;min-height:54px}
+  .cx-buynow{padding:13px}
+  .cx-eta{margin-top:10px}
+}
 @media(min-width:990px){
   .cx-wrap{padding:0 40px}
   .cx-top{grid-template-columns:1.15fr 1fr;gap:72px;align-items:start;padding-top:40px}
@@ -382,9 +432,11 @@ html.sc-offer-on .cx-offer{display:block}
   .cx-buy{padding-top:12px}
   .cx-benefits{grid-template-columns:repeat(4,1fr)}
   .cx-rit{grid-template-columns:1fr 1fr;gap:72px;align-items:center}
-  .cx-box{grid-template-columns:1fr 1fr;gap:56px 32px}
-  .cx-card--wide{grid-column:1/-1}
-  .cx-card--wide b,.cx-card--wide .cx-card__k,.cx-card--wide .cx-card__d{max-width:640px}
+  .cx-box{gap:88px}
+  .cx-card--split{display:grid;grid-template-columns:1.1fr 1fr;gap:64px;align-items:center}
+  .cx-card--split .cx-card__ph{margin:0}
+  .cx-card--rev{grid-template-columns:1fr 1.25fr}
+  .cx-card--rev .cx-card__ph{order:2}
   .cx-sticky{left:auto;right:24px;bottom:24px;width:440px;border:1px solid var(--cx-line);box-shadow:0 20px 50px -30px rgba(29,34,54,.45);transform:translateY(160%)}
   .cx-sticky.is-on{transform:none}
 }
@@ -421,10 +473,10 @@ html.sc-offer-on .cx-offer{display:block}
     const sel = opts.map((f) => f.querySelector('[aria-pressed="true"]')?.dataset.val);
     const v = variants.find((x) => x.options.every((o, i) => o === sel[i]));
     opts.forEach((f, i) => { const s = root.querySelector('[data-gr-picked="' + i + '"]'); if (s && sel[i]) s.textContent = sel[i]; });
-    const btns = root.querySelectorAll('[data-gr-atc],[data-gr-buy],[data-gr-sticky-btn]');
+    const btns = root.querySelectorAll('[data-gr-atc],[data-gr-buy],[data-gr-sticky-btn],[data-gr-end-btn]');
     if (!v) { btns.forEach((b) => b.disabled = true); return; }
     idInput.value = v.id;
-    ['[data-gr-price]', '[data-gr-price2]', '[data-gr-price3]'].forEach((q) => { const e = root.querySelector(q); if (e) e.textContent = fmt(v.price); });
+    ['[data-gr-price]', '[data-gr-price2]', '[data-gr-price3]', '[data-gr-price4]'].forEach((q) => { const e = root.querySelector(q); if (e) e.textContent = fmt(v.price); });
     const sv = root.querySelector('[data-gr-sticky-v]'); if (sv) sv.textContent = v.title;
     const was = root.querySelector('[data-gr-was]'), save = root.querySelector('[data-gr-save]');
     const off = v.compare_at_price && v.compare_at_price > v.price ? v.compare_at_price - v.price : 0;
@@ -468,8 +520,15 @@ html.sc-offer-on .cx-offer{display:block}
     finally { atc.removeAttribute('aria-busy'); }
   });
   root.querySelector('[data-gr-sticky-btn]').addEventListener('click', () => atc.click());
+  const endBtn = root.querySelector('[data-gr-end-btn]'); if (endBtn) endBtn.addEventListener('click', () => atc.click());
   if ('IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => sticky.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(atc);
+    // Phones: the bar shows whenever the main button is off screen, so checkout is never more than a tap away.
+    const mq = matchMedia('(max-width: 989px)');
+    const end = root.querySelector('.cx-end');
+    let atcIn = true, endIn = false;
+    const paint = (e) => sticky.classList.toggle('is-on', !atcIn && !endIn && (mq.matches || e));
+    new IntersectionObserver(([e]) => { atcIn = e.isIntersecting; paint(e.boundingClientRect.top < 0); }).observe(atc);
+    if (end) new IntersectionObserver(([e]) => { endIn = e.isIntersecting; paint(true); }).observe(end);
   }
 })();
 </script>
