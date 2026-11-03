@@ -240,7 +240,7 @@
   <div class="cx-wrap">
     <p class="cx-kick">Tonight</p>
     <h2 class="cx-h2">Twenty minutes, one box, every evening.</h2>
-    <p class="cx-end__p"><span data-gr-price4>{{ cur.price | money }}</span>{%- if gr_pct > 0 -%}<span class="cx-end__o"> · {{ gr_pct }}% off at checkout, ends in <span data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></span>{%- endif -%}</p>
+    <p class="cx-end__p"><span data-gr-price4>{{ cur.price | money }}</span>{%- if gr_pct > 0 -%}<span class="cx-end__o">{{ gr_pct }}% off at checkout, ends in <span data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></span>{%- endif -%}</p>
     <button type="button" class="cx-cta cx-cta--light" data-gr-end-btn {% unless cur.available %}disabled{% endunless %}>Add to bag</button>
     <p class="cx-end__f">Free tracked shipping · 30-day returns · Secure checkout</p>
   </div>
@@ -388,7 +388,8 @@ html.sc-offer-on .cx-offer{display:block}
 .cx-end .cx-h2{max-width:18ch;margin:0 auto}
 .cx-end__p{margin:22px 0 0;font:400 24px/1.4 var(--cx-serif)}
 .cx-end__o{font:400 14px/1.4 var(--cx-sans);letter-spacing:.04em;color:#d6dbe6}
-.cx-end__o span{font-variant-numeric:tabular-nums}
+.cx-end__o{display:block;margin-top:6px}
+.cx-end__o span{font-variant-numeric:tabular-nums;white-space:nowrap}
 html:not(.sc-offer-on) .cx-end__o{display:none}
 .cx-cta--light{max-width:380px;margin:28px auto 0;background:#fff!important;color:var(--cx-navy)!important}
 .cx-cta--light:hover{background:#e9ecf2!important}
