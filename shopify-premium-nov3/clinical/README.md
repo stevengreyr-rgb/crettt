@@ -17,3 +17,5 @@ a copy of "Premium Clean". Whole storefront re-dressed in a quiet clinical-edito
 - `layout/theme.liquid`: loads Bodoni Moda + Jost and `sc-clinical.css`.
 
 Preview: https://sevencrush.com/products/sevencrush-glow-ritual-set-led-mask-eye-wand-collagen-duo?preview_theme_id=168541618395
+
+- Nov 3 fix: "In the box" photos shown at their own 16:9 shape and the ritual photo square, so nothing is cropped.

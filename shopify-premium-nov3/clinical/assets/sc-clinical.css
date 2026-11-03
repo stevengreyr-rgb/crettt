@@ -141,3 +141,6 @@ html body .cx .cx-cta,html body .cx .cx-buynow,html body .cx .cx-tile{font-famil
 /* Phone gallery: less empty white around landscape photos */
 @media(max-width:989px){html body .cx .cx-slide{aspect-ratio:4/3}}
 @media(max-width:480px){html body .cxh .cxh-ann__m{font-size:12px;letter-spacing:.08em}}
+/* Photos at their own shape: the box photos are 16:9 banners, the ritual photo is square (no crop) */
+html body .cx .cx-card__ph{aspect-ratio:16/9}
+html body .cx .cx-rit__ph{aspect-ratio:1/1}
