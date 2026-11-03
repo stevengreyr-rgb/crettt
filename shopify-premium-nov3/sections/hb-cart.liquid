@@ -1,0 +1,71 @@
+{% comment %}
+  Section contract.
+  Full cart page (/cart). Server-rendered native cart form: quantities post to /cart,
+  "Checkout" goes to the Shopify checkout. Shows Shopify's own discount allocations.
+  Empty bag: a single, designed path back to the Glow Ritual Set.
+  @example
+  {% section 'hb-cart' %}
+{% endcomment %}
+{%- liquid
+  assign elig = 0
+  for it in cart.items
+    if it.product_id == 10372429086939 or it.product_id == 10379096785115 or it.product_id == 10378972561627
+      assign elig = elig | plus: it.quantity
+    endif
+  endfor
+  assign set = all_products['sevencrush-glow-ritual-set-led-mask-eye-wand-collagen-duo']
+  assign set_v = set.selected_or_first_available_variant
+  assign set_img = images['sc-white-complete-final.png'] | default: set.featured_image
+-%}
+<section class="hb hb-wrap hb-cartpage" aria-labelledby="hb-cart-h">
+  <h1 class="hb-title" id="hb-cart-h">Your bag</h1>
+  {%- if cart.item_count == 0 -%}
+    <div class="hb-empty">
+      {%- if set_img -%}
+        <figure class="hb-empty__ph">{{ set_img | image_url: width: 900 | image_tag: widths: '400,600,900', sizes: '(min-width: 750px) 45vw, 100vw', loading: 'eager', alt: 'The Glow Ritual Set: LED mask, eye wand and collagen duo' }}</figure>
+      {%- endif -%}
+      <div>
+        <p class="hb-empty__k">Your bag is empty</p>
+        <h2 class="hb-empty__h">The Glow <em>Ritual</em> Set</h2>
+        <p class="hb-empty__p">LED face mask, Booster Pro eye wand and collagen duo in one box.{% if set_v %} <b>{{ set_v.price | money }}</b>{% if set_v.compare_at_price > set_v.price %} <s>{{ set_v.compare_at_price | money }}</s>{% endif %}, free US shipping.{% endif %}</p>
+        <a class="hb-pill hb-pill--pk" href="{{ set.url | default: '/' }}">Build my set</a>
+      </div>
+    </div>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" class="hb-cartpage__grid" data-hb-cartform>
+      <div>
+        {%- for it in cart.items -%}
+          <div class="hb-cline">
+            <a href="{{ it.url }}" class="hb-cline__img">{% if it.image %}{{ it.image | image_url: width: 240 | image_tag: alt: it.product.title, loading: 'lazy', width: 120, height: 120 }}{% endif %}</a>
+            <div>
+              <a class="hb-cline__t" href="{{ it.url }}">{% render 'hb-name', p: it.product %}</a>
+              {%- unless it.product.has_only_default_variant -%}<p class="hb-cline__v">{{ it.variant.title }}</p>{%- endunless -%}
+              {%- if it.properties._bundle -%}<p class="hb-cline__v">{{ it.properties._bundle }}</p>{%- endif -%}
+              {%- for a in it.line_level_discount_allocations -%}<p class="hb-cline__d">{{ a.discount_application.title }} · −{{ a.amount | money }}</p>{%- endfor -%}
+              <div class="hb-cline__row">
+                <label class="hb-vh" for="hb-q-{{ forloop.index }}">Quantity of {{ it.product.title | escape }}</label>
+                <input class="hb-cline__q" id="hb-q-{{ forloop.index }}" type="number" name="updates[]" value="{{ it.quantity }}" min="0" data-hb-autoupdate>
+                <a class="hb-cline__rm" href="{{ it.url_to_remove }}">Remove</a>
+              </div>
+            </div>
+            <p class="hb-cline__p">{% if it.final_line_price < it.original_line_price %}<s>{{ it.original_line_price | money }}</s>{% endif %}{{ it.final_line_price | money }}</p>
+          </div>
+        {%- endfor -%}
+        <noscript><button type="submit" class="hb-pill" name="update">Update bag</button></noscript>
+      </div>
+      <aside class="hb-cartpage__sum">
+        {%- if elig == 1 -%}<p class="hb-cartpage__hint">Add one more of the LEZO mask, Booster Pro or Biodance and 20% comes off both at checkout.</p>{%- endif -%}
+        <div class="hb-sumrow"><span>Subtotal</span><span>{{ cart.original_total_price | money }}</span></div>
+        {%- if cart.total_discount > 0 -%}<div class="hb-sumrow is-off"><span>Discounts</span><span>−{{ cart.total_discount | money }}</span></div>{%- endif -%}
+        <div class="hb-sumrow"><span>Shipping</span><span>Free</span></div>
+        <div class="hb-sumrow is-total"><span>Total</span><span>{{ cart.total_price | money }}</span></div>
+        <p class="hb-note">Free tracked US shipping · 30-day returns on unopened items. Taxes are calculated at checkout.</p>
+        <button type="submit" name="checkout" class="hb-pill hb-pill--pk hb-buynow">Secure checkout</button>
+        <p class="hb-note">Card · PayPal · Shop Pay</p>
+      </aside>
+    </form>
+  {%- endif -%}
+</section>
+{% schema %}
+{"name": "HB · Cart", "settings": []}
+{% endschema %}

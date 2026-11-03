@@ -1,0 +1,42 @@
+{% doc %}
+  Limited-time offer, shop-wide (Theme settings › SC Offer). Rendered once, at the top of the header.
+  Sets html.sc-offer-on while the offer runs (checked in the browser too, so a cached page
+  never shows an expired offer) and ticks every [data-sc-countdown] element.
+  The offer itself must exist as an automatic discount in Shopify admin; this only shows it.
+
+  @example
+  {% render 'sc-offer' %}
+{% enddoc %}
+{%- liquid
+  assign sc_off_end = settings.sc_offer_end | strip
+  assign sc_off_ok = false
+  if settings.sc_offer_on and settings.sc_offer_pct > 0 and sc_off_end != blank
+    assign sc_now_s = 'now' | date: '%s' | plus: 0
+    assign sc_end_s = sc_off_end | date: '%s' | plus: 0
+    if sc_end_s > sc_now_s
+      assign sc_off_ok = true
+    endif
+  endif
+-%}
+{%- if sc_off_ok -%}
+<script>
+(() => {
+  const end = Date.parse({{ sc_off_end | json }});
+  window.SC_OFFER = { pct: {{ settings.sc_offer_pct | json }}, end, title: {{ settings.sc_offer_title | json }} };
+  if (!(end > Date.now())) return;
+  document.documentElement.classList.add('sc-offer-on');
+  // The 5% welcome sheet would compete with the offer: treat it as already shown this session.
+  try { sessionStorage.setItem('sc-welcome5-shown', '1'); } catch (e) {}
+  const pad = (n) => String(n).padStart(2, '0');
+  const tick = () => {
+    const ms = end - Date.now();
+    if (ms <= 0) { document.documentElement.classList.remove('sc-offer-on'); clearInterval(t); return; }
+    const s = Math.floor(ms / 1000), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+    const txt = (d ? d + 'd ' : '') + pad(h) + 'h ' + pad(m) + 'm ' + pad(sec) + 's';
+    document.querySelectorAll('[data-sc-countdown]').forEach((el) => { el.textContent = txt; });
+  };
+  const t = setInterval(tick, 1000);
+  document.addEventListener('DOMContentLoaded', tick);
+})();
+</script>
+{%- endif -%}

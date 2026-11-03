@@ -1,0 +1,76 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "sc_display_font": "manrope_n4",
+    "sc_body_font": "manrope_n4",
+    "sc_email": "sevencrush.store@gmail.com",
+    "sc_motion": true,
+    "sc_upsells": [
+      "aircurve-hair-dryer",
+      "ps5-portal"
+    ],
+    "sc_free_shipping_threshold": 0,
+    "sc_free_shipping_verified": false,
+    "sc_offer_on": true,
+    "sc_offer_pct": 40,
+    "sc_offer_title": "4-day offer",
+    "sc_offer_end": "2026-11-07T04:59:59Z",
+    "sc_offer_end_label": "Nov 6 at midnight ET",
+    "color_schemes": {
+      "scheme-1": {
+        "settings": {
+          "background": "#FFFFFF",
+          "text": "#111111",
+          "accent": "#111111",
+          "button": "#111111",
+          "button_label": "#FFFFFF"
+        }
+      },
+      "scheme-2": {
+        "settings": {
+          "background": "#FFFFFF",
+          "text": "#111111",
+          "accent": "#111111",
+          "button": "#111111",
+          "button_label": "#FFFFFF"
+        }
+      },
+      "scheme-3": {
+        "settings": {
+          "background": "#FFFFFF",
+          "text": "#111111",
+          "accent": "#111111",
+          "button": "#111111",
+          "button_label": "#FFFFFF"
+        }
+      },
+      "scheme-4": {
+        "settings": {
+          "background": "#FFFFFF",
+          "text": "#111111",
+          "accent": "#111111",
+          "button": "#111111",
+          "button_label": "#FFFFFF"
+        }
+      },
+      "scheme-5": {
+        "settings": {
+          "background": "#FFFFFF",
+          "text": "#111111",
+          "accent": "#111111",
+          "button": "#111111",
+          "button_label": "#FFFFFF"
+        }
+      }
+    }
+  },
+  "presets": {}
+}

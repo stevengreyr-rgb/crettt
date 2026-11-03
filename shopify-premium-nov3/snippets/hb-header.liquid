@@ -1,0 +1,47 @@
+{% doc %}
+  Site header for every SEVENCRUSH page: offer strip, menu, search, wordmark, account and
+  bag (opens the sk cart drawer). Single-product store: the menu points to the Glow Ritual Set.
+  While a limited-time offer runs (Theme settings › SC Offer) the strip shows it with a live
+  countdown; otherwise it shows the shipping line.
+
+  @example
+  {% render 'hb-header' %}
+{% enddoc %}
+{% render 'sc-offer' %}
+{%- assign set = all_products['sevencrush-glow-ritual-set-led-mask-eye-wand-collagen-duo'] -%}
+<div class="hb">
+  <p class="hb-strip">
+    {%- if settings.sc_offer_on and settings.sc_offer_pct > 0 -%}
+      <a class="sc-off hb-strip__offer" href="{{ set.url | default: '/' }}"><b>{{ settings.sc_offer_title | escape }} · {{ settings.sc_offer_pct }}% off</b> <span class="hb-strip__sep" aria-hidden="true">·</span> Ends in <span data-sc-countdown>{{ settings.sc_offer_end_label | escape }}</span></a>
+    {%- endif -%}
+    <span class="sc-reg">{{ 'ivory.shipping_short' | t }}</span>
+  </p>
+  <header class="hb-head">
+    <div class="hb-wrap hb-head__in">
+      <div class="hb-head__l">
+        <button type="button" class="hb-ico" data-sk-menu aria-controls="hb-menu" aria-expanded="false" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <a class="hb-ico" href="{{ routes.search_url }}" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></svg>
+        </a>
+      </div>
+      <a class="hb-logo" href="{{ routes.root_url }}" aria-label="SEVENCRUSH home">Sevencrush</a>
+      <div class="hb-head__r">
+        <a class="hb-ico" href="{{ routes.account_url }}" aria-label="Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+        </a>
+        <button type="button" class="hb-ico" data-sk-cart-open aria-label="Open bag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          <span class="hb-bubble" data-sk-count>{{ cart.item_count }}</span>
+        </button>
+      </div>
+    </div>
+    <nav class="hb-menu" id="hb-menu" aria-label="Main">
+      <a href="{{ set.url | default: '/' }}">The Glow Ritual Set</a>
+      <a class="sc-reg" href="/#hb-news">Get 5% off</a>
+      <a href="/policies/shipping-policy">Shipping</a>
+      <a href="/pages/contact">Help &amp; contact</a>
+    </nav>
+  </header>
+</div>

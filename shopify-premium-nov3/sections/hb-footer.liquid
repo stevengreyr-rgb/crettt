@@ -1,0 +1,193 @@
+{% comment %}
+  Site footer for the single-product store: email sign-up (Shopify customer form, tagged
+  "newsletter", reveals the live WELCOME5 code and a link that applies it), brand line,
+  links and payment note. The same #hb-news card opens as a welcome sheet once the visitor
+  has engaged (half the page read after 15 s, or leaving the tab on desktop) — never on the
+  first screen, never on the bag page and never once something is in the bag.
+{% endcomment %}
+{%- liquid
+  assign set = all_products['sevencrush-glow-ritual-set-led-mask-eye-wand-collagen-duo']
+  assign set_v = set.selected_or_first_available_variant
+  assign set_price = set_v.price
+  assign set_off = set_price | times: 95 | divided_by: 100
+  assign hero = images['sc-white-complete-final.png'] | default: set.featured_image
+-%}
+<footer class="hb hb-foot" aria-labelledby="hb-foot-mark">
+  <div class="hb-wrap">
+    <div class="hb-news" id="hb-news">
+      <div class="hb-news__pic">
+        {%- if hero -%}{{ hero | image_url: width: 1000 | image_tag: widths: '400,700,1000', sizes: '(min-width: 900px) 40vw, 100vw', loading: 'lazy', alt: 'The Glow Ritual Set: LED mask, eye wand and collagen duo' }}{%- endif -%}
+        <span class="hb-news__badge">5% OFF</span>
+      </div>
+      <div class="hb-news__body">
+        <p class="hb-news__k">Join the glow list</p>
+        <h2 class="hb-news__h">Get <em>5% off</em> your Glow Ritual Set</h2>
+        {%- if set_price -%}
+          <p class="hb-news__price"><s>{{ set_price | money }}</s> <b>{{ set_off | money }}</b> <span>with your code</span></p>
+        {%- endif -%}
+        <ul class="hb-news__perks">
+          <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></i>Your code, instantly on screen</li>
+          <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></i>Ritual tips: how to get the most from each step</li>
+          <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg></i>First to know about restocks and new colors</li>
+        </ul>
+        {%- form 'customer', id: 'hb-news-form', class: 'hb-news__f' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter, welcome5">
+          {%- if form.posted_successfully? -%}
+            <div class="hb-news__ok" role="status">
+              <p class="hb-news__okh">You're in.</p>
+              <p>Your 5% code for your first order:</p>
+              <button type="button" class="hb-news__code" data-hb-copy="WELCOME5" aria-label="Copy code WELCOME5">WELCOME5 <span>Tap to copy</span></button>
+              <a class="hb-news__go" href="/discount/WELCOME5?redirect={{ set.url | default: '/' | url_encode }}">Apply code &amp; shop the set →</a>
+            </div>
+          {%- else -%}
+            <label class="hb-vh" for="hb-news-email">Email address</label>
+            <div class="hb-news__row">
+              <input id="hb-news-email" type="email" name="contact[email]" placeholder="your@email.com" autocomplete="email" autocapitalize="off" spellcheck="false" inputmode="email" required{% if form.errors %} aria-invalid="true" aria-describedby="hb-news-err"{% endif %}>
+              <button type="submit">Unlock my 5%</button>
+            </div>
+            {%- if form.errors -%}<p class="hb-news__err" id="hb-news-err">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>{%- endif -%}
+            <p class="hb-news__fine">One code per customer, first order only. No spam, unsubscribe anytime · <a href="/policies/privacy-policy">Privacy</a></p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+
+    <div class="hb-foot__top">
+      <div>
+        <p class="hb-foot__mark" id="hb-foot-mark">Sevencrush</p>
+        <p class="hb-foot__line">The Glow Ritual: LED mask, eye wand and collagen care. One box.</p>
+      </div>
+      <div>
+        <h2 class="hb-foot__h">Shop</h2>
+        <ul>
+          <li><a href="{{ set.url | default: '/' }}">The Glow Ritual Set</a></li>
+          <li><a href="{{ routes.cart_url }}">Your bag</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="hb-foot__h">Help</h2>
+        <ul>
+          <li><a href="/policies/shipping-policy">Shipping</a></li>
+          <li><a href="/policies/refund-policy">Returns</a></li>
+          <li><a href="/pages/contact">Contact us</a></li>
+          <li><a href="/policies/privacy-policy">Privacy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="hb-foot__h">Talk to us</h2>
+        <ul>
+          <li><a href="mailto:sevencrush.store@gmail.com">sevencrush.store@gmail.com</a></li>
+          <li>Replies within a few hours</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hb-foot__base">
+      <span>© {{ 'now' | date: '%Y' }} SevenCrush · Charlotte, NC</span>
+      <span>Secure checkout · Card, PayPal, Shop Pay</span>
+    </div>
+  </div>
+</footer>
+<style>
+.hb-news{position:relative;overflow:hidden;display:grid;margin:0 0 clamp(48px,7vw,72px);border-radius:28px;background:#fff;color:#1a1214;box-shadow:0 24px 60px -36px #b8336a66;border:1px solid #f3dfe6}
+.hb-news__pic{position:relative;background:#fff;aspect-ratio:3/2;overflow:hidden}
+.hb-news__pic img{width:100%;height:100%;object-fit:contain;display:block}
+.hb-news__badge{position:absolute;left:16px;top:16px;background:linear-gradient(135deg,#ff6fa5,#e8508a);color:#fff;font:800 13px/1 system-ui,sans-serif;letter-spacing:.08em;padding:9px 13px;border-radius:99px;box-shadow:0 8px 20px -8px #e8508a}
+.hb-news__body{padding:24px 20px 26px;background:linear-gradient(180deg,#fff 0,#fdf2f6 100%)}
+.hb-news__k{margin:0 0 10px;font:800 12px/1 system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#e8508a}
+.hb-news__h{margin:0;font:800 clamp(30px,7vw,52px)/1 system-ui,sans-serif;letter-spacing:-.03em;color:#1a1214}
+.hb-news__h em{font-style:normal;color:#e8508a}
+.hb-news__price{margin:14px 0 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-family:system-ui,sans-serif}
+.hb-news__price s{color:#9a8f92;font-size:17px}
+.hb-news__price b{font-size:28px;font-weight:800;color:#1a1214}
+.hb-news__price span{font-size:13px;font-weight:700;color:#e8508a;background:#fde7ef;padding:5px 10px;border-radius:99px}
+.hb-news__perks{list-style:none;margin:16px 0 18px;padding:0;display:grid;gap:9px;font:500 15px/1.35 system-ui,sans-serif;color:#4a3a3c}
+.hb-news__perks li{display:flex;gap:10px;align-items:center}
+.hb-news__perks i{flex:none;width:24px;height:24px;border-radius:50%;background:#fde7ef;color:#e8508a;display:grid;place-items:center}
+.hb-news__perks svg{width:13px;height:13px}
+.hb-news__row{display:flex;gap:8px;background:#fff;border:2px solid #f1d6e0;border-radius:999px;padding:6px;transition:border-color .2s,box-shadow .2s}
+.hb-news__row:focus-within{border-color:#e8508a;box-shadow:0 0 0 4px #e8508a22}
+.hb-news__row input{flex:1;min-width:0;border:0;background:none;padding:0 14px;min-height:50px;font:500 16px system-ui,sans-serif;color:#111;outline:none}
+.hb-news__row input::placeholder{color:#a99ea1}
+.hb-news__row button{flex:none;border:0;border-radius:999px;background:linear-gradient(135deg,#ff6fa5,#e8508a);color:#fff;padding:0 22px;min-height:50px;font:800 16px/1 system-ui,sans-serif;letter-spacing:.02em;cursor:pointer;box-shadow:0 10px 22px -12px #e8508a;transition:transform .15s}
+.hb-news__row button:active{transform:scale(.97)}
+.hb-news__err{margin:10px 4px 0;font:700 14px system-ui,sans-serif;color:#a23f3f;background:#fff0f0;border-radius:10px;padding:8px 12px}
+.hb-news__fine{margin:12px 6px 0;font:400 12.5px/1.45 system-ui,sans-serif;color:#8a7d80}
+.hb-news .hb-news__fine a{color:#1a1214;text-decoration:underline}
+.hb-news__ok{background:#fff;border:2px solid #f1d6e0;border-radius:22px;padding:20px;font-family:system-ui,sans-serif}
+.hb-news__ok p{margin:0 0 6px;color:#4a3a3c}
+.hb-news__okh{font:800 26px/1.1 system-ui,sans-serif!important;color:#1a1214!important}
+.hb-news__code{display:flex;align-items:center;justify-content:space-between;width:100%;gap:14px;margin:10px 0 12px;border:2px dashed #e8508a;border-radius:14px;background:#fde7ef;padding:14px 16px;font:800 28px/1 system-ui,sans-serif;letter-spacing:.08em;color:#e8508a;cursor:pointer}
+.hb-news__code span{font:700 11px/1 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1a1214}
+.hb-news__go{display:block;text-align:center;border-radius:99px;background:#1a1214;color:#fff!important;text-decoration:none;padding:16px;font:800 15px/1 system-ui,sans-serif}
+.hb-vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media(min-width:900px){.hb-news{grid-template-columns:1fr 1.05fr;align-items:stretch}.hb-news__pic{aspect-ratio:auto}.hb-news__body{padding:44px 40px}}
+@media(max-width:480px){.hb-news__row{flex-direction:column;border-radius:22px}.hb-news__row button{width:100%}}
+</style>
+<script>
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-hb-copy]');
+  if (!b) return;
+  navigator.clipboard && navigator.clipboard.writeText(b.dataset.hbCopy).then(() => { const s = b.querySelector('span'); s && (s.textContent = 'Copied'); });
+});
+if (location.hash === '#hb-news-form' || location.search.indexOf('customer_posted=true') > -1) { const n = document.getElementById('hb-news'); n && n.scrollIntoView({ block: 'center' }); }
+</script>
+
+<dialog id="sc-welcome" class="sc-welcome" aria-label="Email welcome offer">
+  <button type="button" class="sc-welcome__close" aria-label="Close offer">×</button>
+  <div class="sc-welcome__content"></div>
+</dialog>
+<style>
+.sc-welcome{position:fixed;inset:auto 0 0;width:min(100%,560px);max-width:100%;max-height:88dvh;margin:0 auto;padding:0;border:0;border-radius:26px 26px 0 0;background:transparent;overflow:auto}
+.sc-welcome[open]{display:block;animation:sc-welcome-in .4s ease-out}
+.sc-welcome::backdrop{background:#1a121480;backdrop-filter:blur(3px)}
+.sc-welcome .hb-news{margin:0;border-radius:26px 26px 0 0;border:0}
+.sc-welcome .hb-news__pic{aspect-ratio:16/9}
+.sc-welcome .hb-news__body{padding:18px 18px 22px}
+.sc-welcome .hb-news__perks{display:none}
+.sc-welcome .hb-news__h{font-size:clamp(26px,7vw,38px)}
+.sc-welcome__close{position:absolute;right:10px;top:10px;width:38px;height:38px;border:0;border-radius:50%;background:#fffffff0;color:#1a1214;font:24px/1 sans-serif;z-index:3;cursor:pointer;box-shadow:0 4px 14px #0002}
+@keyframes sc-welcome-in{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media(min-width:750px){.sc-welcome{inset:0;margin:auto;border-radius:26px}.sc-welcome .hb-news{border-radius:26px;grid-template-columns:1fr}.sc-welcome .hb-news__pic{aspect-ratio:16/9}}
+@media(prefers-reduced-motion:reduce){.sc-welcome[open]{animation:none}}
+</style>
+<script>
+(() => {
+  const dialog = document.getElementById('sc-welcome'), news = document.getElementById('hb-news');
+  if (!dialog || !news || !dialog.showModal) return;
+  const marker = document.createComment('newsletter'); news.before(marker);
+  const key = 'sc-welcome5-shown';
+  const remember = () => { try { sessionStorage.setItem(key, '1'); } catch (e) {} };
+  const inBag = () => { const c = window.SK_CART; return !!(c && c.item_count > 0) || !!document.querySelector('.sk-cart.is-open'); };
+  const busy = () => { const a = document.activeElement; return a && a.closest && a.closest('form,.sk-cart,[role=dialog]'); };
+  let done = false;
+  const open = (force) => {
+    if (done || dialog.open) return;
+    if (!force && (inBag() || busy())) return;
+    done = true; cleanup();
+    dialog.querySelector('.sc-welcome__content').append(news); dialog.showModal(); remember();
+  };
+  dialog.querySelector('.sc-welcome__close').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+  dialog.addEventListener('close', () => { marker.after(news); remember(); });
+  const ac = new AbortController();
+  const cleanup = () => ac.abort();
+  const success = news.querySelector('.hb-news__ok');
+  if (success) { try { localStorage.setItem('sc-email-joined', '1'); } catch (e) {} open(true); return; }
+  let seen = false; try { seen = sessionStorage.getItem(key) || localStorage.getItem('sc-email-joined'); } catch (e) {}
+  if (seen || location.pathname.indexOf('/cart') === 0) return;
+  // Engagement, not a timer: half the page read after 15 s, or the pointer leaving the tab on desktop after 8 s
+  const t0 = Date.now();
+  addEventListener('scroll', () => {
+    const depth = (scrollY + innerHeight) / document.documentElement.scrollHeight;
+    if (depth > 0.5 && Date.now() - t0 > 15000) open();
+  }, { passive: true, signal: ac.signal });
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.addEventListener('mouseout', (e) => { if (!e.relatedTarget && e.clientY <= 0 && Date.now() - t0 > 8000) open(); }, { signal: ac.signal });
+  }
+  document.addEventListener('sk:cart', cleanup, { signal: ac.signal });
+  addEventListener('pagehide', cleanup, { once: true });
+})();
+</script>
+{% schema %}
+{"name": "HB · Footer", "settings": []}
+{% endschema %}

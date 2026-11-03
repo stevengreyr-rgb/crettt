@@ -1,0 +1,197 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "SevenCrush Studio",
+    "theme_version": "1.0.0",
+    "theme_author": "SevenCrush",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://sevencrush.com/pages/contact"
+  },
+  {
+    "name": "SC Identity",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "sc_display_font",
+        "label": "Display font",
+        "default": "manrope_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "sc_body_font",
+        "label": "Body font",
+        "default": "manrope_n4"
+      },
+      {
+        "type": "image_picker",
+        "id": "sc_logo",
+        "label": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      },
+      {
+        "type": "image_picker",
+        "id": "sc_og",
+        "label": "Social sharing image"
+      },
+      {
+        "type": "text",
+        "id": "sc_email",
+        "label": "Support email",
+        "default": "sevencrush.store@gmail.com"
+      },
+      {
+        "type": "checkbox",
+        "id": "sc_motion",
+        "label": "Enable scroll motion",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "SC Colors",
+    "settings": [
+      {
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color",
+            "id": "text",
+            "label": "Text",
+            "default": "#111111"
+          },
+          {
+            "type": "color",
+            "id": "accent",
+            "label": "Accent",
+            "default": "#111111"
+          },
+          {
+            "type": "color",
+            "id": "button",
+            "label": "Button",
+            "default": "#111111"
+          },
+          {
+            "type": "color",
+            "id": "button_label",
+            "label": "Button text",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color_background",
+            "id": "background_gradient",
+            "label": "Optional background gradient"
+          }
+        ],
+        "role": {
+          "text": "text",
+          "background": {
+            "solid": "background",
+            "gradient": "background_gradient"
+          },
+          "links": "text",
+          "icons": "text",
+          "primary_button": "button",
+          "on_primary_button": "button_label",
+          "primary_button_border": "button",
+          "secondary_button": "background",
+          "on_secondary_button": "text",
+          "secondary_button_border": "text"
+        }
+      }
+    ]
+  },
+  {
+    "name": "SC Commerce",
+    "settings": [
+      {
+        "type": "product_list",
+        "id": "sc_upsells",
+        "label": "Bag recommendations",
+        "limit": 4
+      },
+      {
+        "type": "number",
+        "id": "sc_free_shipping_threshold",
+        "label": "Free shipping threshold in USD (0 disables)",
+        "default": 0
+      },
+      {
+        "type": "checkbox",
+        "id": "sc_free_shipping_verified",
+        "label": "Threshold and market confirmed",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "sc_shipping_copy",
+        "label": "Verified shipping copy"
+      },
+      {
+        "type": "textarea",
+        "id": "sc_returns_copy",
+        "label": "Verified returns copy"
+      },
+      {
+        "type": "textarea",
+        "id": "sc_payment_copy",
+        "label": "Verified payment copy"
+      }
+    ]
+  },
+  {
+    "name": "SC Offer",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shows a limited-time offer on the product page, the top strip and the collection card. It only displays the offer: create the matching automatic discount in Shopify admin › Discounts. It switches itself off at the end time."
+      },
+      {
+        "type": "checkbox",
+        "id": "sc_offer_on",
+        "label": "Show limited-time offer",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "sc_offer_pct",
+        "label": "Discount (%)",
+        "min": 5,
+        "max": 80,
+        "step": 5,
+        "unit": "%",
+        "default": 40
+      },
+      {
+        "type": "text",
+        "id": "sc_offer_title",
+        "label": "Offer name",
+        "default": "4-day offer"
+      },
+      {
+        "type": "text",
+        "id": "sc_offer_end",
+        "label": "Ends at (UTC, ISO format)",
+        "info": "Example: 2026-11-07T04:59:59Z = Nov 6, 11:59 PM Eastern",
+        "default": "2026-11-07T04:59:59Z"
+      },
+      {
+        "type": "text",
+        "id": "sc_offer_end_label",
+        "label": "End date shown to customers",
+        "default": "Nov 6 at midnight ET"
+      }
+    ]
+  }
+]

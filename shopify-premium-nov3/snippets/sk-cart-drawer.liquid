@@ -1,0 +1,176 @@
+{% doc %}
+  Side cart drawer shared by the home page and the product landings. sk.js fills it from
+  /cart.js, so it always shows Shopify's own line prices and automatic discounts.
+  The small script at the end only dresses each line (short name, option chips, contained
+  photo) and the empty state; prices, quantities and checkout stay with sk.js.
+
+  @example
+  {% render 'sk-cart-drawer' %}
+{% enddoc %}
+{%- assign gc_set = all_products['sevencrush-glow-ritual-set-led-mask-eye-wand-collagen-duo'] -%}
+<div class="sk sk-cart gc" id="sk-cart" aria-hidden="true" data-gc-set-url="{{ gc_set.url | default: '/' }}">
+  <button type="button" class="sk-cart__scrim" data-sk-cart-close tabindex="-1" aria-label="Close cart"></button>
+  <div class="sk-cart__panel" role="dialog" aria-modal="true" aria-labelledby="sk-cart-title">
+    <div class="sk-cart__head">
+      <h2 id="sk-cart-title">Your bag <span class="gc-n" data-sk-cart-n></span></h2>
+      <button type="button" class="sk-x" data-sk-cart-close aria-label="Close cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="gc-ship" data-gc-ship>
+      <span class="gc-ship__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span>
+      <span class="gc-ship__t"><b>Free US shipping unlocked</b><small>Tracked, delivered in 5–12 days</small></span>
+      <span class="gc-ship__bar" aria-hidden="true"><i></i></span>
+    </div>
+    <div class="sk-cart__body" data-sk-cart-body>
+      <div class="sk-cart__empty"><p>Your bag is empty.</p></div>
+    </div>
+    <div class="sk-cart__foot" data-sk-cart-foot hidden>
+      <p class="sk-cart__hint" data-sk-cart-hint hidden></p>
+      <div class="sk-sumrow"><span>Subtotal</span><span data-sk-cart-orig></span></div>
+      <div class="sk-sumrow is-off" data-sk-cart-offrow hidden><span data-sk-cart-offname>Discounts</span><span data-sk-cart-off></span></div>
+      <div class="sk-sumrow"><span>Shipping</span><span class="gc-free">Free</span></div>
+      <div class="sk-sumrow is-total"><span>Total</span><span data-sk-cart-total></span></div>
+      <a href="{{ routes.root_url }}checkout" class="sk-btn sk-btn--block gc-go" data-sk-checkout><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure checkout</a>
+      <ul class="gc-trust">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>30-day returns</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>Secure payment</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Card · PayPal · Shop Pay</li>
+      </ul>
+      <p class="gc-tax">Taxes are calculated at checkout.</p>
+      <p class="sk-msg" data-sk-cart-msg role="status"></p>
+    </div>
+  </div>
+</div>
+<script>window.SK_CART={{ cart | json }};window.SK_MONEY={{ shop.money_format | json }};</script>
+<style>
+#sk-cart.gc{--gc-pk:#e8508a;--gc-pk2:#fde7ef;--gc-pk3:#fdf3f6;--gc-ink:#1a1214;--gc-mut:#7a6d71;--gc-line:#f1e7eb;--gc-ease:cubic-bezier(.16,1,.3,1);background:transparent;font-family:"Inter Tight",system-ui,-apple-system,sans-serif}
+#sk-cart .sk-cart__scrim{background:rgba(26,18,20,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+#sk-cart .sk-cart__panel{width:min(460px,100%);background:#fff;box-shadow:-30px 0 80px -40px rgba(26,18,20,.45);transition:transform .55s var(--gc-ease)}
+@media(min-width:600px){#sk-cart .sk-cart__panel{top:10px;right:10px;bottom:10px;border-radius:24px;overflow:hidden;width:min(460px,calc(100% - 20px))}#sk-cart:not(.is-open) .sk-cart__panel{transform:translateX(calc(100% + 20px))}}
+
+/* Head */
+#sk-cart .sk-cart__head{padding:20px 20px 14px;border:0}
+#sk-cart .sk-cart__head h2{display:flex;align-items:center;gap:10px;font:700 26px/1 "Inter Tight",system-ui,sans-serif!important;letter-spacing:-.035em!important;text-transform:none!important;color:var(--gc-ink)}
+#sk-cart .gc-n{font:700 12px/1 "Inter Tight",system-ui,sans-serif;letter-spacing:0;color:var(--gc-pk);background:var(--gc-pk2);border-radius:99px;padding:6px 9px}
+#sk-cart .gc-n:empty{display:none}
+#sk-cart .sk-x{display:grid;place-items:center;width:40px;height:40px;margin:0;border-radius:50%;background:#f6f1f3;color:var(--gc-ink);transition:background .2s,transform .4s var(--gc-ease)}
+#sk-cart .sk-x svg{width:18px;height:18px}
+#sk-cart .sk-x:hover{background:#efe6ea;transform:rotate(90deg)}
+#sk-cart .sk-x:focus{outline:none}
+#sk-cart .sk-x:focus-visible{box-shadow:0 0 0 3px #e8508a40}
+
+/* Shipping banner */
+#sk-cart .gc-ship{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:4px 12px;margin:0 20px 6px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,var(--gc-pk3),var(--gc-pk2))}
+#sk-cart .gc-ship__i{grid-row:1/3;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#fff;color:var(--gc-pk)}
+#sk-cart .gc-ship__i svg{width:19px;height:19px}
+#sk-cart .gc-ship__t b{display:block;font-size:13.5px;font-weight:700;letter-spacing:-.01em;color:var(--gc-ink)}
+#sk-cart .gc-ship__t small{display:block;font-size:12px;color:var(--gc-mut)}
+#sk-cart .gc-ship__bar{grid-column:2;display:block;height:4px;border-radius:4px;background:#fff;overflow:hidden;margin-top:6px}
+#sk-cart .gc-ship__bar i{display:block;height:100%;width:100%;border-radius:4px;background:linear-gradient(90deg,#ff7aac,var(--gc-pk));transform-origin:left;transform:scaleX(0);transition:transform 1.1s var(--gc-ease) .25s}
+#sk-cart.is-open .gc-ship__bar i{transform:none}
+#sk-cart.is-empty .gc-ship{display:none}
+
+/* Lines */
+#sk-cart .sk-cart__body{padding:4px 20px 8px}
+#sk-cart .sk-line{grid-template-columns:96px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--gc-line)}
+#sk-cart .sk-line:last-child{border-bottom:0}
+#sk-cart .sk-line img{width:96px;height:96px;border-radius:18px;object-fit:contain;background:#faf6f7;padding:6px}
+#sk-cart .sk-line__t{display:block;font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.25;text-decoration:none;color:var(--gc-ink)}
+#sk-cart .sk-line__t:hover{color:var(--gc-pk)}
+#sk-cart .sk-line__v{font-size:12.5px;color:var(--gc-mut);margin-top:3px}
+#sk-cart .gc-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+#sk-cart .gc-chips span{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:#4a3d41;background:#f7f2f4;border-radius:99px;padding:4px 9px 4px 6px}
+#sk-cart .gc-chips i{width:10px;height:10px;border-radius:50%;background:var(--c,#ddd);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+#sk-cart .gc-inc{display:block;font-size:11.5px;color:var(--gc-mut);margin-top:6px}
+#sk-cart .sk-line__p{font-size:15px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;font-variant-numeric:tabular-nums}
+#sk-cart .sk-line__row{margin-top:12px}
+#sk-cart .sk-line .sk-qty{height:38px;border:1px solid #ebe1e5;border-radius:99px;background:#fff;overflow:hidden}
+#sk-cart .sk-line .sk-qty button{width:36px;font-size:17px;color:var(--gc-ink);transition:background .2s}
+#sk-cart .sk-line .sk-qty button:hover{background:#f7f2f4}
+#sk-cart .sk-line .sk-qty input{width:28px;font-weight:700;font-variant-numeric:tabular-nums}
+#sk-cart .sk-line__rm{display:inline-flex;align-items:center;gap:5px;text-decoration:none;font-size:12.5px;font-weight:600;color:var(--gc-mut);transition:color .2s}
+#sk-cart .sk-line__rm:hover{color:var(--gc-pk)}
+#sk-cart .sk-line__rm svg{width:15px;height:15px}
+#sk-cart .sk-line__d{color:var(--gc-pk)!important;font-weight:600}
+#sk-cart.gc-enter .sk-line{animation:gc-in .7s var(--gc-ease) both;animation-delay:calc(var(--i,0) * 70ms + .12s)}
+@keyframes gc-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* Empty */
+#sk-cart .gc-empty{display:grid;justify-items:center;gap:10px;text-align:center;padding:56px 12px}
+#sk-cart .gc-empty__i{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--gc-pk2);color:var(--gc-pk);margin-bottom:6px}
+#sk-cart .gc-empty__i svg{width:28px;height:28px}
+#sk-cart .gc-empty b{font-size:20px;letter-spacing:-.03em;color:var(--gc-ink)}
+#sk-cart .gc-empty p{font-size:14px;color:var(--gc-mut);max-width:28ch}
+#sk-cart .gc-empty a{margin-top:8px;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border-radius:99px;background:linear-gradient(135deg,#ff73a8,#e8508a 55%,#d63f7b);color:#fff;font-weight:700;font-size:15px;text-decoration:none;box-shadow:0 14px 28px -16px #e8508a}
+
+/* Foot */
+#sk-cart .sk-cart__foot{gap:9px;padding:16px 20px calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--gc-line);background:linear-gradient(180deg,#fff,#fffafc)}
+#sk-cart .sk-cart__foot .sk-sumrow{font-size:14px;color:#4a3d41;font-variant-numeric:tabular-nums}
+#sk-cart .sk-cart__foot .sk-sumrow.is-off{color:var(--gc-pk);font-weight:600}
+#sk-cart .gc-free{font-weight:700;color:#23784a}
+#sk-cart .sk-cart__foot .sk-sumrow.is-total{align-items:baseline;margin-top:4px;padding-top:12px;border-top:1px dashed #eadde2;font-size:16px;font-weight:700;color:var(--gc-ink)}
+#sk-cart .sk-cart__foot .sk-sumrow.is-total span:last-child{font-size:26px;letter-spacing:-.035em}
+#sk-cart .sk-cart__hint{border-radius:12px;background:var(--gc-pk3);color:#4a3d41;font-size:12.5px}
+#sk-cart .gc-go{position:relative;overflow:hidden;gap:10px;min-height:58px;margin-top:6px;border:0!important;border-radius:99px!important;background:linear-gradient(135deg,#ff73a8 0%,#e8508a 55%,#d63f7b 100%)!important;color:#fff!important;font:700 16px/1 "Inter Tight",system-ui,sans-serif!important;letter-spacing:.01em!important;text-transform:none!important;box-shadow:0 16px 32px -16px #e8508a,inset 0 1px 0 rgba(255,255,255,.25)!important;transition:transform .4s var(--gc-ease),box-shadow .4s var(--gc-ease)}
+#sk-cart .gc-go svg{width:18px;height:18px}
+#sk-cart .gc-go::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-120%);animation:gc-shine 5s var(--gc-ease) 1.2s infinite}
+@keyframes gc-shine{0%{transform:translateX(-120%)}24%,100%{transform:translateX(120%)}}
+@media(hover:hover){#sk-cart .gc-go:hover{transform:translateY(-2px);box-shadow:0 22px 38px -18px #e8508a,inset 0 1px 0 rgba(255,255,255,.25)!important}}
+#sk-cart .gc-trust{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font-size:11.5px;font-weight:600;color:var(--gc-mut)}
+#sk-cart .gc-trust li{display:inline-flex;align-items:center;gap:5px}
+#sk-cart .gc-trust svg{width:14px;height:14px;color:var(--gc-pk)}
+#sk-cart .gc-tax{text-align:center;font-size:11.5px;color:#a3979b}
+#sk-cart .sk-msg:empty{display:none}
+@media(prefers-reduced-motion:reduce){#sk-cart .gc-go::after{animation:none}#sk-cart.gc-enter .sk-line{animation:none}#sk-cart .gc-ship__bar i{transition:none;transform:none}}
+</style>
+<script>
+(() => {
+  const d = document.getElementById('sk-cart');
+  if (!d) return;
+  const body = d.querySelector('[data-sk-cart-body]');
+  const setUrl = d.dataset.gcSetUrl || '/';
+  const dot = (t) => /pink/i.test(t) ? '#f2b8c8' : /black/i.test(t) ? '#25211d' : /blue/i.test(t) ? '#a8c8e8' : '#ddd';
+  const trash = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+  const dress = () => {
+    const empty = body.querySelector('.sk-cart__empty');
+    d.classList.toggle('is-empty', !!empty);
+    if (empty && !empty.classList.contains('gc-empty')) {
+      empty.className = 'sk-cart__empty gc-empty';
+      empty.innerHTML = '<span class="gc-empty__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span><b>Your bag is empty</b><p>The LED mask, eye wand and collagen duo, all in one box.</p><a href="' + setUrl + '" data-sk-cart-close>Shop the Glow Ritual Set</a>';
+    }
+    body.querySelectorAll('.sk-line').forEach((line, i) => {
+      line.style.setProperty('--i', i);
+      if (line.dataset.gc) return;
+      line.dataset.gc = '1';
+      const t = line.querySelector('.sk-line__t');
+      if (t && t.textContent.includes(' — ')) t.textContent = t.textContent.split(' — ')[0];
+      const isSet = t && /glow ritual/i.test(t.textContent);
+      const v = line.querySelector('.sk-line__v');
+      if (isSet && v && v.textContent.includes('/')) {
+        const [wand, duo] = v.textContent.split('/').map((s) => s.trim());
+        const chips = document.createElement('div');
+        chips.className = 'gc-chips';
+        chips.innerHTML = '<span><i style="--c:' + dot(wand) + '"></i>Wand · ' + wand + '</span><span><i style="--c:' + dot(duo) + '"></i>Collagen · ' + duo + '</span>';
+        v.replaceWith(chips);
+        const inc = document.createElement('small');
+        inc.className = 'gc-inc';
+        inc.textContent = 'LED mask + eye wand + pads & ampoule';
+        chips.after(inc);
+      }
+      const rm = line.querySelector('.sk-line__rm');
+      if (rm && !rm.querySelector('svg')) rm.insertAdjacentHTML('afterbegin', trash);
+    });
+  };
+  new MutationObserver(dress).observe(body, { childList: true });
+  dress();
+  // Lines rise in each time the drawer opens.
+  let wasOpen = false;
+  new MutationObserver(() => {
+    const open = d.classList.contains('is-open');
+    if (open && !wasOpen && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      d.classList.add('gc-enter');
+      setTimeout(() => d.classList.remove('gc-enter'), 1400);
+    }
+    wasOpen = open;
+  }).observe(d, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
