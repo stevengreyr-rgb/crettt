@@ -51,3 +51,14 @@ The page shows the product's real price everywhere ($189.99, compare-at $290.96 
 button, sticky bar, clinic table and collection card. The 40% offer is only announced (one line with the countdown,
 "applied at checkout", plus the top strip); the discount itself still comes off at checkout via the automatic discount.
 Product prices in Shopify were never changed (all 4 variants: 189.99 / compare 290.96).
+
+## Premium Clean (round 4) — new draft
+"Premium Experience" (`168504754395`) was published by the merchant on Nov 3 and is now the live theme, so edits to it
+are blocked. Round 4 lives in a fresh copy of it: **"SEVENCRUSH — Premium Clean (borrador) — Nov 3"**
+(`gid://shopify/OnlineStoreTheme/168528675035`), only `assets/glow-premium.css` changed:
+- Desktop gallery: thumbnails only (no arrow/dot row under them).
+- Ritual steps: plain list with hairlines (no five boxed cards, no caption sticker on the photo).
+- "What's inside" photos: one headline + one link each (kicker, big number and small print removed).
+- Clinic table: the two "Varies" rows removed.
+- Buy box: Shop Pay installments banner hidden (rendered in Spanish); "Know your light" color-mix box removed.
+Phone product page: 6,351 → 6,105 px.

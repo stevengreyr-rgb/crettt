@@ -178,3 +178,31 @@ body .gr{padding-bottom:24px}
 body .gl{padding-top:clamp(64px,9vw,100px)!important}
 /* Same left edge as every other section */
 body .gl .gl-in{max-width:1200px}
+
+/* ==================================================================
+   Clean pass (round 4): lighter page below the buy box.
+   ================================================================== */
+/* Gallery on desktop: thumbnails only (arrows + dots repeated them) */
+@media(min-width:900px){body .gr .gr-ctrl{display:none}}
+
+/* Ritual steps: a calm list with hairlines, not five boxed cards */
+body .gr .gr-steps{gap:0!important;border:0!important;border-radius:0!important;background:none!important;border-top:1px solid var(--gl-line)!important}
+body .gr .gr-steps li,body .gr .gr-steps li.is-hl{margin:0;padding:18px 2px!important;border:0!important;border-bottom:1px solid var(--gl-line)!important;border-radius:0!important;background:none!important;box-shadow:none!important}
+body .gr .gr-steps li+li{border-top:0!important}
+body .gr .gr-steps__n{font-size:26px!important}
+body .gr .gr-rit__ph figcaption{display:none}
+@media(min-width:900px){body .gr .gr-rit{gap:56px}}
+
+/* What's inside: one headline + one link per photo */
+body .gr .gr-ed__k,body .gr .gr-ed__o{display:none!important}
+body .gr .gr-ed__cta{margin-top:2.4cqi!important}
+@media(max-width:899px){body .gr .gr-ed__cta{font-size:3cqi!important}}
+
+/* Clinic vs at home: keep the rows that say something */
+body .gr .gr-table .gr-tr:nth-child(5),body .gr .gr-table .gr-tr:nth-child(6){display:none}
+
+/* Buy box: no Shop Pay installments banner (it renders in Spanish on an English store; installments still show at checkout) */
+body .gr .gr-pay{display:none!important}
+/* Know your light: the diagram says it; the color-mix footnote box goes */
+body .gl .gl-combo{display:none}
+body .gr .gr-ed__cta{white-space:nowrap}
