@@ -283,9 +283,9 @@
     // Scene 3: the portrait opens from a circle into the full frame, copy rises after
     const exp = $('[data-cnm-exp]'), em = $('[data-cnm-exp-media]');
     if (exp && em) {
-      const st = { r: 22, s: 1.18 };
+      const st = { r: 14, s: 1.18 };
       gsap.timeline({ scrollTrigger: { trigger: exp, start: 'top top', end: 'bottom bottom', scrub: .5 } })
-        .to(st, { r: 80, s: 1, ease: 'none', duration: .6, onUpdate: () => { em.style.setProperty('--r', st.r + '%'); em.style.setProperty('--s', st.s); } })
+        .to(st, { r: 115, s: 1, ease: 'none', duration: .6, onUpdate: () => { em.style.setProperty('--r', st.r + '%'); em.style.setProperty('--s', st.s); } })
         .from('[data-cnm-exp-copy] > *', { y: 50, opacity: 0, stagger: .08, duration: .3, ease: 'power2.out' }, .45);
     }
 

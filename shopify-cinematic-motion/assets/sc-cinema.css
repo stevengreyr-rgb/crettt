@@ -102,7 +102,7 @@
   .cnm-reveal{align-items:center}
   .cnm-reveal__media{justify-content:flex-end;padding-right:max(var(--cnm-g),calc((100vw - var(--cnm-max)) / 2 + var(--cnm-g) / 2))}
   .cnm-reveal__img{width:min(70vh,44vw)}
-  .cnm-reveal__copy{grid-template-columns:1fr;align-content:center;padding-top:56px;padding-bottom:56px;gap:22px}
+  .cnm-reveal__copy{width:100%;grid-template-columns:1fr;align-content:center;padding-top:56px;padding-bottom:56px;gap:22px}
   .cnm-reveal__copy>*{max-width:min(560px,46vw)}
   .cnm-reveal__buy{align-items:flex-start}
   .cnm-reveal__ctas{justify-content:flex-start}
@@ -110,8 +110,10 @@
 }
 @media (max-width:899px){
   .cnm-reveal{min-height:calc(100svh - var(--cnm-header,96px));align-items:stretch}
-  .cnm-reveal__media{position:relative;inset:auto;height:44svh;margin-top:8px}
-  .cnm-reveal__img{width:min(44svh,86vw)}
+  .cnm-reveal__media{position:relative;inset:auto;height:30svh;margin-top:4px}
+  .cnm-reveal__img{width:min(30svh,80vw)}
+  .cnm-reveal__sub{font-size:15px}
+  .cnm-reveal__note{display:none}
   .cnm-reveal__floor{bottom:4%}
   .cnm-reveal{display:flex;flex-direction:column;justify-content:space-between}
   .cnm-reveal__copy{grid-template-columns:1fr;padding-top:8px;gap:14px}
@@ -119,7 +121,8 @@
   .cnm-reveal__buy .cnm-price{justify-content:flex-start}
   .cnm-reveal__ctas{justify-content:stretch;display:grid;grid-template-columns:1fr 1fr}
   .cnm-reveal__ctas .cnm-btn{padding:0 12px}
-  .cnm-reveal__title.cnm-d--xl{font-size:clamp(56px,17vw,92px)}
+  .cnm-reveal__title.cnm-d--xl{font-size:clamp(48px,14vw,72px)}
+  .cnm-reveal__copy{padding-bottom:20px}
 }
 
 /* ───────── Editorial banner (marquee) ───────── */
@@ -165,10 +168,13 @@
 .cnm-on .cnm-details{height:300vh}
 .cnm-on .cnm-details__stage{position:sticky;top:0;height:100svh;display:flex;align-items:center;padding:0}
 .cnm-on .cnm-details__stage>.cnm-wrap{width:100%}
+@media (min-width:900px){.cnm-on .cnm-angles{width:min(100%,64svh);margin-left:auto}}
 @media (max-width:899px){
   .cnm-on .cnm-details{height:240vh}
   .cnm-on .cnm-details__grid{gap:18px}
-  .cnm-on .cnm-angles__stage{width:min(100%,52svh);margin:0 auto}
+  .cnm-on .cnm-angles__stage{width:min(100%,42svh);margin:0 auto}
+  .cnm-on .cnm-details__copy{gap:8px}
+  .cnm-on .cnm-details__copy .cnm-d--l{font-size:clamp(30px,8.4vw,40px)}
   .cnm-on .cnm-details__copy .cnm-p{display:none}
 }
 
@@ -183,7 +189,9 @@
 .cnm-exp__copy .cnm-k{color:rgba(255,255,255,.7)}
 .cnm-on .cnm-exp{height:220vh}
 .cnm-on .cnm-exp__stage{position:sticky;top:0;height:100svh}
-.cnm-on .cnm-exp__media{clip-path:circle(var(--r,22%) at 50% 46%);will-change:clip-path}
+.cnm-exp{--cxp:72% 40%}
+.cnm-on .cnm-exp__media{clip-path:circle(var(--r,14%) at var(--cxp));will-change:clip-path}
+@media (max-width:899px){.cnm-exp{--cxp:72% 36%}.cnm-exp__media img{object-position:75% 30%}}
 .cnm-on .cnm-exp__media img{transform:scale(var(--s,1.18));will-change:transform}
 
 /* ───────── Scene 4 · The benefits ───────── */
