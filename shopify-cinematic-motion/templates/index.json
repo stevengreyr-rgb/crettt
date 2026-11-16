@@ -1,0 +1,68 @@
+{
+ "sections": {
+  "landing": {
+   "type": "sc-cinema",
+   "settings": {
+    "product": "sevencrush-the-everyday-earbuds",
+    "img_hero": "shopify://shop_images/hf_20261019_135040_eef27217-a8e0-4603-96c4-f5377c74340f.png",
+    "img_a1": "shopify://shop_images/sevencrish-earbuds-detail.png",
+    "img_a2": "shopify://shop_images/hf_20261019_135040_c1d03a69-cf5d-4c6c-b4d8-2d78a577c936.png",
+    "img_a3": "shopify://shop_images/sevencrish-earbuds-case.png",
+    "img_exp": "shopify://shop_images/sc-premium-earbuds-editorial-nov15.png",
+    "img_b1": "shopify://shop_images/sevencrush-earbuds-cafe-editorial.png",
+    "img_b2": "shopify://shop_images/sevencrish-earbuds-white-hero.png",
+    "img_b3": "shopify://shop_images/hf_20261019_133649_cfd37ea1-91be-43f8-ac1a-757c01c97bef.png",
+    "img_b4": "shopify://shop_images/IMG_1878.jpg",
+    "img_box": "shopify://shop_images/IMG_1877.jpg",
+    "img_offer": "shopify://shop_images/hf_20261019_135040_eef27217-a8e0-4603-96c4-f5377c74340f.png"
+   },
+   "blocks": {
+    "q1": {
+     "type": "faq",
+     "settings": {
+      "q": "Do they have noise cancellation?",
+      "a": "Yes. Active noise cancellation reduces the sound around you, and spatial audio gives music, films and calls a wider, more immersive sound."
+     }
+    },
+    "q2": {
+     "type": "faq",
+     "settings": {
+      "q": "How do the bundles work?",
+      "a": "Pick Duo or Complete set and the discount comes off automatically at checkout: 15% off 2 pairs, 25% off 3 or more. One for you, the rest as gifts."
+     }
+    },
+    "q3": {
+     "type": "faq",
+     "settings": {
+      "q": "What if I lose them?",
+      "a": "You can locate your earbuds from your phone, so a missing earbud doesn't have to stay missing."
+     }
+    },
+    "q4": {
+     "type": "faq",
+     "settings": {
+      "q": "How fast is delivery?",
+      "a": "Orders arrive in 2–5 days, and every order includes a tracking number."
+     }
+    },
+    "q5": {
+     "type": "faq",
+     "settings": {
+      "q": "Returns and support",
+      "a": "30 days to return unopened, unused items. Write to sevencrush.store@gmail.com and a real person will get back to you."
+     }
+    }
+   },
+   "block_order": [
+    "q1",
+    "q2",
+    "q3",
+    "q4",
+    "q5"
+   ]
+  }
+ },
+ "order": [
+  "landing"
+ ]
+}
