@@ -1,0 +1,24 @@
+{% doc %}
+  Responsive image for the cinematic section. Renders nothing when no image is set.
+
+  @param {image} image - Image (from an image_picker setting or product media)
+  @param {string} [sizes] - sizes attribute
+  @param {string} [alt] - Alt text override
+  @param {boolean} [eager] - Load eagerly with high fetch priority (LCP image)
+  @param {number} [max] - Largest width to request, default 1800
+
+  @example
+  {% render 'sc-cinema-img', image: section.settings.img_hero, sizes: '60vw', eager: true %}
+{% enddoc %}
+{%- if image != blank -%}
+  {%- liquid
+    assign mx = max | default: 1800
+    assign a = alt | default: image.alt | escape
+    assign s = sizes | default: '100vw'
+  -%}
+  {%- if eager -%}
+    {{ image | image_url: width: mx | image_tag: widths: '480,720,960,1200,1500,1800', sizes: s, loading: 'eager', fetchpriority: 'high', alt: a }}
+  {%- else -%}
+    {{ image | image_url: width: mx | image_tag: widths: '480,720,960,1200,1500,1800', sizes: s, loading: 'lazy', decoding: 'async', alt: a }}
+  {%- endif -%}
+{%- endif -%}
