@@ -23,11 +23,11 @@ def on(bg, img, box):  # paste img fitted into box (x,y,w,h), bottom-centered
     cv.paste(im, (x + (w - im.width) // 2, y + h - im.height), im); return cv
 
 # ---------- AirSleek ----------
-model('airsleek-1', 'as1', dict(l1='Wet to sleek,', l2='in <em>one pass.</em>', cl=0,
-      p='Air flows through the plates, so hair dries and smooths without extreme heat.', big='2-in-1', small='Dryer + straightener'))
+model('airsleek-1', 'as1', dict(l1='Wet to sleek,', l2='in <em>one pass.</em>',
+      p='Air flows through the plates, so hair dries and smooths without extreme heat.', big='2-in-1', small='Dryer + straightener', cl=0))
 model('airsleek-2', 'as2', dict(l1='No extreme heat.', l2='Just <em>shine.</em>', size=185, cl=1,
       p='Negative ions and controlled air leave hair smooth and glossy.', big='Ion', small='Negative ion care'))
-model('airsleek-3', 'as3', dict(l1='Heat that', l2='<em>stays gentle.</em>', cl=1, cy=33,
+model('airsleek-3', 'as3', dict(l1='Heat that', l2='<em>stays gentle.</em>', cl=0, cy=33,
       p='Thermostatic control holds it steady, never above 160 °C, to help protect your hair.', big='160', unit='°C', small='Maximum heat'))
 pl = Image.open(f'{V}/as-plates-2k.png').convert('RGB')
 product('airsleek-4', on(pl.getpixel((8, 8)), pl, (330, 640, 1270, 1360)), dict(l1='Air through', l2='the <em>plates.</em>', cl=1, cy=36, cw=270,
