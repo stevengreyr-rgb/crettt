@@ -1,17 +1,113 @@
 {
  "airsleek": [
-  {"n":"01","l1":"Wet to sleek,","l2":"in <em>one pass.</em>","cl":1,"p":"Air flows through the plates, so hair dries and smooths at once.","big":"2-in-1","small":"Dryer + straightener"},
-  {"n":"02","l1":"Wet or dry.","l2":"You <em>choose.</em>","cl":1,"p":"Use it straight after the towel in wet mode, or on dry hair for touch-ups.","big":"2","unit":"modes","small":"Wet and dry"},
-  {"n":"03","l1":"Heat you","l2":"<em>control.</em>","cl":1,"p":"Thermostatic control with a clear display. Set the heat your hair needs.","big":"160","unit":"°C","small":"Adjustable, max heat"},
-  {"n":"04","l1":"Smooth, with","l2":"real <em>shine.</em>","cl":1,"p":"Negative ions help keep frizz down for a sleek, glossy finish.","big":"Ion","small":"Negative ion care"},
-  {"n":"05","l1":"Easy to hold.","l2":"Easy to <em>store.</em>","cl":1,"p":"A lock button keeps it closed. The cord turns with you as you style.","big":"360°","small":"Rotating cord, 1.8 m"}
+  {
+   "n": "01",
+   "l1": "Wet to sleek,",
+   "l2": "in <em>one pass.</em>",
+   "cl": 1,
+   "p": "Air flows through the plates, so hair dries and smooths without extreme heat.",
+   "big": "2-in-1",
+   "small": "Dryer + straightener"
+  },
+  {
+   "n": "02",
+   "l1": "Wet or dry.",
+   "l2": "You <em>choose.</em>",
+   "cl": 1,
+   "p": "Use it straight after the towel in wet mode, or on dry hair for touch-ups.",
+   "big": "2",
+   "unit": "modes",
+   "small": "Wet and dry"
+  },
+  {
+   "n": "03",
+   "l1": "Heat that",
+   "l2": "stays <em>gentle.</em>",
+   "cl": 1,
+   "p": "Thermostatic control keeps the heat steady and never above 160 °C, to help protect hair from heat damage.",
+   "big": "160",
+   "unit": "°C",
+   "small": "Max heat, never more"
+  },
+  {
+   "n": "04",
+   "l1": "Smooth, with",
+   "l2": "real <em>shine.</em>",
+   "cl": 1,
+   "p": "Negative ions help keep frizz down for a sleek, glossy finish.",
+   "big": "Ion",
+   "small": "Negative ion care"
+  },
+  {
+   "n": "05",
+   "l1": "Easy to hold.",
+   "l2": "Easy to <em>store.</em>",
+   "cl": 1,
+   "p": "A lock button keeps it closed for storage. The cord turns 360° as you style.",
+   "big": "360°",
+   "small": "Rotating cord, 1.8 m"
+  }
  ],
  "airwave": [
-  {"n":"01","l1":"Curls that","l2":"<em>hold.</em>","cl":0,"p":"The conical barrel wraps each section with air for soft, defined curls. Set them with the cool shot.","big":"01","unit":"/06","small":"Conical curling barrel"},
-  {"n":"02","l1":"Curls, but","l2":"<em>defined.</em>","cl":1,"p":"The diffuser spreads the airflow gently over natural curls and waves for shape with less frizz.","big":"02","unit":"/06","small":"Diffuser"},
-  {"n":"03","l1":"Wet to dry,","l2":"<em>fast.</em>","cl":1,"p":"The pre-styling dryer takes hair from wet to dry with focused, high-speed air from a 1500 W motor.","big":"03","unit":"/06","small":"Pre-styling dryer"},
-  {"n":"04","l1":"Smooth from","l2":"root to <em>tip.</em>","cl":1,"p":"Firm bristles hold tension while warm air smooths each section straight.","big":"04","unit":"/06","small":"Firm smoothing brush"},
-  {"n":"05","l1":"Lift at","l2":"the <em>root.</em>","cl":1,"p":"The round brush adds body at the roots and soft bends at the ends.","big":"05","unit":"/06","small":"Round volumizing brush"},
-  {"n":"06","l1":"Thick hair,","l2":"<em>tamed.</em>","cl":1,"p":"Long, wide teeth glide through thick or curly hair to smooth it as it dries.","big":"06","unit":"/06","small":"Wide-tooth comb"}
+  {
+   "n": "01",
+   "l1": "Curls that",
+   "l2": "<em>hold.</em>",
+   "cl": 0,
+   "p": "Air wraps each section around the barrel, so curls form without extreme heat. Set them with the cool shot.",
+   "big": "01",
+   "unit": "/06",
+   "small": "Conical curling barrel"
+  },
+  {
+   "n": "02",
+   "l1": "Curls, but",
+   "l2": "<em>defined.</em>",
+   "cl": 1,
+   "p": "The diffuser spreads the airflow gently over natural curls and waves for shape with less frizz.",
+   "big": "02",
+   "unit": "/06",
+   "small": "Diffuser"
+  },
+  {
+   "n": "03",
+   "l1": "Air, not",
+   "l2": "extreme <em>heat.</em>",
+   "cl": 1,
+   "p": "Fast, focused airflow from a 1500 W motor dries hair without the extreme heat that damages it.",
+   "big": "03",
+   "unit": "/06",
+   "small": "Pre-styling dryer"
+  },
+  {
+   "n": "04",
+   "l1": "Smooth from",
+   "l2": "root to <em>tip.</em>",
+   "cl": 1,
+   "p": "Firm bristles hold tension while warm air, not hot plates, smooths each section straight.",
+   "big": "04",
+   "unit": "/06",
+   "small": "Firm smoothing brush"
+  },
+  {
+   "n": "05",
+   "l1": "Lift at",
+   "l2": "the <em>root.</em>",
+   "cl": 1,
+   "p": "The round brush adds body at the roots and soft bends at the ends.",
+   "big": "05",
+   "unit": "/06",
+   "small": "Round volumizing brush"
+  },
+  {
+   "n": "06",
+   "l1": "Thick hair,",
+   "l2": "<em>tamed.</em>",
+   "cl": 1,
+   "p": "Long, wide teeth glide through thick or curly hair to smooth it with air as it dries.",
+   "big": "06",
+   "unit": "/06",
+   "small": "Wide-tooth comb"
+  }
  ]
 }
