@@ -6,6 +6,14 @@ const [,, photos, out] = process.argv;
 const S = [
   { f:'01', h1:'Dry and straighten<br>in', em:'one pass.', pos:'l', y:27,
     p:'Air flows through the plates, so your hair dries and smooths at the same time.', big:'2-in-1', small:'Dryer and<br>straightener' },
+  { f:'02', h1:'Wet or dry.<br>You', em:'choose.', pos:'l', y:27,
+    p:'Use it straight after the towel in wet mode, or on dry hair for quick touch-ups.', big:'2', unit:'modes', small:'Wet and dry' },
+  { f:'03', h1:'Heat you<br>', em:'control.', pos:'l', y:27,
+    p:'Thermostatic control with a clear display, so you set the heat your hair needs.', big:'160', unit:'°C', small:'Adjustable,<br>max heat' },
+  { f:'04', h1:'Smooth, with<br>real', em:'shine.', pos:'l', y:27,
+    p:'Negative ions help keep frizz down for a sleek, glossy finish.', big:'Ion', small:'Negative ion<br>care' },
+  { f:'05', h1:'Easy to hold.<br>Easy to', em:'store.', pos:'l', y:27,
+    p:'A lock button keeps it closed, and the cord turns with you as you style.', big:'360°', small:'Rotating cord,<br>1.8 m' },
 ];
 const dots = ['#d8352f','#2f6fd8','#3aa45a','#e8c43a','#8a4fc8','#3cc4cf','#f4f4f1'];
 const html = (s, img) => `<!doctype html><html><head><meta charset="utf-8">
